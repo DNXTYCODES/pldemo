@@ -1,0 +1,895 @@
+import imageModel from "../models/imageModel.js";
+import userModel from "../models/userModel.js";
+import notificationModel from "../models/notificationModel.js";
+import transactionModel from "../models/transactionModel.js";
+import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
+import cloudinary from "../config/cloudinary.js";
+
+/**
+ * Upload a new image for sale (requires admin approval)
+ */
+export const uploadImage = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      priceEth,
+      category,
+      tags,
+      usageRights,
+      licenseType,
+    } = req.body;
+    const userId = req.body.userId || req.userId;
+
+    // List of allowed photography specialties
+    const ALLOWED_CATEGORIES = [
+      "Landscape",
+      "Portrait",
+      "Wildlife",
+      "Architecture",
+      "Street",
+      "Macro",
+      "Abstract",
+      "Nature",
+      "People",
+      "Product",
+    ];
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file uploaded",
+      });
+    }
+
+    if (!title || !priceEth || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Title, price, and category are required",
+      });
+    }
+
+    // Validate category
+    if (!ALLOWED_CATEGORIES.includes(category)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Allowed categories: ${ALLOWED_CATEGORIES.join(", ")}`,
+      });
+    }
+
+    // Validate price
+    const price = parseFloat(priceEth);
+    if (price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Price must be greater than 0",
+      });
+    }
+
+    // Upload to Cloudinary using file path from multer
+    let imageResult;
+    if (process.env.NODE_ENV === "development" && !req.file.path) {
+      // For development without actual file, create dummy response
+      imageResult = {
+        secure_url: `https://via.placeholder.com/400?text=${encodeURIComponent(title)}`,
+        public_id: "placeholder",
+      };
+    } else {
+      imageResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: "photography_trading/images",
+        resource_type: "auto",
+      });
+    }
+
+    // Get current ETH price
+    const ethPrice = await getCurrentEthPrice();
+    const priceUsd = (price * ethPrice).toFixed(2);
+    
+    // Calculate estimated gas fee (fixed fee of 0.001 ETH per upload)
+    const gasFee = "0.001";
+
+    // Create image document with PENDING approval status
+    const image = new imageModel({
+      title,
+      description: description || "",
+      imageUrl: imageResult.secure_url,
+      thumbnailUrl: imageResult.secure_url.replace(
+        "/upload/",
+        "/upload/w_300,h_300,c_fill/",
+      ),
+      sellerId: userId,
+      priceEth: price.toString(),
+      priceUsd: priceUsd,
+      ethPriceAtListing: ethPrice.toString(),
+      category: category,
+      tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
+      usageRights: usageRights || "personal_use",
+      licenseType: licenseType || "non-exclusive",
+      status: "pending_approval", // Set as pending approval
+      approvalStatus: "pending",
+      gasFee: gasFee,
+    });
+
+    await image.save();
+
+    // DO NOT add to user's ownedImages yet - only after approval
+
+    res.json({
+      success: true,
+      message: "Image uploaded successfully. Awaiting admin approval.",
+      image: {
+        _id: image._id,
+        title: image.title,
+        imageUrl: image.imageUrl,
+        priceEth: image.priceEth,
+        priceUsd: image.priceUsd,
+        status: image.status,
+        approvalStatus: image.approvalStatus,
+        gasFee: image.gasFee,
+      },
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get all available images (for browsing/shopping)
+ */
+export const getImages = async (req, res) => {
+  try {
+    const { category, limit = 20, skip = 0, sortBy = "createdAt" } = req.query;
+    let query = { status: "active" };
+
+    if (category) {
+      query.category = category;
+    }
+
+    const images = await imageModel
+      .find(query)
+      .populate("sellerId", "name profilePicture")
+      .select("-purchaseHistory") // Don't send full purchase history in list
+      .sort({ [sortBy]: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(skip));
+
+    const total = await imageModel.countDocuments(query);
+
+    // Add price formatting to response
+    const ethPrice = await getCurrentEthPrice();
+    const imageList = images.map((img) => ({
+      ...img.toObject(),
+      currency: {
+        eth: img.priceEth,
+        usd: img.priceUsd,
+        formatted: `${parseFloat(img.priceEth).toFixed(8)} ETH ($${parseFloat(img.priceUsd).toFixed(2)})`,
+      },
+    }));
+
+    res.json({
+      success: true,
+      images: imageList,
+      pagination: {
+        total,
+        limit: parseInt(limit),
+        skip: parseInt(skip),
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+      currentEthPrice: ethPrice,
+    });
+  } catch (error) {
+    console.error("Error getting images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving images",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get single image details
+ */
+export const getImageById = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    const image = await imageModel
+      .findById(imageId)
+      .populate("sellerId", "name email profilePicture")
+      .populate("purchaseHistory.buyerId", "name profilePicture");
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    // Increment view count
+    image.views += 1;
+    await image.save();
+
+    const ethPrice = await getCurrentEthPrice();
+
+    res.json({
+      success: true,
+      image: {
+        ...image.toObject(),
+        currency: {
+          eth: image.priceEth,
+          usd: image.priceUsd,
+          formatted: `${parseFloat(image.priceEth).toFixed(8)} ETH ($${parseFloat(image.priceUsd).toFixed(2)})`,
+        },
+      },
+      currentEthPrice: ethPrice,
+    });
+  } catch (error) {
+    console.error("Error getting image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get user's uploaded images
+ */
+export const getUserImages = async (req, res) => {
+  try {
+    const userId = req.body.userId || req.userId;
+    const { limit = 20, skip = 0 } = req.query;
+
+    const images = await imageModel
+      .find({ sellerId: userId })
+      .select("-purchaseHistory")
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(skip));
+
+    const total = await imageModel.countDocuments({ sellerId: userId });
+
+    res.json({
+      success: true,
+      images,
+      pagination: {
+        total,
+        limit: parseInt(limit),
+        skip: parseInt(skip),
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+    });
+  } catch (error) {
+    console.error("Error getting user images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving user images",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Update image price
+ */
+export const updateImagePrice = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const { priceEth } = req.body;
+    const userId = req.body.userId || req.userId;
+
+    const image = await imageModel.findById(imageId);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.sellerId.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Only image owner can update price",
+      });
+    }
+
+    const price = parseFloat(priceEth);
+    if (price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Price must be greater than 0",
+      });
+    }
+
+    const ethPrice = await getCurrentEthPrice();
+    const priceUsd = (price * ethPrice).toFixed(2);
+
+    image.priceEth = price.toString();
+    image.priceUsd = priceUsd;
+    image.ethPriceAtListing = ethPrice.toString();
+    await image.save();
+
+    res.json({
+      success: true,
+      message: "Image price updated successfully",
+      image: {
+        _id: image._id,
+        priceEth: image.priceEth,
+        priceUsd: image.priceUsd,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating image price:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating image price",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Toggle image favorite status
+ */
+export const toggleFavorite = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const userId = req.body.userId || req.userId;
+
+    const user = await userModel.findById(userId);
+    const image = await imageModel.findById(imageId);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    const isFavorited = user.favorites.includes(imageId);
+
+    if (isFavorited) {
+      // Remove from favorites
+      user.favorites = user.favorites.filter(
+        (fav) => fav.toString() !== imageId,
+      );
+      image.favoriteCount = Math.max(0, image.favoriteCount - 1);
+    } else {
+      // Add to favorites
+      user.favorites.push(imageId);
+      image.favoriteCount += 1;
+    }
+
+    await user.save();
+    await image.save();
+
+    res.json({
+      success: true,
+      message: isFavorited ? "Removed from favorites" : "Added to favorites",
+      isFavorited: !isFavorited,
+      favoriteCount: image.favoriteCount,
+    });
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating favorite",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Delete image (can only be done by owner or admin)
+ */
+export const deleteImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const userId = req.body.userId || req.userId;
+
+    const image = await imageModel.findById(imageId);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.sellerId.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Only image owner can delete",
+      });
+    }
+
+    // Delete from Cloudinary if needed
+    if (image.imageUrl && image.imageUrl.includes("cloudinary")) {
+      try {
+        // Extract public_id from URL if needed
+        // await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.log("Could not delete from Cloudinary:", err);
+      }
+    }
+
+    // Delete image and remove from user's ownedImages
+    await imageModel.findByIdAndDelete(imageId);
+    await userModel.findByIdAndUpdate(userId, {
+      $pull: {
+        ownedImages: imageId,
+        favorites: imageId, // Also remove from anyone's favorites
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Image deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Search images
+ */
+export const searchImages = async (req, res) => {
+  try {
+    const {
+      query,
+      category,
+      minPrice,
+      maxPrice,
+      limit = 20,
+      skip = 0,
+    } = req.query;
+
+    let searchQuery = { status: "active" };
+
+    if (query) {
+      searchQuery.$or = [
+        { title: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+        { tags: { $in: [new RegExp(query, "i")] } },
+      ];
+    }
+
+    if (category) {
+      searchQuery.category = category;
+    }
+
+    if (minPrice || maxPrice) {
+      searchQuery.priceEth = {};
+      if (minPrice) {
+        searchQuery.priceEth.$gte = parseFloat(minPrice).toString();
+      }
+      if (maxPrice) {
+        searchQuery.priceEth.$lte = parseFloat(maxPrice).toString();
+      }
+    }
+
+    const images = await imageModel
+      .find(searchQuery)
+      .populate("sellerId", "name profilePicture")
+      .select("-purchaseHistory")
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(skip));
+
+    const total = await imageModel.countDocuments(searchQuery);
+
+    res.json({
+      success: true,
+      images,
+      pagination: {
+        total,
+        limit: parseInt(limit),
+        skip: parseInt(skip),
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+    });
+  } catch (error) {
+    console.error("Error searching images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error searching images",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Upload image for a user
+ */
+export const adminUploadImage = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      priceEth,
+      category,
+      tags,
+      usageRights,
+      licenseType,
+      userId,
+    } = req.body;
+
+    // List of allowed photography specialties
+    const ALLOWED_CATEGORIES = [
+      "Landscape",
+      "Portrait",
+      "Wildlife",
+      "Architecture",
+      "Street",
+      "Macro",
+      "Abstract",
+      "Nature",
+      "People",
+      "Product",
+    ];
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file uploaded",
+      });
+    }
+
+    if (!title || !priceEth || !category || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Title, price, category, and userId are required",
+      });
+    }
+
+    // Validate category
+    if (!ALLOWED_CATEGORIES.includes(category)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Allowed categories: ${ALLOWED_CATEGORIES.join(", ")}`,
+      });
+    }
+
+    // Validate user exists
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Validate price
+    const price = parseFloat(priceEth);
+    if (price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Price must be greater than 0",
+      });
+    }
+
+    // Upload to Cloudinary
+    let imageResult;
+    if (process.env.NODE_ENV === "development" && !req.file.path) {
+      imageResult = {
+        secure_url: `https://via.placeholder.com/400?text=${encodeURIComponent(title)}`,
+        public_id: "placeholder",
+      };
+    } else {
+      imageResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: "photography_trading/images",
+        resource_type: "auto",
+      });
+    }
+
+    // Get current ETH price
+    const ethPrice = await getCurrentEthPrice();
+    const priceUsd = (price * ethPrice).toFixed(2);
+
+    // Create image document
+    const image = new imageModel({
+      title,
+      description: description || "",
+      imageUrl: imageResult.secure_url,
+      thumbnailUrl: imageResult.secure_url.replace(
+        "/upload/",
+        "/upload/w_300,h_300,c_fill/",
+      ),
+      sellerId: userId,
+      priceEth: price.toString(),
+      priceUsd: priceUsd,
+      ethPriceAtListing: ethPrice.toString(),
+      category: category,
+      tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
+      usageRights: usageRights || "personal_use",
+      licenseType: licenseType || "non-exclusive",
+      status: "active",
+    });
+
+    await image.save();
+
+    // Add to user's ownedImages
+    await userModel.findByIdAndUpdate(
+      userId,
+      { $push: { ownedImages: image._id } },
+      { new: true },
+    );
+
+    res.json({
+      success: true,
+      message: "Image uploaded successfully for user",
+      image: {
+        _id: image._id,
+        title: image.title,
+        imageUrl: image.imageUrl,
+        priceEth: image.priceEth,
+        priceUsd: image.priceUsd,
+        status: image.status,
+      },
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get all pending uploads (Admin only)
+ */
+export const getPendingUploads = async (req, res) => {
+  try {
+    const pending = await imageModel
+      .find({ approvalStatus: "pending" })
+      .populate("sellerId", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: pending.length,
+      uploads: pending,
+    });
+  } catch (error) {
+    console.error("Error fetching pending uploads:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching pending uploads",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get user's pending uploads
+ */
+export const getUserPendingUploads = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const pending = await imageModel
+      .find({ sellerId: userId, approvalStatus: "pending" })
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: pending.length,
+      uploads: pending,
+    });
+  } catch (error) {
+    console.error("Error fetching user pending uploads:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching pending uploads",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Approve image upload (Admin only)
+ */
+export const approveImageUpload = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const adminId = req.userId; // Admin user who is approving
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Image is not pending approval",
+      });
+    }
+
+    const sellerId = image.sellerId;
+    const gasFee = parseFloat(image.gasFee);
+    const ethPrice = await getCurrentEthPrice();
+    const gasFeeUsd = (gasFee * ethPrice).toFixed(2);
+
+    // Update image status
+    image.status = "active";
+    image.approvalStatus = "approved";
+    image.approvedAt = new Date();
+    image.approvedBy = adminId;
+    await image.save();
+
+    // Add to user's ownedImages
+    await userModel.findByIdAndUpdate(
+      sellerId,
+      { $push: { ownedImages: image._id } },
+      { new: true },
+    );
+
+    // Deduct gas fee from user's balance
+    const user = await userModel.findById(sellerId);
+    const currentBalance = parseFloat(user.balance);
+    const newBalance = Math.max(0, currentBalance - gasFee);
+    user.balance = newBalance.toString();
+    await user.save();
+
+    // Create transaction record for approval
+    const transaction = new transactionModel({
+      userId: sellerId,
+      type: "upload_approval",
+      amountEth: "0", // No amount transferred, just fee deducted
+      amountUsd: "0",
+      ethPriceAtTime: ethPrice.toString(),
+      gasFeeEth: gasFee.toString(),
+      imageId: image._id,
+      status: "completed",
+      description: `Image upload approved: ${image.title}`,
+      completedAt: new Date(),
+    });
+    await transaction.save();
+
+    // Add transaction to user
+    await userModel.findByIdAndUpdate(
+      sellerId,
+      { $push: { transactions: transaction._id } },
+      { new: true },
+    );
+
+    res.json({
+      success: true,
+      message: "Image approved successfully",
+      image: {
+        _id: image._id,
+        title: image.title,
+        status: image.status,
+        approvalStatus: image.approvalStatus,
+        approvedAt: image.approvedAt,
+      },
+      gasFeeDeducted: {
+        eth: gasFee.toString(),
+        usd: gasFeeUsd,
+      },
+      userNewBalance: user.balance,
+    });
+  } catch (error) {
+    console.error("Error approving image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error approving image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Decline image upload (Admin only)
+ */
+export const declineImageUpload = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const { reason } = req.body;
+    const adminId = req.userId; // Admin user who is declining
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Image is not pending approval",
+      });
+    }
+
+    const sellerId = image.sellerId;
+    const ethPrice = await getCurrentEthPrice();
+
+    // Update image status
+    image.status = "deleted";
+    image.approvalStatus = "declined";
+    image.declinedAt = new Date();
+    image.declinedBy = adminId;
+    image.declineReason = reason || "No reason provided";
+    await image.save();
+
+    // Create transaction record for decline
+    const transaction = new transactionModel({
+      userId: sellerId,
+      type: "upload_decline",
+      amountEth: "0",
+      amountUsd: "0",
+      ethPriceAtTime: ethPrice.toString(),
+      gasFeeEth: "0",
+      imageId: image._id,
+      status: "completed",
+      description: `Image upload declined: ${image.title}. Reason: ${image.declineReason}`,
+      adminNotes: image.declineReason,
+      completedAt: new Date(),
+    });
+    await transaction.save();
+
+    // Add transaction to user
+    await userModel.findByIdAndUpdate(
+      sellerId,
+      { $push: { transactions: transaction._id } },
+      { new: true },
+    );
+
+    res.json({
+      success: true,
+      message: "Image declined successfully",
+      image: {
+        _id: image._id,
+        title: image.title,
+        status: image.status,
+        approvalStatus: image.approvalStatus,
+        declinedAt: image.declinedAt,
+        declineReason: image.declineReason,
+      },
+    });
+  } catch (error) {
+    console.error("Error declining image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error declining image",
+      error: error.message,
+    });
+  }
+};
+
+export default {
+  uploadImage,
+  getImages,
+  getImageById,
+  getUserImages,
+  updateImagePrice,
+  toggleFavorite,
+  deleteImage,
+  searchImages,
+  adminUploadImage,
+  getPendingUploads,
+  getUserPendingUploads,
+  approveImageUpload,
+  declineImageUpload,
+};
