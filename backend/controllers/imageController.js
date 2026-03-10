@@ -84,7 +84,7 @@ export const uploadImage = async (req, res) => {
     // Get current ETH price
     const ethPrice = await getCurrentEthPrice();
     const priceUsd = (price * ethPrice).toFixed(2);
-    
+
     // Calculate estimated gas fee (fixed fee of 0.001 ETH per upload)
     const gasFee = "0.001";
 

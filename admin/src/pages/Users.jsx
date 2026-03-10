@@ -62,7 +62,7 @@ const Users = ({ token }) => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
-  
+
   // Pending Uploads Management
   const [pendingUploads, setPendingUploads] = useState([]);
   const [loadingPending, setLoadingPending] = useState(false);
@@ -241,7 +241,9 @@ const Users = ({ token }) => {
         setProfilePicturePreview(null);
         fetchUsers();
       } else {
-        toast.error(response.data.message || "Failed to update profile picture");
+        toast.error(
+          response.data.message || "Failed to update profile picture",
+        );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -503,468 +505,483 @@ const Users = ({ token }) => {
       {/* Users Tab */}
       {!showPendingTab && (
         <div>
-        <div className="mb-8 p-6 bg-white border rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-6">
-            {editingUser ? "Edit User" : "Create New User"}
-          </h2>
+          <div className="mb-8 p-6 bg-white border rounded-lg shadow">
+            <h2 className="text-xl font-bold mb-6">
+              {editingUser ? "Edit User" : "Create New User"}
+            </h2>
 
-          <form onSubmit={handleCreateUser} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-
-              {/* Password */}
-              {!editingUser && (
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Name */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Password *
+                    Name *
                   </label>
                   <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
+                    type="text"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border rounded-lg"
-                    required={!editingUser}
+                    required
                   />
                 </div>
-              )}
 
-              {/* Balance */}
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded-lg"
+                    required
+                  />
+                </div>
+
+                {/* Password */}
+                {!editingUser && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Password *
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border rounded-lg"
+                      required={!editingUser}
+                    />
+                  </div>
+                )}
+
+                {/* Balance */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Balance (ETH)
+                  </label>
+                  <input
+                    type="text"
+                    name="balance"
+                    value={formData.balance}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
+                </div>
+
+                {/* Account Status */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Account Status
+                  </label>
+                  <select
+                    name="accountStatus"
+                    value={formData.accountStatus}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  >
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+
+                {/* Expertise Level */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Expertise Level
+                  </label>
+                  <select
+                    name="expertise_level"
+                    value={formData.expertise_level}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  >
+                    {EXPERTISE_LEVELS.map((level) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Bio */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Bio</label>
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-lg h-20"
+                />
+              </div>
+
+              {/* Location */}
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Balance (ETH)
+                  Location
                 </label>
                 <input
                   type="text"
-                  name="balance"
-                  value={formData.balance}
+                  name="location"
+                  value={formData.location}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
 
-              {/* Account Status */}
+              {/* Photography Specialties */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Account Status
+                <label className="block text-sm font-medium mb-3">
+                  Photography Specialties
                 </label>
-                <select
-                  name="accountStatus"
-                  value={formData.accountStatus}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                >
-                  <option value="active">Active</option>
-                  <option value="suspended">Suspended</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-
-              {/* Expertise Level */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Expertise Level
-                </label>
-                <select
-                  name="expertise_level"
-                  value={formData.expertise_level}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                >
-                  {EXPERTISE_LEVELS.map((level) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
+                <div className="grid grid-cols-5 gap-2">
+                  {PHOTOGRAPHY_SPECIALTIES.map((specialty) => (
+                    <label key={specialty} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.photography_specialty.includes(
+                          specialty,
+                        )}
+                        onChange={() => handleSpecialtyToggle(specialty)}
+                        className="mr-2"
+                      />
+                      {specialty}
+                    </label>
                   ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Bio */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Bio</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-lg h-20"
-              />
-            </div>
-
-            {/* Location */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Location</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-lg"
-              />
-            </div>
-
-            {/* Photography Specialties */}
-            <div>
-              <label className="block text-sm font-medium mb-3">
-                Photography Specialties
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {PHOTOGRAPHY_SPECIALTIES.map((specialty) => (
-                  <label key={specialty} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.photography_specialty.includes(
-                        specialty,
-                      )}
-                      onChange={() => handleSpecialtyToggle(specialty)}
-                      className="mr-2"
-                    />
-                    {specialty}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Languages */}
-            <div>
-              <label className="block text-sm font-medium mb-3">
-                Languages
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {LANGUAGES.map((language) => (
-                  <label key={language} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.languages.includes(language)}
-                      onChange={() => handleLanguageToggle(language)}
-                      className="mr-2"
-                    />
-                    {language}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="pt-4 flex gap-4">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-              >
-                {editingUser ? "Update User" : "Create User"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-
-          {/* Profile Picture Upload - Only show when editing */}
-          {editingUser && (
-            <div className="mt-8 pt-8 border-t">
-              <h3 className="text-lg font-bold mb-4">Update Profile Picture</h3>
-              <div className="space-y-4">
-                {profilePicturePreview && (
-                  <img
-                    src={profilePicturePreview}
-                    alt="Preview"
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
-                )}
-                <div>
-                  <input
-                    type="file"
-                    id="profilePictureInput"
-                    accept="image/*"
-                    onChange={handleProfilePictureChange}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="profilePictureInput"
-                    className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500"
-                  >
-                    {profilePictureFile
-                      ? "Change Profile Picture"
-                      : "Click to select profile picture"}
-                  </label>
                 </div>
-                {profilePictureFile && (
-                  <button
-                    type="button"
-                    onClick={handleUploadProfilePicture}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Upload Profile Picture
-                  </button>
-                )}
               </div>
-            </div>
-          )}
 
-          {/* Image Upload - Only show when editing */}
-          {editingUser && (
-            <div className="mt-8 pt-8 border-t">
-              <h3 className="text-lg font-bold mb-4">Upload Image for User</h3>
-              <form onSubmit={handleUploadImage} className="space-y-4">
-                {/* Image Preview */}
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Image Preview"
-                    className="w-48 h-48 object-cover rounded-lg"
-                  />
-                )}
-
-                {/* Image Upload */}
-                <div>
-                  <input
-                    type="file"
-                    id="imageInput"
-                    accept="image/*"
-                    onChange={handleImageFileChange}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="imageInput"
-                    className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500"
-                  >
-                    {imageFile
-                      ? "Change Image"
-                      : "Click to select image for upload"}
-                  </label>
+              {/* Languages */}
+              <div>
+                <label className="block text-sm font-medium mb-3">
+                  Languages
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {LANGUAGES.map((language) => (
+                    <label key={language} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.languages.includes(language)}
+                        onChange={() => handleLanguageToggle(language)}
+                        className="mr-2"
+                      />
+                      {language}
+                    </label>
+                  ))}
                 </div>
+              </div>
 
-                {/* Image Details */}
-                <div className="grid grid-cols-2 gap-4">
+              {/* Submit Button */}
+              <div className="pt-4 flex gap-4">
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                >
+                  {editingUser ? "Update User" : "Create User"}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+
+            {/* Profile Picture Upload - Only show when editing */}
+            {editingUser && (
+              <div className="mt-8 pt-8 border-t">
+                <h3 className="text-lg font-bold mb-4">
+                  Update Profile Picture
+                </h3>
+                <div className="space-y-4">
+                  {profilePicturePreview && (
+                    <img
+                      src={profilePicturePreview}
+                      alt="Preview"
+                      className="w-32 h-32 object-cover rounded-lg"
+                    />
+                  )}
+                  <div>
+                    <input
+                      type="file"
+                      id="profilePictureInput"
+                      accept="image/*"
+                      onChange={handleProfilePictureChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="profilePictureInput"
+                      className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500"
+                    >
+                      {profilePictureFile
+                        ? "Change Profile Picture"
+                        : "Click to select profile picture"}
+                    </label>
+                  </div>
+                  {profilePictureFile && (
+                    <button
+                      type="button"
+                      onClick={handleUploadProfilePicture}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    >
+                      Upload Profile Picture
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Image Upload - Only show when editing */}
+            {editingUser && (
+              <div className="mt-8 pt-8 border-t">
+                <h3 className="text-lg font-bold mb-4">
+                  Upload Image for User
+                </h3>
+                <form onSubmit={handleUploadImage} className="space-y-4">
+                  {/* Image Preview */}
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Image Preview"
+                      className="w-48 h-48 object-cover rounded-lg"
+                    />
+                  )}
+
+                  {/* Image Upload */}
+                  <div>
+                    <input
+                      type="file"
+                      id="imageInput"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="imageInput"
+                      className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500"
+                    >
+                      {imageFile
+                        ? "Change Image"
+                        : "Click to select image for upload"}
+                    </label>
+                  </div>
+
+                  {/* Image Details */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Title *
+                      </label>
+                      <input
+                        type="text"
+                        name="title"
+                        value={imageUploadData.title}
+                        onChange={handleImageInputChange}
+                        placeholder="Image title"
+                        className="w-full px-3 py-2 border rounded-lg"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Category *
+                      </label>
+                      <select
+                        name="category"
+                        value={imageUploadData.category}
+                        onChange={handleImageInputChange}
+                        className="w-full px-3 py-2 border rounded-lg"
+                        required
+                      >
+                        <option value="">Select category</option>
+                        {PHOTOGRAPHY_SPECIALTIES.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Price (ETH) *
+                      </label>
+                      <input
+                        type="number"
+                        name="priceEth"
+                        value={imageUploadData.priceEth}
+                        onChange={handleImageInputChange}
+                        placeholder="0.00"
+                        step="0.00001"
+                        min="0"
+                        className="w-full px-3 py-2 border rounded-lg"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Usage Rights
+                      </label>
+                      <select
+                        name="usageRights"
+                        value={imageUploadData.usageRights}
+                        onChange={handleImageInputChange}
+                        className="w-full px-3 py-2 border rounded-lg"
+                      >
+                        <option value="personal_use">Personal Use</option>
+                        <option value="commercial_use">Commercial Use</option>
+                        <option value="both">Both</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Title *
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={imageUploadData.description}
+                      onChange={handleImageInputChange}
+                      placeholder="Image description"
+                      rows="3"
+                      className="w-full px-3 py-2 border rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Tags
                     </label>
                     <input
                       type="text"
-                      name="title"
-                      value={imageUploadData.title}
+                      name="tags"
+                      value={imageUploadData.tags}
                       onChange={handleImageInputChange}
-                      placeholder="Image title"
+                      placeholder="Separate tags with commas"
                       className="w-full px-3 py-2 border rounded-lg"
-                      required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Category *
-                    </label>
-                    <select
-                      name="category"
-                      value={imageUploadData.category}
-                      onChange={handleImageInputChange}
-                      className="w-full px-3 py-2 border rounded-lg"
-                      required
-                    >
-                      <option value="">Select category</option>
-                      {PHOTOGRAPHY_SPECIALTIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Price (ETH) *
-                    </label>
-                    <input
-                      type="number"
-                      name="priceEth"
-                      value={imageUploadData.priceEth}
-                      onChange={handleImageInputChange}
-                      placeholder="0.00"
-                      step="0.00001"
-                      min="0"
-                      className="w-full px-3 py-2 border rounded-lg"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Usage Rights
-                    </label>
-                    <select
-                      name="usageRights"
-                      value={imageUploadData.usageRights}
-                      onChange={handleImageInputChange}
-                      className="w-full px-3 py-2 border rounded-lg"
-                    >
-                      <option value="personal_use">Personal Use</option>
-                      <option value="commercial_use">Commercial Use</option>
-                      <option value="both">Both</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={imageUploadData.description}
-                    onChange={handleImageInputChange}
-                    placeholder="Image description"
-                    rows="3"
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Tags</label>
-                  <input
-                    type="text"
-                    name="tags"
-                    value={imageUploadData.tags}
-                    onChange={handleImageInputChange}
-                    placeholder="Separate tags with commas"
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                {/* Upload Button */}
-                <button
-                  type="submit"
-                  disabled={uploadingImage || !imageFile}
-                  className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
-                >
-                  {uploadingImage ? "Uploading..." : "Upload Image for User"}
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
+                  {/* Upload Button */}
+                  <button
+                    type="submit"
+                    disabled={uploadingImage || !imageFile}
+                    className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+                  >
+                    {uploadingImage ? "Uploading..." : "Upload Image for User"}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
         </div>
       )}
-      
+
       {!showPendingTab && (
-      <div>
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg"
-        />
-      </div>
+        <div>
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg"
+            />
+          </div>
 
-      {/* Users Table */}
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="w-full">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="px-4 py-3 text-left">Name</th>
-              <th className="px-4 py-3 text-left">Email</th>
-              <th className="px-4 py-3 text-left">Balance</th>
-              <th className="px-4 py-3 text-left">Expertise</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">Account Type</th>
-              <th className="px-4 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <tr key={user._id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-3">{user.name}</td>
-                  <td className="px-4 py-3">{user.email}</td>
-                  <td className="px-4 py-3">{user.balance} ETH</td>
-                  <td className="px-4 py-3 capitalize">
-                    {user.expertise_level}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        user.accountStatus === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {user.accountStatus}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        user.accountType === "real"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-purple-100 text-purple-800"
-                      }`}
-                    >
-                      {user.accountType === "real" ? "Real Account" : "Bot Account"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <button
-                      onClick={() => handleEditUser(user)}
-                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm mr-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user._id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
+          {/* Users Table */}
+          <div className="overflow-x-auto border rounded-lg">
+            <table className="w-full">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="px-4 py-3 text-left">Name</th>
+                  <th className="px-4 py-3 text-left">Email</th>
+                  <th className="px-4 py-3 text-left">Balance</th>
+                  <th className="px-4 py-3 text-left">Expertise</th>
+                  <th className="px-4 py-3 text-left">Status</th>
+                  <th className="px-4 py-3 text-left">Account Type</th>
+                  <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                  No users found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => (
+                    <tr key={user._id} className="border-t hover:bg-gray-50">
+                      <td className="px-4 py-3">{user.name}</td>
+                      <td className="px-4 py-3">{user.email}</td>
+                      <td className="px-4 py-3">{user.balance} ETH</td>
+                      <td className="px-4 py-3 capitalize">
+                        {user.expertise_level}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            user.accountStatus === "active"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {user.accountStatus}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            user.accountType === "real"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-purple-100 text-purple-800"
+                          }`}
+                        >
+                          {user.accountType === "real"
+                            ? "Real Account"
+                            : "Bot Account"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => handleEditUser(user)}
+                          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm mr-2"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user._id)}
+                          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="px-4 py-8 text-center text-gray-500"
+                    >
+                      No users found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
-      <div className="mt-4 text-sm text-gray-600">
-        Total Users: <strong>{filteredUsers.length}</strong>
-      </div>
-      </div>
+          <div className="mt-4 text-sm text-gray-600">
+            Total Users: <strong>{filteredUsers.length}</strong>
+          </div>
+        </div>
       )}
 
       {/* Pending Uploads Tab */}
@@ -1032,7 +1049,9 @@ const Users = ({ token }) => {
                         disabled={approvingId === upload._id}
                         className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition text-sm font-medium"
                       >
-                        {approvingId === upload._id ? "Approving..." : "Approve"}
+                        {approvingId === upload._id
+                          ? "Approving..."
+                          : "Approve"}
                       </button>
                       <div>
                         <textarea
@@ -1052,7 +1071,9 @@ const Users = ({ token }) => {
                           disabled={decliningId === upload._id}
                           className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition text-sm font-medium"
                         >
-                          {decliningId === upload._id ? "Declining..." : "Decline"}
+                          {decliningId === upload._id
+                            ? "Declining..."
+                            : "Decline"}
                         </button>
                       </div>
                     </div>

@@ -36,7 +36,7 @@ const Home = () => {
       {/* <FeaturedSection /> */}
       {/* <FlyboyBanner /> */}
       {/* <OurPolicy /> */}
-      <NewsletterBox />
+      <NewsletterBox />  
     </div>
   );
 };

@@ -33,7 +33,12 @@ imageRouter.put("/:imageId/favorite", auth, toggleFavorite); // Toggle favorite
 imageRouter.delete("/:imageId", auth, deleteImage); // Delete image
 
 // Admin Routes
-imageRouter.post("/admin/upload", auth, upload.single("image"), adminUploadImage); // Admin upload image for user
+imageRouter.post(
+  "/admin/upload",
+  auth,
+  upload.single("image"),
+  adminUploadImage,
+); // Admin upload image for user
 imageRouter.get("/admin/pending", auth, getPendingUploads); // Get all pending uploads (admin)
 imageRouter.post("/:imageId/approve", auth, approveImageUpload); // Approve pending upload (admin)
 imageRouter.post("/:imageId/decline", auth, declineImageUpload); // Decline pending upload (admin)

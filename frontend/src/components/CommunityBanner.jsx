@@ -20,8 +20,7 @@ const CommunityBanner = () => {
       subtitle: "Build Your Photography Portfolio",
       description:
         "Showcase your best work to an audience of collectors and enthusiasts. Create a professional portfolio and connect with other photographers.",
-      image:
-        "https://500px.com/staticV2/media/explore_banner_1.982fdc43.jpg",
+      image: "https://500px.com/staticV2/media/explore_banner_1.982fdc43.jpg",
     },
     {
       id: 2,

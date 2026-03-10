@@ -12,7 +12,15 @@ const transactionSchema = new mongoose.Schema(
     // Transaction Type
     type: {
       type: String,
-      enum: ["deposit", "purchase", "sale", "withdrawal", "fee", "upload_approval", "upload_decline"],
+      enum: [
+        "deposit",
+        "purchase",
+        "sale",
+        "withdrawal",
+        "fee",
+        "upload_approval",
+        "upload_decline",
+      ],
       required: true,
     },
 

@@ -110,8 +110,15 @@ const UploadPhoto = () => {
     setSuccess("");
 
     // Validate required fields
-    if (!formData.title || !formData.priceEth || !formData.category || !selectedFile) {
-      setError("Please fill all required fields (Title, Category, Price) and select an image");
+    if (
+      !formData.title ||
+      !formData.priceEth ||
+      !formData.category ||
+      !selectedFile
+    ) {
+      setError(
+        "Please fill all required fields (Title, Category, Price) and select an image",
+      );
       return;
     }
 
