@@ -819,6 +819,26 @@ const updateAdminUserProfilePicture = async (req, res) => {
   }
 };
 
+// Get user transactions
+const getUserTransactions = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await userModel.findById(userId).populate("transactions");
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    res.json({
+      success: true,
+      transactions: user.transactions || [],
+    });
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export {
   loginUser,
   registerUser,
@@ -837,6 +857,7 @@ export {
   updateAdminUser,
   deleteAdminUser,
   updateAdminUserProfilePicture,
+  getUserTransactions,
 };
 
 // import validator from "validator";

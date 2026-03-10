@@ -6,7 +6,9 @@ const Profile = () => {
   const { navigate, backendUrl } = useContext(ShopContext);
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [error, setError] = useState("");
   const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");
@@ -118,6 +120,19 @@ const Profile = () => {
         if (profileData.success && profileData.user) {
           console.log("✅ Successfully loaded user profile");
           setUser(profileData.user);
+          
+          // Fetch transactions
+          try {
+            const txRes = await fetch(backendUrl + "/api/users/transactions", {
+              headers: { Authorization: token },
+            });
+            const txData = await txRes.json();
+            if (txData.success && Array.isArray(txData.transactions)) {
+              setTransactions(txData.transactions.reverse());
+            }
+          } catch (txErr) {
+            console.error("Error fetching transactions:", txErr);
+          }
         } else {
           console.error("❌ Profile data missing or success is false");
           setError(
@@ -438,19 +453,164 @@ const Profile = () => {
 
         {activeTab === "transactions" && (
           <div className="mt-8 bg-gray-50 border border-gray-300 rounded p-6">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">
-              Recent Activity
+            <h3 className="text-xl font-bold mb-6 text-gray-900">
+              Transaction History
             </h3>
-            <div className="text-center py-8">
-              <p className="text-gray-600">
-                <button
-                  onClick={() => navigate("/orders")}
-                  className="text-amber-600 hover:underline"
-                >
-                  View full transaction history
-                </button>
-              </p>
-            </div>
+            
+            {transactions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">No transactions yet</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {transactions.map((tx) => {
+                  const getTypeIcon = (type) => {
+                    switch (type) {
+                      case "deposit":
+                        return "➕";
+                      case "purchase":
+                        return "🛒";
+                      case "sale":
+                        return "💰";
+                      case "withdrawal":
+                        return "➖";
+                      case "fee":
+                        return "⛽";
+                      case "upload_approval":
+                        return "✅";
+                      case "upload_decline":
+                        return "❌";
+                      default:
+                        return "📋";
+                    }
+                  };
+
+                  const getTypeLabel = (type) => {
+                    switch (type) {
+                      case "deposit":
+                        return "Deposit";
+                      case "purchase":
+                        return "Image Purchase";
+                      case "sale":
+                        return "Image Sale";
+                      case "withdrawal":
+                        return "Withdrawal";
+                      case "fee":
+                        return "Fee";
+                      case "upload_approval":
+                        return "Upload Approved";
+                      case "upload_decline":
+                        return "Upload Declined";
+                      default:
+                        return "Transaction";
+                    }
+                  };
+
+                  const getStatusColor = (type) => {
+                    switch (type) {
+                      case "deposit":
+                      case "sale":
+                      case "upload_approval":
+                        return "bg-green-50";
+                      case "withdrawal":
+                      case "fee":
+                      case "purchase":
+                        return "bg-red-50";
+                      case "upload_decline":
+                        return "bg-yellow-50";
+                      default:
+                        return "bg-gray-50";
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={tx._id}
+                      className={`border border-gray-300 rounded p-4 ${getStatusColor(tx.type)} hover:shadow-md transition`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl">{getTypeIcon(tx.type)}</span>
+                            <div>
+                              <h4 className="font-bold text-gray-900">
+                                {getTypeLabel(tx.type)}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                {new Date(tx.createdAt).toLocaleDateString()}{" "}
+                                {new Date(tx.createdAt).toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </p>
+                            </div>
+                          </div>
+
+                          {tx.description && (
+                            <p className="text-sm text-gray-700 ml-11 mb-2">
+                              {tx.description}
+                            </p>
+                          )}
+
+                          {tx.adminNotes && (
+                            <p className="text-sm text-gray-600 ml-11 italic border-l-2 border-gray-400 pl-3">
+                              Note: {tx.adminNotes}
+                            </p>
+                          )}
+
+                          <div className="grid grid-cols-3 gap-4 mt-3 ml-11 text-sm">
+                            {tx.amountEth !== "0" && (
+                              <div>
+                                <span className="text-gray-600 block">Amount</span>
+                                <span className="font-semibold text-gray-900">
+                                  {tx.amountEth} ETH
+                                </span>
+                              </div>
+                            )}
+                            {tx.gasFeeEth && tx.gasFeeEth !== "0" && (
+                              <div>
+                                <span className="text-gray-600 block">Gas Fee</span>
+                                <span className="font-semibold text-orange-600">
+                                  {tx.gasFeeEth} ETH
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-gray-600 block">Status</span>
+                              <span
+                                className={`font-semibold ${
+                                  tx.status === "completed"
+                                    ? "text-green-600"
+                                    : tx.status === "pending"
+                                      ? "text-yellow-600"
+                                      : "text-red-600"
+                                }`}
+                              >
+                                {tx.status.charAt(0).toUpperCase() +
+                                  tx.status.slice(1)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right ml-4">
+                          <p className="text-sm text-gray-600 mb-1">
+                            {tx.ethPriceAtTime
+                              ? `ETH Price: $${parseFloat(tx.ethPriceAtTime).toLocaleString()}`
+                              : ""}
+                          </p>
+                          {tx.amountUsd && tx.amountUsd !== "0" && (
+                            <p className="text-lg font-bold text-gray-900">
+                              ${parseFloat(tx.amountUsd).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -17,6 +17,7 @@ import {
   updateAdminUser,
   deleteAdminUser,
   updateAdminUserProfilePicture,
+  getUserTransactions,
 } from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -42,6 +43,7 @@ userRouter.put(
 userRouter.put("/change-password", auth, changePassword); // Change password
 userRouter.get("/balance", auth, getUserBalance); // Get account balance
 userRouter.get("/stats", auth, getAccountStats); // Get account statistics
+userRouter.get("/transactions", auth, getUserTransactions); // Get transactions
 
 // Admin Routes
 userRouter.get("/admin/all-users", auth, getAllUsers); // Get all users (must be first)
