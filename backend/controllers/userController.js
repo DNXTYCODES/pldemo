@@ -844,9 +844,11 @@ const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const user = await userModel.findById(userId).select(
-      "name email bio location expertise_level photography_specialty profilePicture createdAt"
-    );
+    const user = await userModel
+      .findById(userId)
+      .select(
+        "name email bio location expertise_level photography_specialty profilePicture createdAt",
+      );
 
     if (!user) {
       return res.status(404).json({

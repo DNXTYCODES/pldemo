@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ShopContext } from '../context/ShopContext';
-import { toast } from 'react-toastify';
+import React, { useContext, useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
+import { toast } from "react-toastify";
 
 const UploaderProfile = () => {
   const { uploaderId } = useParams();
@@ -19,21 +19,21 @@ const UploaderProfile = () => {
 
         // Fetch uploader profile info
         const profileResponse = await fetch(
-          `${backendUrl}/api/users/${uploaderId}`
+          `${backendUrl}/api/users/${uploaderId}`,
         );
         const profileData = await profileResponse.json();
 
         if (profileData.success) {
           setUploaderInfo(profileData.user);
         } else {
-          toast.error('Uploader not found');
-          navigate('/');
+          toast.error("Uploader not found");
+          navigate("/");
           return;
         }
 
         // Fetch uploader's images
         const imagesResponse = await fetch(
-          `${backendUrl}/api/images/search?sellerId=${uploaderId}&limit=50`
+          `${backendUrl}/api/images/search?sellerId=${uploaderId}&limit=50`,
         );
         const imagesData = await imagesResponse.json();
 
@@ -41,8 +41,8 @@ const UploaderProfile = () => {
           setUploads(imagesData.images);
         }
       } catch (error) {
-        console.error('Error fetching uploader data:', error);
-        toast.error('Failed to load uploader profile');
+        console.error("Error fetching uploader data:", error);
+        toast.error("Failed to load uploader profile");
       } finally {
         setLoading(false);
       }
@@ -90,27 +90,29 @@ const UploaderProfile = () => {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Location</p>
                   <p className="text-lg font-medium text-gray-900">
-                    {uploaderInfo.location || 'Not specified'}
+                    {uploaderInfo.location || "Not specified"}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Expertise Level</p>
                   <p className="text-lg font-medium text-gray-900">
-                    {uploaderInfo.expertiseLevel || 'Not specified'}
+                    {uploaderInfo.expertiseLevel || "Not specified"}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Specialty</p>
                   <p className="text-lg font-medium text-gray-900">
-                    {uploaderInfo.specialty || 'General Photography'}
+                    {uploaderInfo.specialty || "General Photography"}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Uploads</p>
-                  <p className="text-lg font-medium text-gray-900">{uploads.length}</p>
+                  <p className="text-lg font-medium text-gray-900">
+                    {uploads.length}
+                  </p>
                 </div>
               </div>
 
@@ -145,7 +147,9 @@ const UploaderProfile = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
                   <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                    <h3 className="font-bold text-sm line-clamp-2">{image.title}</h3>
+                    <h3 className="font-bold text-sm line-clamp-2">
+                      {image.title}
+                    </h3>
                     <p className="text-xs text-gray-300 mt-1">
                       {image.category}
                     </p>

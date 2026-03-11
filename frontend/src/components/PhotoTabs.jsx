@@ -153,43 +153,82 @@ const PhotoTabs = () => {
       <div className="bg-white">
         {/* Explore Tab */}
         {activeTab === "explore" && (
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Explore</h2>
-            <p className="text-gray-600 mb-8">
-              Discover exceptional photography from talented artists around the
-              world.
-            </p>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Explore</h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
                 Loading images...
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {allImages.slice(0, 12).map((image) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {allImages.slice(0, 24).map((image) => (
                   <div
                     key={image._id}
-                    onClick={() => navigate(`/image/${image._id}`)}
-                    className="bg-gray-100 h-64 group relative cursor-pointer overflow-hidden rounded-md hover:shadow-md transition"
+                    className="group relative cursor-pointer overflow-hidden rounded-md bg-gray-200 aspect-square"
                   >
                     <img
                       src={image.thumbnailUrl || image.imageUrl}
                       alt={image.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      onClick={() => navigate(`/image/${image._id}`)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
-                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                        <h3 className="font-bold text-sm line-clamp-2">
-                          {image.title}
-                        </h3>
-                        <p className="text-xs text-gray-300">
-                          {image.sellerId?.name}
-                        </p>
-                        {image.priceEth && (
-                          <p className="text-xs text-amber-400 font-semibold mt-2">
-                            {parseFloat(image.priceEth).toFixed(4)} ETH
-                          </p>
-                        )}
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
+                      {/* Uploader Info */}
+                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 truncate">
+                          {image.sellerId?.name || "Unknown"}
+                        </span>
+                      </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="Like"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-red-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/image/${image._id}`);
+                          }}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="View Details"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-gray-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -201,48 +240,88 @@ const PhotoTabs = () => {
 
         {/* For You Tab */}
         {activeTab === "for-you" && (
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Photography Categories
-            </h2>
-            <p className="text-gray-600 mb-8">Browse by your interests</p>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Photography Categories</h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
                 Loading categories...
               </div>
             ) : (
-              <div className="space-y-12">
+              <div className="space-y-10">
                 {categoriesData.map((category) => (
                   <div key={category.id}>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase mb-4">
                       {category.name}
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                       {category.images.map((image) => (
                         <div
                           key={image._id}
-                          onClick={() => navigate(`/image/${image._id}`)}
-                          className="bg-gray-100 h-64 group relative cursor-pointer overflow-hidden rounded-md hover:shadow-md transition"
+                          className="group relative cursor-pointer overflow-hidden rounded-md bg-gray-200 aspect-square"
                         >
                           <img
                             src={image.thumbnailUrl || image.imageUrl}
                             alt={image.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                            onClick={() => navigate(`/image/${image._id}`)}
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
-                            <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                              <h3 className="font-bold text-sm line-clamp-2">
-                                {image.title}
-                              </h3>
-                              <p className="text-xs text-gray-300">
-                                {image.sellerId?.name}
-                              </p>
-                              {image.priceEth && (
-                                <p className="text-xs text-amber-400 font-semibold mt-2">
-                                  {parseFloat(image.priceEth).toFixed(4)} ETH
-                                </p>
-                              )}
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
+                            {/* Uploader Info */}
+                            <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                              <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">
+                                  {image.sellerId?.name?.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <span className="text-xs font-medium text-gray-900 truncate">
+                                {image.sellerId?.name || "Unknown"}
+                              </span>
+                            </div>
+                            {/* Action Buttons */}
+                            <div className="flex gap-2">
+                              <button
+                                onClick={(e) => e.stopPropagation()}
+                                className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                                title="Like"
+                              >
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  className="text-red-500"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/image/${image._id}`);
+                                }}
+                                className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                                title="View Details"
+                              >
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  className="text-gray-700"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle cx="12" cy="12" r="1"></circle>
+                                  <circle cx="19" cy="12" r="1"></circle>
+                                  <circle cx="5" cy="12" r="1"></circle>
+                                </svg>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -257,44 +336,82 @@ const PhotoTabs = () => {
 
         {/* Trending Tab */}
         {activeTab === "trending" && (
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Trending This Week
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Most viewed and loved photography right now
-            </p>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Trending This Week</h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
                 Loading trending images...
               </div>
             ) : trendingImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {trendingImages.map((image) => (
                   <div
                     key={image._id}
-                    onClick={() => navigate(`/image/${image._id}`)}
-                    className="bg-gray-100 h-64 group relative cursor-pointer overflow-hidden rounded-md hover:shadow-md transition"
+                    className="group relative cursor-pointer overflow-hidden rounded-md bg-gray-200 aspect-square"
                   >
                     <img
                       src={image.thumbnailUrl || image.imageUrl}
                       alt={image.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      onClick={() => navigate(`/image/${image._id}`)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
-                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                        <h3 className="font-bold text-sm line-clamp-2">
-                          {image.title}
-                        </h3>
-                        <p className="text-xs text-gray-300">
-                          {image.sellerId?.name}
-                        </p>
-                        {image.priceEth && (
-                          <p className="text-xs text-amber-400 font-semibold mt-2">
-                            {parseFloat(image.priceEth).toFixed(4)} ETH
-                          </p>
-                        )}
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
+                      {/* Uploader Info */}
+                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 truncate">
+                          {image.sellerId?.name || "Unknown"}
+                        </span>
+                      </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="Like"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-red-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/image/${image._id}`);
+                          }}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="View Details"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-gray-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -310,44 +427,82 @@ const PhotoTabs = () => {
 
         {/* Recently Added Tab */}
         {activeTab === "recent" && (
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Recently Added
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Latest uploads from our community of photographers
-            </p>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Recently Added</h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
                 Loading recent images...
               </div>
             ) : recentImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {recentImages.slice(0, 12).map((image) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {recentImages.slice(0, 24).map((image) => (
                   <div
                     key={image._id}
-                    onClick={() => navigate(`/image/${image._id}`)}
-                    className="bg-gray-100 h-64 group relative cursor-pointer overflow-hidden rounded-md hover:shadow-md transition"
+                    className="group relative cursor-pointer overflow-hidden rounded-md bg-gray-200 aspect-square"
                   >
                     <img
                       src={image.thumbnailUrl || image.imageUrl}
                       alt={image.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      onClick={() => navigate(`/image/${image._id}`)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
-                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                        <h3 className="font-bold text-sm line-clamp-2">
-                          {image.title}
-                        </h3>
-                        <p className="text-xs text-gray-300">
-                          {image.sellerId?.name}
-                        </p>
-                        {image.priceEth && (
-                          <p className="text-xs text-amber-400 font-semibold mt-2">
-                            {parseFloat(image.priceEth).toFixed(4)} ETH
-                          </p>
-                        )}
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
+                      {/* Uploader Info */}
+                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 truncate">
+                          {image.sellerId?.name || "Unknown"}
+                        </span>
+                      </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="Like"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-red-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/image/${image._id}`);
+                          }}
+                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                          title="View Details"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-gray-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>

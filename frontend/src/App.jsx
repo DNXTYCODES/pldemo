@@ -76,7 +76,7 @@ const App = () => {
           <Route path="/my-purchases" element={<MyPurchases />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/fund-account" element={<FundAccount />} />
-          
+
           {/* Image Routes */}
           <Route path="/image/:imageId" element={<ImageDetail />} />
           <Route path="/uploader/:uploaderId" element={<UploaderProfile />} />

@@ -202,7 +202,10 @@ export const getImageById = async (req, res) => {
 
     const image = await imageModel
       .findById(imageId)
-      .populate("sellerId", "name email profilePicture location expertiseLevel specialty bio")
+      .populate(
+        "sellerId",
+        "name email profilePicture location expertiseLevel specialty bio",
+      )
       .populate("purchaseHistory.buyerId", "name profilePicture");
 
     if (!image) {
@@ -494,7 +497,10 @@ export const searchImages = async (req, res) => {
 
     const images = await imageModel
       .find(searchQuery)
-      .populate("sellerId", "name profilePicture location expertiseLevel specialty")
+      .populate(
+        "sellerId",
+        "name profilePicture location expertiseLevel specialty",
+      )
       .select("-purchaseHistory")
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
@@ -963,7 +969,7 @@ export const addToFavourite = async (req, res) => {
     if (isFavourited) {
       // Remove from favourites
       image.favouritedBy = image.favouritedBy.filter(
-        (id) => id.toString() !== userId
+        (id) => id.toString() !== userId,
       );
       image.favoriteCount = Math.max(0, image.favoriteCount - 1);
     } else {
@@ -976,9 +982,7 @@ export const addToFavourite = async (req, res) => {
 
     res.json({
       success: true,
-      message: isFavourited
-        ? "Removed from favourites"
-        : "Added to favourites",
+      message: isFavourited ? "Removed from favourites" : "Added to favourites",
       isFavourite: !isFavourited,
       favoriteCount: image.favoriteCount,
     });
@@ -1025,7 +1029,7 @@ export const reportImage = async (req, res) => {
 
     // Check if user already reported this image
     const alreadyReported = image.reports.some(
-      (r) => r.reportedBy.toString() === userId
+      (r) => r.reportedBy.toString() === userId,
     );
 
     if (alreadyReported) {
@@ -1088,7 +1092,7 @@ export const buyImageRequest = async (req, res) => {
 
     // Check if user already requested to buy
     const alreadyRequested = image.buyRequests.some(
-      (r) => r.requestedBy.toString() === userId && r.status === "pending"
+      (r) => r.requestedBy.toString() === userId && r.status === "pending",
     );
 
     if (alreadyRequested) {
