@@ -217,7 +217,7 @@ const Users = ({ token }) => {
       if (response.data.success) {
         toast.success("Deposit confirmed successfully!");
         setPendingDeposits(
-          pendingDeposits.filter((tx) => tx._id !== transactionId)
+          pendingDeposits.filter((tx) => tx._id !== transactionId),
         );
       } else {
         toast.error(response.data.message || "Failed to confirm deposit");
@@ -247,7 +247,7 @@ const Users = ({ token }) => {
       if (response.data.success) {
         toast.success("Deposit rejected successfully!");
         setPendingDeposits(
-          pendingDeposits.filter((tx) => tx._id !== transactionId)
+          pendingDeposits.filter((tx) => tx._id !== transactionId),
         );
       } else {
         toast.error(response.data.message || "Failed to reject deposit");
@@ -1211,25 +1211,25 @@ const Users = ({ token }) => {
               <table className="w-full">
                 <thead className="bg-gray-200">
                   <tr>
-                    <th className="px-4 py-3 text-left">User Name</th>
-                    <th className="px-4 py-3 text-left">Email</th>
+                    <th className="px-4 py-3 text-left">User Account</th>
                     <th className="px-4 py-3 text-left">Amount (ETH)</th>
                     <th className="px-4 py-3 text-left">Wallet Address</th>
-                    <th className="px-4 py-3 text-left">Date</th>
+                    <th className="px-4 py-3 text-left">Date Requested</th>
                     <th className="px-4 py-3 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pendingDeposits.map((deposit) => (
-                    <tr
-                      key={deposit._id}
-                      className="border-t hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3 font-medium">
-                        {deposit.userId?.name || "Unknown"}
+                    <tr key={deposit._id} className="border-t hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-gray-900">
+                          {deposit.userId?.name || "Unknown"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {deposit.userId?.email || "No email"}
+                        </div>
                       </td>
-                      <td className="px-4 py-3">{deposit.userId?.email}</td>
-                      <td className="px-4 py-3 font-semibold">
+                      <td className="px-4 py-3 font-semibold text-lg text-green-600">
                         {deposit.amountEth} ETH
                       </td>
                       <td className="px-4 py-3 text-xs font-mono">

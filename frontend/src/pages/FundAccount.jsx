@@ -340,8 +340,8 @@ const FundAccount = () => {
                       </p>
                       {deposit.status === "pending" && (
                         <p className="text-xs text-amber-400 mt-2">
-                          ⏳ Awaiting admin review. Please send {deposit.amountEth}{" "}
-                          ETH to the address above.
+                          ⏳ Awaiting admin review. Please send{" "}
+                          {deposit.amountEth} ETH to the address above.
                         </p>
                       )}
                       {deposit.status === "completed" && (
@@ -357,12 +357,11 @@ const FundAccount = () => {
                           )}
                         </p>
                       )}
-                      {deposit.status === "cancelled" &&
-                        deposit.adminNotes && (
-                          <p className="text-xs text-red-400 mt-2">
-                            Reason: {deposit.adminNotes}
-                          </p>
-                        )}
+                      {deposit.status === "cancelled" && deposit.adminNotes && (
+                        <p className="text-xs text-red-400 mt-2">
+                          Reason: {deposit.adminNotes}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
