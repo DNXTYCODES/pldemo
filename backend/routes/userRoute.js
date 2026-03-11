@@ -18,6 +18,7 @@ import {
   deleteAdminUser,
   updateAdminUserProfilePicture,
   getUserTransactions,
+  getUserById,
 } from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -30,6 +31,9 @@ userRouter.post("/login", loginUser);
 userRouter.post("/admin", adminLogin);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password", resetPassword);
+
+// Public Routes
+userRouter.get("/:userId", getUserById); // Get public user profile by ID
 
 // Profile Routes (require authentication)
 userRouter.get("/profile", auth, getUserProfile); // Get user profile

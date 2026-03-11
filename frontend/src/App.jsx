@@ -25,6 +25,8 @@ import MySales from "./pages/MySales";
 import MyPurchases from "./pages/MyPurchases";
 import Favorites from "./pages/Favorites";
 import FundAccount from "./pages/FundAccount";
+import ImageDetail from "./pages/ImageDetail";
+import UploaderProfile from "./pages/UploaderProfile";
 
 const App = () => {
   return (
@@ -74,6 +76,10 @@ const App = () => {
           <Route path="/my-purchases" element={<MyPurchases />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/fund-account" element={<FundAccount />} />
+          
+          {/* Image Routes */}
+          <Route path="/image/:imageId" element={<ImageDetail />} />
+          <Route path="/uploader/:uploaderId" element={<UploaderProfile />} />
         </Routes>
 
         <Footer />

@@ -14,6 +14,9 @@ import {
   approveImageUpload,
   declineImageUpload,
   toggleTrending,
+  addToFavourite,
+  reportImage,
+  buyImageRequest,
 } from "../controllers/imageController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -31,6 +34,9 @@ imageRouter.get("/user/my-images", auth, getUserImages); // Get user's uploaded 
 imageRouter.get("/user/pending", auth, getUserPendingUploads); // Get user's pending uploads
 imageRouter.put("/:imageId/price", auth, updateImagePrice); // Update image price
 imageRouter.put("/:imageId/favorite", auth, toggleFavorite); // Toggle favorite
+imageRouter.post("/:imageId/favourite", auth, addToFavourite); // Add to favourite
+imageRouter.post("/:imageId/report", auth, reportImage); // Report image
+imageRouter.post("/:imageId/buy-request", auth, buyImageRequest); // Request to buy image
 imageRouter.delete("/:imageId", auth, deleteImage); // Delete image
 
 // Admin Routes

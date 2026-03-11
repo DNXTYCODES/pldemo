@@ -63,9 +63,7 @@ const PhotoTabs = () => {
   // Fetch trending images
   const fetchTrendingImages = async () => {
     try {
-      const response = await fetch(
-        `${backendUrl}/api/images/search?limit=50`,
-      );
+      const response = await fetch(`${backendUrl}/api/images/search?limit=50`);
       const data = await response.json();
       if (data.success) {
         const trending = data.images
@@ -81,9 +79,7 @@ const PhotoTabs = () => {
   // Fetch recent images
   const fetchRecentImages = async () => {
     try {
-      const response = await fetch(
-        `${backendUrl}/api/images/search?limit=12`,
-      );
+      const response = await fetch(`${backendUrl}/api/images/search?limit=12`);
       const data = await response.json();
       if (data.success) {
         setRecentImages(data.images);

@@ -198,10 +198,11 @@ export const getImages = async (req, res) => {
 export const getImageById = async (req, res) => {
   try {
     const { imageId } = req.params;
+    const userId = req.userId; // From auth middleware
 
     const image = await imageModel
       .findById(imageId)
-      .populate("sellerId", "name email profilePicture")
+      .populate("sellerId", "name email profilePicture location expertiseLevel specialty bio")
       .populate("purchaseHistory.buyerId", "name profilePicture");
 
     if (!image) {
@@ -217,10 +218,14 @@ export const getImageById = async (req, res) => {
 
     const ethPrice = await getCurrentEthPrice();
 
+    // Check if user has favourited this image
+    const isFavourite = userId ? image.favouritedBy.includes(userId) : false;
+
     res.json({
       success: true,
       image: {
         ...image.toObject(),
+        isFavourite,
         currency: {
           eth: image.priceEth,
           usd: image.priceUsd,
@@ -454,6 +459,7 @@ export const searchImages = async (req, res) => {
       category,
       minPrice,
       maxPrice,
+      sellerId,
       limit = 20,
       skip = 0,
     } = req.query;
@@ -472,6 +478,10 @@ export const searchImages = async (req, res) => {
       searchQuery.category = category;
     }
 
+    if (sellerId) {
+      searchQuery.sellerId = sellerId;
+    }
+
     if (minPrice || maxPrice) {
       searchQuery.priceEth = {};
       if (minPrice) {
@@ -484,7 +494,7 @@ export const searchImages = async (req, res) => {
 
     const images = await imageModel
       .find(searchQuery)
-      .populate("sellerId", "name profilePicture")
+      .populate("sellerId", "name profilePicture location expertiseLevel specialty")
       .select("-purchaseHistory")
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
@@ -925,6 +935,194 @@ export const toggleTrending = async (req, res) => {
   }
 };
 
+/**
+ * Add/Remove image from user's favourites
+ */
+export const addToFavourite = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Please log in to favourite images",
+      });
+    }
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    const isFavourited = image.favouritedBy.includes(userId);
+
+    if (isFavourited) {
+      // Remove from favourites
+      image.favouritedBy = image.favouritedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      image.favoriteCount = Math.max(0, image.favoriteCount - 1);
+    } else {
+      // Add to favourites
+      image.favouritedBy.push(userId);
+      image.favoriteCount += 1;
+    }
+
+    await image.save();
+
+    res.json({
+      success: true,
+      message: isFavourited
+        ? "Removed from favourites"
+        : "Added to favourites",
+      isFavourite: !isFavourited,
+      favoriteCount: image.favoriteCount,
+    });
+  } catch (error) {
+    console.error("Error updating favourite:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating favourite",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Report an image
+ */
+export const reportImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const { reason } = req.body;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Please log in to report images",
+      });
+    }
+
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        message: "Report reason is required",
+      });
+    }
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    // Check if user already reported this image
+    const alreadyReported = image.reports.some(
+      (r) => r.reportedBy.toString() === userId
+    );
+
+    if (alreadyReported) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already reported this image",
+      });
+    }
+
+    // Add report
+    image.reports.push({
+      reportedBy: userId,
+      reason,
+      reportedAt: new Date(),
+    });
+
+    // If reports exceed threshold, flag the image
+    if (image.reports.length >= 5) {
+      image.status = "flagged";
+    }
+
+    await image.save();
+
+    res.json({
+      success: true,
+      message: "Image reported successfully",
+    });
+  } catch (error) {
+    console.error("Error reporting image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error reporting image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Create a purchase request for an image
+ */
+export const buyImageRequest = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Please log in to request purchase",
+      });
+    }
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    // Check if user already requested to buy
+    const alreadyRequested = image.buyRequests.some(
+      (r) => r.requestedBy.toString() === userId && r.status === "pending"
+    );
+
+    if (alreadyRequested) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already requested to buy this image",
+      });
+    }
+
+    // Add buy request
+    image.buyRequests.push({
+      requestedBy: userId,
+      requestedAt: new Date(),
+      status: "pending",
+    });
+
+    await image.save();
+
+    // TODO: Create notification for image owner
+
+    res.json({
+      success: true,
+      message: "Purchase request sent to uploader",
+    });
+  } catch (error) {
+    console.error("Error creating buy request:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating purchase request",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   uploadImage,
   getImages,
@@ -940,4 +1138,7 @@ export default {
   approveImageUpload,
   declineImageUpload,
   toggleTrending,
+  addToFavourite,
+  reportImage,
+  buyImageRequest,
 };

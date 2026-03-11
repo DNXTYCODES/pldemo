@@ -839,6 +839,36 @@ const getUserTransactions = async (req, res) => {
   }
 };
 
+// Get public user profile by ID
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userModel.findById(userId).select(
+      "name email bio location expertise_level photography_specialty profilePicture createdAt"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error getting user profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving user profile",
+      error: error.message,
+    });
+  }
+};
+
 export {
   loginUser,
   registerUser,
@@ -858,6 +888,7 @@ export {
   deleteAdminUser,
   updateAdminUserProfilePicture,
   getUserTransactions,
+  getUserById,
 };
 
 // import validator from "validator";

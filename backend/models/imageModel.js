@@ -114,7 +114,42 @@ const imageSchema = new mongoose.Schema(
 
     // Rights/License Info
     licenseType: { type: String }, // e.g., 'exclusive', 'non-exclusive'
-  },
+
+    // Favourites Tracking
+    favouritedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+
+    // Reports/Flags
+    reports: [
+      {
+        reportedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "user",
+        },
+        reason: { type: String },
+        reportedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    // Buy Requests
+    buyRequests: [
+      {
+        requestedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "user",
+        },
+        requestedAt: { type: Date, default: Date.now },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "declined"],
+          default: "pending",
+        },
+      },
+    ],
   { minimize: false },
 );
 

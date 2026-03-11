@@ -65,9 +65,7 @@ const PhotoTabs = () => {
   // Fetch trending images
   const fetchTrendingImages = async () => {
     try {
-      const response = await fetch(
-        `${backendUrl}/api/images/search?limit=50`,
-      );
+      const response = await fetch(`${backendUrl}/api/images/search?limit=50`);
       const data = await response.json();
       if (data.success) {
         const trending = data.images
@@ -83,9 +81,7 @@ const PhotoTabs = () => {
   // Fetch recent images
   const fetchRecentImages = async () => {
     try {
-      const response = await fetch(
-        `${backendUrl}/api/images/search?limit=12`,
-      );
+      const response = await fetch(`${backendUrl}/api/images/search?limit=12`);
       const data = await response.json();
       if (data.success) {
         setRecentImages(data.images);
@@ -189,6 +185,11 @@ const PhotoTabs = () => {
                         <p className="text-xs text-gray-300">
                           {image.sellerId?.name}
                         </p>
+                        {image.priceEth && (
+                          <p className="text-xs text-amber-400 font-semibold mt-2">
+                            {parseFloat(image.priceEth).toFixed(4)} ETH
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -237,6 +238,11 @@ const PhotoTabs = () => {
                               <p className="text-xs text-gray-300">
                                 {image.sellerId?.name}
                               </p>
+                              {image.priceEth && (
+                                <p className="text-xs text-amber-400 font-semibold mt-2">
+                                  {parseFloat(image.priceEth).toFixed(4)} ETH
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -284,6 +290,11 @@ const PhotoTabs = () => {
                         <p className="text-xs text-gray-300">
                           {image.sellerId?.name}
                         </p>
+                        {image.priceEth && (
+                          <p className="text-xs text-amber-400 font-semibold mt-2">
+                            {parseFloat(image.priceEth).toFixed(4)} ETH
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -332,6 +343,11 @@ const PhotoTabs = () => {
                         <p className="text-xs text-gray-300">
                           {image.sellerId?.name}
                         </p>
+                        {image.priceEth && (
+                          <p className="text-xs text-amber-400 font-semibold mt-2">
+                            {parseFloat(image.priceEth).toFixed(4)} ETH
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
