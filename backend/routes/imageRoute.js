@@ -13,6 +13,7 @@ import {
   getUserPendingUploads,
   approveImageUpload,
   declineImageUpload,
+  toggleTrending,
 } from "../controllers/imageController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -42,5 +43,6 @@ imageRouter.post(
 imageRouter.get("/admin/pending", auth, getPendingUploads); // Get all pending uploads (admin)
 imageRouter.post("/:imageId/approve", auth, approveImageUpload); // Approve pending upload (admin)
 imageRouter.post("/:imageId/decline", auth, declineImageUpload); // Decline pending upload (admin)
+imageRouter.put("/:imageId/trending", auth, toggleTrending); // Toggle trending status (admin)
 
 export default imageRouter;

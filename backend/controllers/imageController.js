@@ -878,6 +878,53 @@ export const declineImageUpload = async (req, res) => {
   }
 };
 
+/**
+ * Toggle trending status for an image (Admin only)
+ */
+export const toggleTrending = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.status !== "active") {
+      return res.status(400).json({
+        success: false,
+        message: "Only active images can be marked as trending",
+      });
+    }
+
+    // Toggle the trending status
+    image.isTrending = !image.isTrending;
+    await image.save();
+
+    res.json({
+      success: true,
+      message: image.isTrending
+        ? "Image marked as trending"
+        : "Image unmarked as trending",
+      image: {
+        _id: image._id,
+        title: image.title,
+        isTrending: image.isTrending,
+      },
+    });
+  } catch (error) {
+    console.error("Error toggling trending status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error toggling trending status",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   uploadImage,
   getImages,
@@ -892,4 +939,5 @@ export default {
   getUserPendingUploads,
   approveImageUpload,
   declineImageUpload,
+  toggleTrending,
 };

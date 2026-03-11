@@ -73,6 +73,12 @@ const imageSchema = new mongoose.Schema(
       default: "active",
     },
 
+    // Featured/Trending Flag
+    isTrending: {
+      type: Boolean,
+      default: false, // Admin can mark images as trending
+    },
+
     // Admin Approval for User Uploads
     approvalStatus: {
       type: String,

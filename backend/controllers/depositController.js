@@ -249,12 +249,19 @@ export const confirmDeposit = async (req, res) => {
     // Update transaction
     transaction.status = "completed";
     transaction.completedAt = Date.now();
-    transaction.depositConfirmedBy = req.adminId;
     transaction.adminNotes = adminNotes || "";
     await transaction.save();
 
     // Get user and update balance
     const user = await userModel.findById(transaction.userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    
     const currentBalance = parseFloat(user.balance) || 0;
     const newBalance = (
       currentBalance + parseFloat(transaction.amountEth)
@@ -293,10 +300,12 @@ export const confirmDeposit = async (req, res) => {
     });
   } catch (error) {
     console.error("Error confirming deposit:", error);
+    console.error("Error stack:", error.stack);
     res.status(500).json({
       success: false,
       message: "Error confirming deposit",
       error: error.message,
+      details: error.toString(),
     });
   }
 };
