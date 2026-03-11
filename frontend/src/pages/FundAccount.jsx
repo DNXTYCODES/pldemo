@@ -4,7 +4,7 @@ import Title from "../components/Title";
 import { assets } from "../assets/assets";
 
 const FundAccount = () => {
-  const { navigate } = useContext(ShopContext);
+  const { navigate, backendUrl, token } = useContext(ShopContext);
   const [ethAmount, setEthAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,9 +12,36 @@ const FundAccount = () => {
   const [deposits, setDeposits] = useState([]);
   const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [usdValue, setUsdValue] = useState("0");
+  const [loadingDeposits, setLoadingDeposits] = useState(false);
 
   // Simulated platform deposit address
   const DEPOSIT_ADDRESS = "0x742d35Cc6634C0532925a3b844Bc238e8eA63c53";
+
+  // Fetch user's pending deposits
+  const fetchUserDeposits = async () => {
+    if (!token) return;
+    try {
+      setLoadingDeposits(true);
+      const response = await fetch(
+        backendUrl + "/api/deposit/transactions?type=deposit&limit=10",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        },
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setDeposits(data.transactions || []);
+      }
+    } catch (err) {
+      console.error("Error fetching deposits:", err);
+    } finally {
+      setLoadingDeposits(false);
+    }
+  };
 
   useEffect(() => {
     // Fetch current ETH price
@@ -41,6 +68,10 @@ const FundAccount = () => {
     fetchEthPrice();
   }, []);
 
+  useEffect(() => {
+    fetchUserDeposits();
+  }, [token]);
+
   // Calculate USD value when ETH amount changes
   useEffect(() => {
     if (ethAmount && currentEthPrice) {
@@ -63,7 +94,7 @@ const FundAccount = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/deposit/initiate", {
+      const response = await fetch(backendUrl + "/api/deposit/initiate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -255,13 +286,88 @@ const FundAccount = () => {
 
           {/* Recent Deposits */}
           <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-            <h3 className="text-xl font-bold mb-6">Deposit History</h3>
+            <h3 className="text-xl font-bold mb-6">Pending Deposits</h3>
 
-            <div className="space-y-3">
-              <p className="text-gray-400 text-center py-4">
+            {loadingDeposits ? (
+              <div className="text-center py-4 text-gray-400">
+                Loading deposits...
+              </div>
+            ) : deposits.length === 0 ? (
+              <div className="text-center py-4 text-gray-400">
                 No pending deposits at this time
-              </p>
-            </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {deposits.map((deposit) => (
+                  <div
+                    key={deposit._id}
+                    className="p-4 bg-gray-700 border border-gray-600 rounded flex justify-between items-center"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-semibold text-white">
+                          {deposit.amountEth} ETH
+                        </h4>
+                        <span
+                          className={`px-3 py-1 rounded text-xs font-medium ${
+                            deposit.status === "pending"
+                              ? "bg-yellow-900 text-yellow-200"
+                              : deposit.status === "completed"
+                                ? "bg-green-900 text-green-200"
+                                : "bg-red-900 text-red-200"
+                          }`}
+                        >
+                          {deposit.status === "pending" && "⏳ Pending Review"}
+                          {deposit.status === "completed" &&
+                            "✅ Confirmed (funds added)"}
+                          {deposit.status === "cancelled" && "❌ Rejected"}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        ${deposit.amountUsd} USD
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(deposit.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </p>
+                      {deposit.status === "pending" && (
+                        <p className="text-xs text-amber-400 mt-2">
+                          ⏳ Awaiting admin review. Please send {deposit.amountEth}{" "}
+                          ETH to the address above.
+                        </p>
+                      )}
+                      {deposit.status === "completed" && (
+                        <p className="text-xs text-green-400 mt-2">
+                          ✅ Your deposit was approved by admin on{" "}
+                          {new Date(deposit.completedAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )}
+                        </p>
+                      )}
+                      {deposit.status === "cancelled" &&
+                        deposit.adminNotes && (
+                          <p className="text-xs text-red-400 mt-2">
+                            Reason: {deposit.adminNotes}
+                          </p>
+                        )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

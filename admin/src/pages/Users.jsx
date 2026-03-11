@@ -71,10 +71,17 @@ const Users = ({ token }) => {
   const [decliningId, setDecliningId] = useState(null);
   const [declineReason, setDeclineReason] = useState({});
 
+  // Pending Deposits Management
+  const [pendingDeposits, setPendingDeposits] = useState([]);
+  const [loadingDeposits, setLoadingDeposits] = useState(false);
+  const [showDepositsTab, setShowDepositsTab] = useState(false);
+  const [confirmingDepositId, setConfirmingDepositId] = useState(null);
+
   // Fetch all users
   useEffect(() => {
     fetchUsers();
     fetchPendingUploads();
+    fetchPendingDeposits();
   }, []);
 
   const fetchUsers = async () => {
@@ -173,6 +180,83 @@ const Users = ({ token }) => {
       toast.error("Error declining upload");
     } finally {
       setDecliningId(null);
+    }
+  };
+
+  const fetchPendingDeposits = async () => {
+    try {
+      setLoadingDeposits(true);
+      const response = await axios.get(
+        backendUrl + "/api/deposit/admin/pending",
+        {
+          headers: { Authorization: token },
+        },
+      );
+
+      if (response.data.success) {
+        setPendingDeposits(response.data.deposits || []);
+      }
+    } catch (error) {
+      console.error("Error fetching pending deposits:", error);
+    } finally {
+      setLoadingDeposits(false);
+    }
+  };
+
+  const handleConfirmDeposit = async (transactionId) => {
+    try {
+      setConfirmingDepositId(transactionId);
+      const response = await axios.put(
+        backendUrl + `/api/deposit/admin/confirm/${transactionId}`,
+        {},
+        {
+          headers: { Authorization: token },
+        },
+      );
+
+      if (response.data.success) {
+        toast.success("Deposit confirmed successfully!");
+        setPendingDeposits(
+          pendingDeposits.filter((tx) => tx._id !== transactionId)
+        );
+      } else {
+        toast.error(response.data.message || "Failed to confirm deposit");
+      }
+    } catch (error) {
+      console.error("Error confirming deposit:", error);
+      toast.error("Error confirming deposit");
+    } finally {
+      setConfirmingDepositId(null);
+    }
+  };
+
+  const handleRejectDeposit = async (transactionId) => {
+    const reason = window.prompt("Enter rejection reason:");
+    if (!reason) return;
+
+    try {
+      setConfirmingDepositId(transactionId);
+      const response = await axios.put(
+        backendUrl + `/api/deposit/admin/reject/${transactionId}`,
+        { reason },
+        {
+          headers: { Authorization: token },
+        },
+      );
+
+      if (response.data.success) {
+        toast.success("Deposit rejected successfully!");
+        setPendingDeposits(
+          pendingDeposits.filter((tx) => tx._id !== transactionId)
+        );
+      } else {
+        toast.error(response.data.message || "Failed to reject deposit");
+      }
+    } catch (error) {
+      console.error("Error rejecting deposit:", error);
+      toast.error("Error rejecting deposit");
+    } finally {
+      setConfirmingDepositId(null);
     }
   };
 
@@ -466,6 +550,8 @@ const Users = ({ token }) => {
           onClick={() => {
             resetForm();
             setShowForm(!showForm);
+            setShowPendingTab(false);
+            setShowDepositsTab(false);
           }}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
@@ -476,9 +562,12 @@ const Users = ({ token }) => {
       {/* Tabs */}
       <div className="flex gap-4 mb-6 border-b">
         <button
-          onClick={() => setShowPendingTab(false)}
+          onClick={() => {
+            setShowPendingTab(false);
+            setShowDepositsTab(false);
+          }}
           className={`px-6 py-3 font-semibold transition ${
-            !showPendingTab
+            !showPendingTab && !showDepositsTab
               ? "border-b-2 border-blue-600 text-blue-600"
               : "text-gray-600 hover:text-gray-900"
           }`}
@@ -486,9 +575,12 @@ const Users = ({ token }) => {
           Users
         </button>
         <button
-          onClick={() => setShowPendingTab(true)}
+          onClick={() => {
+            setShowPendingTab(true);
+            setShowDepositsTab(false);
+          }}
           className={`px-6 py-3 font-semibold transition relative ${
-            showPendingTab
+            showPendingTab && !showDepositsTab
               ? "border-b-2 border-blue-600 text-blue-600"
               : "text-gray-600 hover:text-gray-900"
           }`}
@@ -500,10 +592,28 @@ const Users = ({ token }) => {
             </span>
           )}
         </button>
+        <button
+          onClick={() => {
+            setShowDepositsTab(true);
+            setShowPendingTab(false);
+          }}
+          className={`px-6 py-3 font-semibold transition relative ${
+            showDepositsTab
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
+        >
+          Pending Deposits
+          {pendingDeposits.length > 0 && (
+            <span className="ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">
+              {pendingDeposits.length}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Users Tab */}
-      {!showPendingTab && (
+      {!showPendingTab && !showDepositsTab && (
         <div>
           <div className="mb-8 p-6 bg-white border rounded-lg shadow">
             <h2 className="text-xl font-bold mb-6">
@@ -888,7 +998,7 @@ const Users = ({ token }) => {
         </div>
       )}
 
-      {!showPendingTab && (
+      {!showPendingTab && !showDepositsTab && (
         <div>
           <div className="mb-6">
             <input
@@ -985,7 +1095,7 @@ const Users = ({ token }) => {
       )}
 
       {/* Pending Uploads Tab */}
-      {showPendingTab && (
+      {showPendingTab && !showDepositsTab && (
         <div>
           {loadingPending ? (
             <div className="text-center py-8">
@@ -1080,6 +1190,88 @@ const Users = ({ token }) => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pending Deposits Tab */}
+      {showDepositsTab && (
+        <div>
+          {loadingDeposits ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Loading pending deposits...</p>
+            </div>
+          ) : pendingDeposits.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">No pending deposits</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto border rounded-lg">
+              <table className="w-full">
+                <thead className="bg-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left">User Name</th>
+                    <th className="px-4 py-3 text-left">Email</th>
+                    <th className="px-4 py-3 text-left">Amount (ETH)</th>
+                    <th className="px-4 py-3 text-left">Wallet Address</th>
+                    <th className="px-4 py-3 text-left">Date</th>
+                    <th className="px-4 py-3 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingDeposits.map((deposit) => (
+                    <tr
+                      key={deposit._id}
+                      className="border-t hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-3 font-medium">
+                        {deposit.userId?.name || "Unknown"}
+                      </td>
+                      <td className="px-4 py-3">{deposit.userId?.email}</td>
+                      <td className="px-4 py-3 font-semibold">
+                        {deposit.amountEth} ETH
+                      </td>
+                      <td className="px-4 py-3 text-xs font-mono">
+                        {deposit.ethereumAddress?.substring(0, 10)}...
+                        {deposit.ethereumAddress?.substring(
+                          deposit.ethereumAddress.length - 10,
+                        ) || "N/A"}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {new Date(deposit.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => handleConfirmDeposit(deposit._id)}
+                          disabled={confirmingDepositId === deposit._id}
+                          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition text-sm font-medium mr-2"
+                        >
+                          {confirmingDepositId === deposit._id
+                            ? "Confirming..."
+                            : "Confirm"}
+                        </button>
+                        <button
+                          onClick={() => handleRejectDeposit(deposit._id)}
+                          disabled={confirmingDepositId === deposit._id}
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition text-sm font-medium"
+                        >
+                          {confirmingDepositId === deposit._id
+                            ? "Processing..."
+                            : "Reject"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>

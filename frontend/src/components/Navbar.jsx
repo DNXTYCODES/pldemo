@@ -3,16 +3,37 @@ import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-  const { getCartCount, navigate, token, setToken, setCartItems } =
+  const { getCartCount, navigate, token, setToken, setCartItems, backendUrl } =
     useContext(ShopContext);
   const [searchType, setSearchType] = useState("keywords");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchTypeDropdown, setShowSearchTypeDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const cartCount = getCartCount ? getCartCount() : 0;
+
+  // Fetch user profile when token changes
+  useEffect(() => {
+    if (token) {
+      const fetchUserProfile = async () => {
+        try {
+          const response = await fetch(backendUrl + "/api/users/profile", {
+            headers: { Authorization: token },
+          });
+          const data = await response.json();
+          if (data.success && data.user) {
+            setUserProfile(data.user);
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+      fetchUserProfile();
+    }
+  }, [token, backendUrl]);
 
   const searchTypeOptions = [
     { value: "keywords", label: "Keyword" },
@@ -238,16 +259,26 @@ const Navbar = () => {
                 {/* Profile Icon Button */}
                 <button
                   onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 transition-colors cursor-pointer"
+                  className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer overflow-hidden border-2 border-amber-500 hover:border-amber-600"
                   title="Profile Menu"
                 >
-                  <svg
-                    className="w-6 h-6 text-gray-900"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
+                  {userProfile?.profilePicture ? (
+                    <img
+                      src={userProfile.profilePicture}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-gray-900"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
+                  )}
                 </button>
 
                 {/* Profile Dropdown Menu */}

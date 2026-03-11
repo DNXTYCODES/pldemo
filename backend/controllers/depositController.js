@@ -263,23 +263,23 @@ export const confirmDeposit = async (req, res) => {
     user.balance = newBalance;
     await user.save();
 
-    // Create notification for user
-    const notification = new notificationModel({
-      userId: transaction.userId,
-      type: "deposit_confirmed",
-      title: "Deposit Confirmed",
-      message: `Your deposit of ${transaction.amountEth} ETH has been confirmed! Your balance has been updated.`,
-      actionUrl: "/fund-account",
-      relatedTransactionId: transaction._id,
-    });
-
-    await notification.save();
-
-    await userModel.findByIdAndUpdate(
-      transaction.userId,
-      { $push: { notifications: notification._id } },
-      { new: true },
-    );
+    // Create notification for user (commented out for now - can be uncommented once notificationModel is properly configured)
+    // const notification = new notificationModel({
+    //   userId: transaction.userId,
+    //   type: "deposit_confirmed",
+    //   title: "Deposit Confirmed",
+    //   message: `Your deposit of ${transaction.amountEth} ETH has been confirmed! Your balance has been updated.`,
+    //   actionUrl: "/fund-account",
+    //   relatedTransactionId: transaction._id,
+    // });
+    //
+    // await notification.save();
+    //
+    // await userModel.findByIdAndUpdate(
+    //   transaction.userId,
+    //   { $push: { notifications: notification._id } },
+    //   { new: true },
+    // );
 
     res.json({
       success: true,
@@ -331,23 +331,23 @@ export const rejectDeposit = async (req, res) => {
     transaction.adminNotes = reason;
     await transaction.save();
 
-    // Create notification for user
-    const notification = new notificationModel({
-      userId: transaction.userId,
-      type: "deposit_rejected",
-      title: "Deposit Rejected",
-      message: `Your deposit of ${transaction.amountEth} ETH has been rejected. Reason: ${reason}. Please contact support if you have questions.`,
-      actionUrl: "/fund-account",
-      relatedTransactionId: transaction._id,
-    });
-
-    await notification.save();
-
-    await userModel.findByIdAndUpdate(
-      transaction.userId,
-      { $push: { notifications: notification._id } },
-      { new: true },
-    );
+    // Create notification for user (commented out for now - can be uncommented once notificationModel is properly configured)
+    // const notification = new notificationModel({
+    //   userId: transaction.userId,
+    //   type: "deposit_rejected",
+    //   title: "Deposit Rejected",
+    //   message: `Your deposit of ${transaction.amountEth} ETH has been rejected. Reason: ${reason}. Please contact support if you have questions.`,
+    //   actionUrl: "/fund-account",
+    //   relatedTransactionId: transaction._id,
+    // });
+    //
+    // await notification.save();
+    //
+    // await userModel.findByIdAndUpdate(
+    //   transaction.userId,
+    //   { $push: { notifications: notification._id } },
+    //   { new: true },
+    // );
 
     res.json({
       success: true,

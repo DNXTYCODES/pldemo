@@ -120,7 +120,7 @@ const Profile = () => {
         if (profileData.success && profileData.user) {
           console.log("✅ Successfully loaded user profile");
           setUser(profileData.user);
-          
+
           // Fetch transactions
           try {
             const txRes = await fetch(backendUrl + "/api/users/transactions", {
@@ -456,7 +456,7 @@ const Profile = () => {
             <h3 className="text-xl font-bold mb-6 text-gray-900">
               Transaction History
             </h3>
-            
+
             {transactions.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-600 text-lg">No transactions yet</p>
@@ -531,7 +531,9 @@ const Profile = () => {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <span className="text-2xl">{getTypeIcon(tx.type)}</span>
+                            <span className="text-2xl">
+                              {getTypeIcon(tx.type)}
+                            </span>
                             <div>
                               <h4 className="font-bold text-gray-900">
                                 {getTypeLabel(tx.type)}
@@ -561,7 +563,9 @@ const Profile = () => {
                           <div className="grid grid-cols-3 gap-4 mt-3 ml-11 text-sm">
                             {tx.amountEth !== "0" && (
                               <div>
-                                <span className="text-gray-600 block">Amount</span>
+                                <span className="text-gray-600 block">
+                                  Amount
+                                </span>
                                 <span className="font-semibold text-gray-900">
                                   {tx.amountEth} ETH
                                 </span>
@@ -569,14 +573,18 @@ const Profile = () => {
                             )}
                             {tx.gasFeeEth && tx.gasFeeEth !== "0" && (
                               <div>
-                                <span className="text-gray-600 block">Gas Fee</span>
+                                <span className="text-gray-600 block">
+                                  Gas Fee
+                                </span>
                                 <span className="font-semibold text-orange-600">
                                   {tx.gasFeeEth} ETH
                                 </span>
                               </div>
                             )}
                             <div>
-                              <span className="text-gray-600 block">Status</span>
+                              <span className="text-gray-600 block">
+                                Status
+                              </span>
                               <span
                                 className={`font-semibold ${
                                   tx.status === "completed"
