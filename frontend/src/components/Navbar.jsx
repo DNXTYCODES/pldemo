@@ -201,6 +201,12 @@ const Navbar = () => {
               Shop
             </Link>
             <Link
+              to="/photographers"
+              className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
+            >
+              Photographers
+            </Link>
+            <Link
               to="/about"
               className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
             >
@@ -268,31 +274,32 @@ const Navbar = () => {
                   currencyPreference === "eth" ? "usd" : "eth",
                 )
               }
-              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium border border-gray-300"
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 text-sm font-medium border border-gray-300 group"
               title="Toggle between ETH and USD prices"
             >
               {currencyPreference === "eth" ? (
                 <>
                   <span className="font-semibold">ETH</span>
+                  <svg
+                    className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" />
+                  </svg>
                 </>
               ) : (
                 <>
                   <span className="font-semibold">USD</span>
+                  <svg
+                    className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" />
+                  </svg>
                 </>
               )}
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7h12M8 11h12m-12 4h12M3 7l1.293 1.293a1 1 0 000 1.414L3 11m0 4l1.293 1.293a1 1 0 000 1.414L3 19"
-                />
-              </svg>
             </button>
 
             {/* Auth - Profile Icon when Logged In, Login/Signup when Not */}
@@ -620,6 +627,12 @@ const Navbar = () => {
                 className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
               >
                 Shop
+              </Link>
+              <Link
+                to="/photographers"
+                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+              >
+                Photographers
               </Link>
               <Link
                 to="/about"

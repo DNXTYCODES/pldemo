@@ -27,6 +27,7 @@ import Favorites from "./pages/Favorites";
 import FundAccount from "./pages/FundAccount";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
+import Photographers from "./pages/Photographers";
 
 const App = () => {
   return (
@@ -80,6 +81,8 @@ const App = () => {
           {/* Image Routes */}
           <Route path="/image/:imageId" element={<ImageDetail />} />
           <Route path="/uploader/:uploaderId" element={<UploaderProfile />} />
+          <Route path="/user/:uploaderId" element={<UploaderProfile />} />
+          <Route path="/photographers" element={<Photographers />} />
         </Routes>
 
         <Footer />

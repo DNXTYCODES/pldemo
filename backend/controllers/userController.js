@@ -900,6 +900,33 @@ const getFeaturedPhotographers = async (req, res) => {
 };
 
 /**
+ * Get all photographers for frontend display
+ */
+const getAllPhotographers = async (req, res) => {
+  try {
+    const photographers = await userModel
+      .find({ accountStatus: "active" })
+      .select(
+        "name profilePicture bio location expertise_level photography_specialty ownedImages isFeatured",
+      )
+      .populate("ownedImages", "imageUrl thumbnailUrl title")
+      .sort({ isFeatured: -1, createdAt: -1 });
+
+    res.json({
+      success: true,
+      photographers,
+    });
+  } catch (error) {
+    console.error("Error fetching photographers:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching photographers",
+      error: error.message,
+    });
+  }
+};
+
+/**
  * Admin: Get all photographers for management (featured and non-featured)
  */
 const getAllPhotographersForAdmin = async (req, res) => {
@@ -990,6 +1017,7 @@ export {
   getUserTransactions,
   getUserById,
   getFeaturedPhotographers,
+  getAllPhotographers,
   getAllPhotographersForAdmin,
   updateFeaturedPhotographer,
 };

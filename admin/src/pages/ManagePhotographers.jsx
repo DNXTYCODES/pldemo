@@ -13,9 +13,12 @@ const ManagePhotographers = ({ token }) => {
   const fetchPhotographersForAdmin = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${backendUrl}/api/users/admin/photographers`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${backendUrl}/api/users/admin/photographers`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       console.log("Photographers response:", response.data);
       if (response.data.success) {
         setPhotographers(response.data.photographers);
@@ -73,7 +76,8 @@ const ManagePhotographers = ({ token }) => {
   const filteredPhotographers = photographers.filter(
     (photographer) =>
       photographer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (photographer.location && photographer.location.toLowerCase().includes(searchTerm.toLowerCase())),
+      (photographer.location &&
+        photographer.location.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   if (loading) {

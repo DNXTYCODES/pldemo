@@ -85,7 +85,11 @@ const AmbassadorsPick = () => {
                   {image.priceEth && (
                     <div className="bg-white/90 rounded-md px-2 py-1 w-full">
                       <p className="text-xs font-semibold text-gray-900">
-                        {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                        {getFormattedPrice(
+                          image.priceEth,
+                          ethPrice,
+                          currencyPreference,
+                        )}
                       </p>
                     </div>
                   )}

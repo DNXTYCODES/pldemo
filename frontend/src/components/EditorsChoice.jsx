@@ -86,7 +86,11 @@ const EditorsChoice = () => {
                 {image.priceEth && (
                   <div className="bg-white rounded-xs px-1.5 py-0.5 self-start">
                     <p className="text-xs font-semibold text-gray-900">
-                      {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                      {getFormattedPrice(
+                        image.priceEth,
+                        ethPrice,
+                        currencyPreference,
+                      )}
                     </p>
                   </div>
                 )}

@@ -113,7 +113,9 @@ const FeaturedPhotographers = () => {
                             key={`placeholder-${idx}`}
                             className="aspect-square bg-gray-200 flex items-center justify-center"
                           >
-                            <span className="text-gray-400 text-xs">No image</span>
+                            <span className="text-gray-400 text-xs">
+                              No image
+                            </span>
                           </div>
                         ))}
                       </>
@@ -145,7 +147,7 @@ const FeaturedPhotographers = () => {
 
                   {/* View Profile Button */}
                   <button
-                    onClick={() => navigate(`/user/${photographer._id}`)}
+                    onClick={() => navigate(`/uploader/${photographer._id}`)}
                     className="w-full px-3 py-2 text-xs font-semibold bg-gray-900 text-white rounded-sm hover:bg-gray-800 transition duration-300 mt-auto"
                   >
                     View Profile

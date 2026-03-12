@@ -20,6 +20,7 @@ import {
   getUserTransactions,
   getUserById,
   getFeaturedPhotographers,
+  getAllPhotographers,
   getAllPhotographersForAdmin,
   updateFeaturedPhotographer,
 } from "../controllers/userController.js";
@@ -66,6 +67,7 @@ userRouter.delete("/admin/:userId", auth, deleteAdminUser); // Delete user
 
 // Public Routes - Featured Photographers
 userRouter.get("/featured", getFeaturedPhotographers); // Get featured photographers for frontend (no auth)
+userRouter.get("/all", getAllPhotographers); // Get all photographers for frontend (no auth)
 
 // Generic Route - MUST BE LAST
 userRouter.get("/:userId", getUserById); // Get public user profile by ID
