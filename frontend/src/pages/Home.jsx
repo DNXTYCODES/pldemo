@@ -6,6 +6,7 @@ import LatestCollection from "../components/LatestCollection";
 import BestSeller from "../components/BestSeller";
 import PopularPhotos from "../components/PopularPhotos";
 import EditorsChoice from "../components/EditorsChoice";
+import AmbassadorsPick from "../components/AmbassadorsPick";
 import PhotoStories from "../components/PhotoStories";
 import OurPolicy from "../components/OurPolicy";
 import NewsletterBox from "../components/NewsletterBox";
@@ -26,7 +27,8 @@ const Home = () => {
       {/* <LatestColection/>
       <BestSeller/>l */}
       <PopularPhotos />
-      <EditorsChoice />
+      {/* <EditorsChoice /> */}
+      <AmbassadorsPick />
       <FeaturedPhotographers />
       <PhotoStories />
       {/* <CustomerReviews /> */}
@@ -36,7 +38,7 @@ const Home = () => {
       {/* <FeaturedSection /> */}
       {/* <FlyboyBanner /> */}
       {/* <OurPolicy /> */}
-      <NewsletterBox />  
+      <NewsletterBox />
     </div>
   );
 };

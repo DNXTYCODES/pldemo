@@ -871,6 +871,104 @@ const getUserById = async (req, res) => {
   }
 };
 
+/**
+ * Get featured photographers for frontend display
+ */
+const getFeaturedPhotographers = async (req, res) => {
+  try {
+    const photographers = await userModel
+      .find({ isFeatured: true, accountStatus: "active" })
+      .select(
+        "name profilePicture bio location expertise_level photography_specialty ownedImages",
+      )
+      .populate("ownedImages", "imageUrl thumbnailUrl title")
+      .limit(6)
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      photographers,
+    });
+  } catch (error) {
+    console.error("Error fetching featured photographers:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching featured photographers",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Get all photographers for management (featured and non-featured)
+ */
+const getAllPhotographersForAdmin = async (req, res) => {
+  try {
+    const photographers = await userModel
+      .find({}) // Fetch all users regardless of status
+      .select(
+        "name profilePicture bio location expertise_level isFeatured ownedImages accountStatus",
+      )
+      .populate("ownedImages", "imageUrl thumbnailUrl")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      photographers,
+    });
+  } catch (error) {
+    console.error("Error fetching photographers for admin:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching photographers",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Update photographer featured status
+ */
+const updateFeaturedPhotographer = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isFeatured } = req.body;
+
+    if (typeof isFeatured !== "boolean") {
+      return res.json({
+        success: false,
+        message: "isFeatured must be a boolean",
+      });
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { isFeatured },
+      { new: true },
+    ).select("name profilePicture bio location isFeatured");
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Photographer not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Photographer ${isFeatured ? "featured" : "unfeatured"} successfully`,
+      photographer: user,
+    });
+  } catch (error) {
+    console.error("Error updating photographer featured status:", error);
+    res.json({
+      success: false,
+      message: "Error updating photographer",
+      error: error.message,
+    });
+  }
+};
+
 export {
   loginUser,
   registerUser,
@@ -891,6 +989,9 @@ export {
   updateAdminUserProfilePicture,
   getUserTransactions,
   getUserById,
+  getFeaturedPhotographers,
+  getAllPhotographersForAdmin,
+  updateFeaturedPhotographer,
 };
 
 // import validator from "validator";

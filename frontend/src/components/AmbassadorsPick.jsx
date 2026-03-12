@@ -3,31 +3,31 @@ import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { getFormattedPrice } from "../utils/ethPrice";
 
-const PopularPhotos = () => {
+const AmbassadorsPick = () => {
   const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPopularPhotos = async () => {
+    const fetchAmbassadorsPick = async () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `${backendUrl}/api/images/section/popular`,
+          `${backendUrl}/api/images/section/ambassadors-pick`,
         );
         const data = await response.json();
         if (data.success) {
           setImages(data.images);
         }
       } catch (error) {
-        console.error("Error fetching popular photos:", error);
+        console.error("Error fetching ambassadors pick:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPopularPhotos();
+    fetchAmbassadorsPick();
   }, [backendUrl]);
 
   if (loading) {
@@ -35,7 +35,7 @@ const PopularPhotos = () => {
       <div className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
-            Popular Photos
+            Ambassadors Pick
           </h2>
           <div className="text-center py-8 text-gray-500">Loading...</div>
         </div>
@@ -51,10 +51,10 @@ const PopularPhotos = () => {
     <div className="bg-white py-12">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
-          Popular Photos
+          Editor's Pick
         </h2>
         <p className="text-lg font-medium text-gray-900 mb-8">
-          Trending images with the highest ratings
+          Handpicked selections from our editors
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -72,13 +72,11 @@ const PopularPhotos = () => {
               />
 
               {/* Editor's Pick Badge */}
-              {image.isAmbassadorsPick && (
-                <div className="absolute top-2 right-2">
-                  <span className="inline-block rounded-full bg-yellow-400 px-2 py-1 text-xs font-semibold text-gray-900">
-                    📌 Editor's Pick
-                  </span>
-                </div>
-              )}
+              <div className="absolute top-2 right-2">
+                <span className="inline-block rounded-full bg-yellow-400 px-2 py-1 text-xs font-semibold text-gray-900">
+                  📌 Editor's Pick
+                </span>
+              </div>
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
@@ -87,11 +85,7 @@ const PopularPhotos = () => {
                   {image.priceEth && (
                     <div className="bg-white/90 rounded-md px-2 py-1 w-full">
                       <p className="text-xs font-semibold text-gray-900">
-                        {getFormattedPrice(
-                          image.priceEth,
-                          ethPrice,
-                          currencyPreference,
-                        )}
+                        {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
                       </p>
                     </div>
                   )}
@@ -161,4 +155,4 @@ const PopularPhotos = () => {
   );
 };
 
-export default PopularPhotos;
+export default AmbassadorsPick;

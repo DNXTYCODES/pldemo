@@ -19,6 +19,9 @@ import {
   updateAdminUserProfilePicture,
   getUserTransactions,
   getUserById,
+  getFeaturedPhotographers,
+  getAllPhotographersForAdmin,
+  updateFeaturedPhotographer,
 } from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -46,11 +49,9 @@ userRouter.get("/balance", auth, getUserBalance); // Get account balance
 userRouter.get("/stats", auth, getAccountStats); // Get account statistics
 userRouter.get("/transactions", auth, getUserTransactions); // Get transactions
 
-// Public Routes - AFTER specific routes
-userRouter.get("/:userId", getUserById); // Get public user profile by ID
-
-// Admin Routes
+// Admin Routes - MUST BE BEFORE /:userId
 userRouter.get("/admin/all-users", auth, getAllUsers); // Get all users (must be first)
+userRouter.get("/admin/photographers", auth, getAllPhotographersForAdmin); // Get all photographers for admin management
 userRouter.post("/admin/create", auth, createAdminUser); // Create user
 userRouter.put(
   "/admin/:userId/profile-picture",
@@ -58,9 +59,16 @@ userRouter.put(
   upload.single("profilePicture"),
   updateAdminUserProfilePicture,
 ); // Update user profile picture (must come before /:userId routes)
+userRouter.put("/admin/:userId/featured", auth, updateFeaturedPhotographer); // Toggle photographer featured status
 userRouter.get("/admin/:userId", auth, getAdminUser); // Get single user
 userRouter.put("/admin/:userId", auth, updateAdminUser); // Update user
 userRouter.delete("/admin/:userId", auth, deleteAdminUser); // Delete user
+
+// Public Routes - Featured Photographers
+userRouter.get("/featured", getFeaturedPhotographers); // Get featured photographers for frontend (no auth)
+
+// Generic Route - MUST BE LAST
+userRouter.get("/:userId", getUserById); // Get public user profile by ID
 
 export default userRouter;
 

@@ -1134,7 +1134,9 @@ export const getAllImagesForAdmin = async (req, res) => {
   try {
     const images = await imageModel
       .find({ status: "active" })
-      .select("title imageUrl isPopular isEditorsChoice isAmbassadorsPick isTrending priceEth priceUsd sellerId")
+      .select(
+        "title imageUrl isPopular isEditorsChoice isAmbassadorsPick isTrending priceEth priceUsd sellerId",
+      )
       .populate("sellerId", "name email")
       .sort({ createdAt: -1 });
 
@@ -1161,7 +1163,12 @@ export const updateImageSections = async (req, res) => {
     const { section, assigned } = req.body;
 
     // Validate section
-    const validSections = ["trending", "popular", "editors-choice", "ambassadors-pick"];
+    const validSections = [
+      "trending",
+      "popular",
+      "editors-choice",
+      "ambassadors-pick",
+    ];
     if (!validSections.includes(section)) {
       return res.status(400).json({
         success: false,
@@ -1212,7 +1219,12 @@ export const getImagesBySection = async (req, res) => {
     const { section } = req.params;
 
     // Validate section
-    const validSections = ["trending", "popular", "editors-choice", "ambassadors-pick"];
+    const validSections = [
+      "trending",
+      "popular",
+      "editors-choice",
+      "ambassadors-pick",
+    ];
     if (!validSections.includes(section)) {
       return res.status(400).json({
         success: false,

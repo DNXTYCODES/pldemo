@@ -77,7 +77,8 @@ const ManageImages = ({ token }) => {
   const filteredImages = images.filter(
     (img) =>
       img.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (img.sellerId?.name && img.sellerId.name.toLowerCase().includes(searchTerm.toLowerCase())),
+      (img.sellerId?.name &&
+        img.sellerId.name.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   if (loading) {
@@ -93,9 +94,12 @@ const ManageImages = ({ token }) => {
       <div className="mx-auto max-w-6xl px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Images</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Manage Images
+          </h1>
           <p className="text-gray-600">
-            Assign images to home page sections (Trending, Popular, Editors Choice, Ambassadors Pick)
+            Assign images to home page sections (Trending, Popular, Editor's
+            Pick)
           </p>
         </div>
 
@@ -112,9 +116,7 @@ const ManageImages = ({ token }) => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 rounded bg-red-50 p-4 text-red-600">
-            {error}
-          </div>
+          <div className="mb-4 rounded bg-red-50 p-4 text-red-600">{error}</div>
         )}
 
         {/* Images Grid */}
@@ -134,7 +136,7 @@ const ManageImages = ({ token }) => {
                 <div className="absolute right-2 top-2">
                   {image.isAmbassadorsPick && (
                     <span className="inline-block rounded-full bg-yellow-400 px-2 py-1 text-xs font-semibold text-gray-900">
-                      🏆 Ambassador's Pick
+                      📌 Editor's Pick
                     </span>
                   )}
                 </div>
@@ -159,7 +161,11 @@ const ManageImages = ({ token }) => {
                       type="checkbox"
                       checked={image.isTrending || false}
                       onChange={() =>
-                        handleSectionToggle(image._id, "trending", image.isTrending)
+                        handleSectionToggle(
+                          image._id,
+                          "trending",
+                          image.isTrending,
+                        )
                       }
                       disabled={savingImageId === image._id}
                       className="h-4 w-4 cursor-pointer rounded border-gray-300"
@@ -172,25 +178,18 @@ const ManageImages = ({ token }) => {
                       type="checkbox"
                       checked={image.isPopular || false}
                       onChange={() =>
-                        handleSectionToggle(image._id, "popular", image.isPopular)
+                        handleSectionToggle(
+                          image._id,
+                          "popular",
+                          image.isPopular,
+                        )
                       }
                       disabled={savingImageId === image._id}
                       className="h-4 w-4 cursor-pointer rounded border-gray-300"
                     />
-                    <span className="text-sm text-gray-700">Popular Photos</span>
-                  </label>
-
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={image.isEditorsChoice || false}
-                      onChange={() =>
-                        handleSectionToggle(image._id, "editors-choice", image.isEditorsChoice)
-                      }
-                      disabled={savingImageId === image._id}
-                      className="h-4 w-4 cursor-pointer rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">Editors Choice</span>
+                    <span className="text-sm text-gray-700">
+                      Popular Photos
+                    </span>
                   </label>
 
                   <label className="flex items-center gap-2">
@@ -198,12 +197,18 @@ const ManageImages = ({ token }) => {
                       type="checkbox"
                       checked={image.isAmbassadorsPick || false}
                       onChange={() =>
-                        handleSectionToggle(image._id, "ambassadors-pick", image.isAmbassadorsPick)
+                        handleSectionToggle(
+                          image._id,
+                          "ambassadors-pick",
+                          image.isAmbassadorsPick,
+                        )
                       }
                       disabled={savingImageId === image._id}
                       className="h-4 w-4 cursor-pointer rounded border-gray-300"
                     />
-                    <span className="text-sm text-gray-700">🏆 Ambassadors Pick</span>
+                    <span className="text-sm text-gray-700">
+                      📌 Editor's Pick
+                    </span>
                   </label>
                 </div>
 
@@ -220,7 +225,9 @@ const ManageImages = ({ token }) => {
         {filteredImages.length === 0 && !loading && (
           <div className="rounded border border-gray-200 bg-gray-50 p-8 text-center">
             <p className="text-gray-600">
-              {searchTerm ? "No images found matching your search" : "No images available"}
+              {searchTerm
+                ? "No images found matching your search"
+                : "No images available"}
             </p>
           </div>
         )}

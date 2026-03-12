@@ -79,6 +79,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
 
     // Metadata
+    isFeatured: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     accountStatus: {
