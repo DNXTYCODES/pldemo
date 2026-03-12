@@ -19,7 +19,7 @@ const Hero = () => {
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1495854035989-cebdf40d5e6d?w=1200&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=600&fit=crop",
     },
     {
       id: 2,
@@ -28,7 +28,7 @@ const Hero = () => {
       backgroundStyle:
         "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(85, 85, 85, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=1200&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=600&fit=crop",
     },
   ];
 
