@@ -129,7 +129,6 @@ const FundAccount = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-
         <div className="mt-12 space-y-8">
           {/* Step-by-step instructions */}
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
@@ -194,7 +193,9 @@ const FundAccount = () => {
 
           {/* Deposit Form */}
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold mb-6 text-gray-900">Initiate Deposit</h3>
+            <h3 className="text-xl font-bold mb-6 text-gray-900">
+              Initiate Deposit
+            </h3>
 
             {/* ETH Price Display */}
             <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-amber-100 rounded border border-amber-200">
@@ -254,7 +255,9 @@ const FundAccount = () => {
 
           {/* Deposit Address */}
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold mb-6 text-gray-900">Deposit Address</h3>
+            <h3 className="text-xl font-bold mb-6 text-gray-900">
+              Deposit Address
+            </h3>
             <p className="text-gray-600 text-sm mb-4">
               Send Ethereum to this address:
             </p>
@@ -272,7 +275,9 @@ const FundAccount = () => {
             </div>
 
             <div className="bg-yellow-50 border border-yellow-200 p-4 rounded text-yellow-800 text-sm">
-              <p className="font-semibold mb-2 text-yellow-900">⚠️ Important:</p>
+              <p className="font-semibold mb-2 text-yellow-900">
+                ⚠️ Important:
+              </p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Only send Ethereum (ETH) to this address</li>
                 <li>Sending other tokens may result in permanent loss</li>
@@ -284,7 +289,9 @@ const FundAccount = () => {
 
           {/* Recent Deposits */}
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold mb-6 text-gray-900">Pending Deposits</h3>
+            <h3 className="text-xl font-bold mb-6 text-gray-900">
+              Pending Deposits
+            </h3>
 
             {loadingDeposits ? (
               <div className="text-center py-4 text-gray-500">

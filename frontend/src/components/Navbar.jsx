@@ -3,8 +3,16 @@ import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-  const { getCartCount, navigate, token, setToken, setCartItems, backendUrl, currencyPreference, setCurrencyPreference } =
-    useContext(ShopContext);
+  const {
+    getCartCount,
+    navigate,
+    token,
+    setToken,
+    setCartItems,
+    backendUrl,
+    currencyPreference,
+    setCurrencyPreference,
+  } = useContext(ShopContext);
   const [searchType, setSearchType] = useState("keywords");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchTypeDropdown, setShowSearchTypeDropdown] = useState(false);
@@ -255,11 +263,15 @@ const Navbar = () => {
 
             {/* Currency Toggle */}
             <button
-              onClick={() => setCurrencyPreference(currencyPreference === 'eth' ? 'usd' : 'eth')}
+              onClick={() =>
+                setCurrencyPreference(
+                  currencyPreference === "eth" ? "usd" : "eth",
+                )
+              }
               className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium border border-gray-300"
               title="Toggle between ETH and USD prices"
             >
-              {currencyPreference === 'eth' ? (
+              {currencyPreference === "eth" ? (
                 <>
                   <span className="font-semibold">ETH</span>
                 </>

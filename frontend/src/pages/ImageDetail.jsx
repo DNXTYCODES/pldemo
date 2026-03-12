@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 const ImageDetail = () => {
   const { imageId } = useParams();
   const navigate = useNavigate();
-  const { backendUrl, token, currencyPreference, ethPrice } = useContext(ShopContext);
+  const { backendUrl, token, currencyPreference, ethPrice } =
+    useContext(ShopContext);
 
   const [imageData, setImageData] = useState(null);
   const [relatedImages, setRelatedImages] = useState([]);
@@ -438,22 +439,24 @@ const ImageDetail = () => {
               </h3>
               <div className="flex items-center justify-between">
                 <div>
-                  {currencyPreference === 'eth' ? (
+                  {currencyPreference === "eth" ? (
                     <div>
                       <p className="text-3xl font-bold text-gray-900">
-                        {getFormattedPrice(imageData.priceEth, ethPrice, 'eth')}
+                        {getFormattedPrice(imageData.priceEth, ethPrice, "eth")}
                       </p>
                       <p className="text-xs text-gray-600 mt-1">
-                        ≈ {getFormattedPrice(imageData.priceEth, ethPrice, 'usd')}
+                        ≈{" "}
+                        {getFormattedPrice(imageData.priceEth, ethPrice, "usd")}
                       </p>
                     </div>
                   ) : (
                     <div>
                       <p className="text-3xl font-bold text-gray-900">
-                        {getFormattedPrice(imageData.priceEth, ethPrice, 'usd')}
+                        {getFormattedPrice(imageData.priceEth, ethPrice, "usd")}
                       </p>
                       <p className="text-xs text-gray-600 mt-1">
-                        ≈ {getFormattedPrice(imageData.priceEth, ethPrice, 'eth')}
+                        ≈{" "}
+                        {getFormattedPrice(imageData.priceEth, ethPrice, "eth")}
                       </p>
                     </div>
                   )}
@@ -555,7 +558,11 @@ const ImageDetail = () => {
                       {image.priceEth && (
                         <div className="bg-white/90 rounded-md px-2 py-1 w-full">
                           <p className="text-xs font-semibold text-gray-900">
-                            {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                            {getFormattedPrice(
+                              image.priceEth,
+                              ethPrice,
+                              currencyPreference,
+                            )}
                           </p>
                         </div>
                       )}
@@ -612,9 +619,8 @@ const ImageDetail = () => {
                           className="text-gray-700"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle cx="12" cy="12" r="1"></circle>
-                          <circle cx="19" cy="12" r="1"></circle>
-                          <circle cx="5" cy="12" r="1"></circle>
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                       </button>
                     </div>
@@ -659,7 +665,11 @@ const ImageDetail = () => {
                       {image.priceEth && (
                         <div className="bg-white/90 rounded-md px-2 py-1 w-full">
                           <p className="text-xs font-semibold text-gray-900">
-                            {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                            {getFormattedPrice(
+                              image.priceEth,
+                              ethPrice,
+                              currencyPreference,
+                            )}
                           </p>
                         </div>
                       )}
@@ -711,9 +721,8 @@ const ImageDetail = () => {
                           className="text-gray-700"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle cx="12" cy="12" r="1"></circle>
-                          <circle cx="19" cy="12" r="1"></circle>
-                          <circle cx="5" cy="12" r="1"></circle>
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                       </button>
                     </div>

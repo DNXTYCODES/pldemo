@@ -162,7 +162,6 @@ const MySales = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Tabs */}
         <div className="flex gap-4 mt-8 mb-6 border-b border-gray-700">
           <button
@@ -215,7 +214,9 @@ const MySales = () => {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-2xl font-bold mb-4 text-gray-900">No Images Yet</p>
+                <p className="text-2xl font-bold mb-4 text-gray-900">
+                  No Images Yet
+                </p>
                 <p className="text-gray-600 mb-8">
                   Start selling your photos by uploading images
                 </p>
@@ -262,15 +263,21 @@ const MySales = () => {
                       <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
                         <div className="bg-gray-50 p-2 rounded border border-gray-200">
                           <p className="text-gray-600">Views</p>
-                          <p className="font-bold text-gray-900">{image.views}</p>
+                          <p className="font-bold text-gray-900">
+                            {image.views}
+                          </p>
                         </div>
                         <div className="bg-gray-50 p-2 rounded border border-gray-200">
                           <p className="text-gray-600">Purchases</p>
-                          <p className="font-bold text-gray-900">{image.purchaseCount}</p>
+                          <p className="font-bold text-gray-900">
+                            {image.purchaseCount}
+                          </p>
                         </div>
                         <div className="bg-gray-50 p-2 rounded border border-gray-200">
                           <p className="text-gray-600">Favorites</p>
-                          <p className="font-bold text-gray-900">{image.favoriteCount}</p>
+                          <p className="font-bold text-gray-900">
+                            {image.favoriteCount}
+                          </p>
                         </div>
                       </div>
 
@@ -379,7 +386,9 @@ const MySales = () => {
                     d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p className="text-2xl font-bold mb-4 text-gray-900">No Pending Uploads</p>
+                <p className="text-2xl font-bold mb-4 text-gray-900">
+                  No Pending Uploads
+                </p>
                 <p className="text-gray-600 mb-8">
                   All your uploads have been processed
                 </p>

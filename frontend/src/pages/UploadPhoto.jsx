@@ -181,7 +181,6 @@ const UploadPhoto = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
-
         <form onSubmit={handleSubmit} className="mt-12 space-y-6">
           {/* Image Upload Area */}
           <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8">
@@ -289,7 +288,9 @@ const UploadPhoto = () => {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-900">Tags</label>
+            <label className="block text-sm font-medium mb-2 text-gray-900">
+              Tags
+            </label>
             <input
               type="text"
               name="tags"

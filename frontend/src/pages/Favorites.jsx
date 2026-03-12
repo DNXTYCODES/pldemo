@@ -66,7 +66,6 @@ const Favorites = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
         {error && (
           <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded text-red-800">
             {error}
@@ -82,7 +81,9 @@ const Favorites = () => {
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
-            <p className="text-2xl font-bold mb-4 text-gray-900">No Favorites Yet</p>
+            <p className="text-2xl font-bold mb-4 text-gray-900">
+              No Favorites Yet
+            </p>
             <p className="text-gray-600 mb-8">
               Add photos to your favorites while browsing
             </p>

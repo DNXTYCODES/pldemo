@@ -69,7 +69,6 @@ const MyPurchases = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
         {error && (
           <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded text-red-800">
             {error}
@@ -91,7 +90,9 @@ const MyPurchases = () => {
                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
               />
             </svg>
-            <p className="text-2xl font-bold mb-4 text-gray-900">No Purchases Yet</p>
+            <p className="text-2xl font-bold mb-4 text-gray-900">
+              No Purchases Yet
+            </p>
             <p className="text-gray-600 mb-8">
               Start exploring and buying amazing photos
             </p>

@@ -32,10 +32,7 @@ userRouter.post("/admin", adminLogin);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password", resetPassword);
 
-// Public Routes
-userRouter.get("/:userId", getUserById); // Get public user profile by ID
-
-// Profile Routes (require authentication)
+// Profile Routes (require authentication) - MUST BE BEFORE /:userId
 userRouter.get("/profile", auth, getUserProfile); // Get user profile
 userRouter.put("/profile", auth, updateUserProfile); // Update profile
 userRouter.put(
@@ -48,6 +45,9 @@ userRouter.put("/change-password", auth, changePassword); // Change password
 userRouter.get("/balance", auth, getUserBalance); // Get account balance
 userRouter.get("/stats", auth, getAccountStats); // Get account statistics
 userRouter.get("/transactions", auth, getUserTransactions); // Get transactions
+
+// Public Routes - AFTER specific routes
+userRouter.get("/:userId", getUserById); // Get public user profile by ID
 
 // Admin Routes
 userRouter.get("/admin/all-users", auth, getAllUsers); // Get all users (must be first)

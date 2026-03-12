@@ -3,7 +3,8 @@
  * Handles fetching current ETH price and converting between ETH and USD
  */
 
-const ETH_PRICE_API = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd";
+const ETH_PRICE_API =
+  "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd";
 const FALLBACK_ETH_PRICE = 3000; // Fallback price in USD
 
 /**

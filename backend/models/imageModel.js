@@ -151,7 +151,7 @@ const imageSchema = new mongoose.Schema(
       },
     ],
   },
-  { minimize: false }
+  { minimize: false },
 );
 
 // Update the updatedAt timestamp before saving

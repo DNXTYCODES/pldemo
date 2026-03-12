@@ -170,10 +170,6 @@ const Profile = () => {
     );
   }
 
-  const usdBalance = user.balance
-    ? (parseFloat(user.balance) * currentEthPrice).toFixed(2)
-    : "0";
-
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
