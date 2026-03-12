@@ -17,6 +17,9 @@ import {
   addToFavourite,
   reportImage,
   buyImageRequest,
+  getAllImagesForAdmin,
+  updateImageSections,
+  getImagesBySection,
 } from "../controllers/imageController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
@@ -47,8 +50,13 @@ imageRouter.post(
   adminUploadImage,
 ); // Admin upload image for user
 imageRouter.get("/admin/pending", auth, getPendingUploads); // Get all pending uploads (admin)
+imageRouter.get("/admin/all", auth, getAllImagesForAdmin); // Get all images for admin management
 imageRouter.post("/:imageId/approve", auth, approveImageUpload); // Approve pending upload (admin)
 imageRouter.post("/:imageId/decline", auth, declineImageUpload); // Decline pending upload (admin)
 imageRouter.put("/:imageId/trending", auth, toggleTrending); // Toggle trending status (admin)
+imageRouter.put("/:imageId/sections", auth, updateImageSections); // Update image section assignments (admin)
+
+// Section-based Routes
+imageRouter.get("/section/:section", getImagesBySection); // Get images by section (public)
 
 export default imageRouter;

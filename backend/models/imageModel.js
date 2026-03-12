@@ -79,6 +79,20 @@ const imageSchema = new mongoose.Schema(
       default: false, // Admin can mark images as trending
     },
 
+    // Home Page Section Assignments
+    isPopular: {
+      type: Boolean,
+      default: false, // Popular Photos section
+    },
+    isEditorsChoice: {
+      type: Boolean,
+      default: false, // Editors Choice section
+    },
+    isAmbassadorsPick: {
+      type: Boolean,
+      default: false, // Ambassador's Pick badge on image
+    },
+
     // Admin Approval for User Uploads
     approvalStatus: {
       type: String,

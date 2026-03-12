@@ -63,16 +63,13 @@ const PhotoTabs = () => {
     }
   };
 
-  // Fetch trending images
+  // Fetch trending images from backend section
   const fetchTrendingImages = async () => {
     try {
-      const response = await fetch(`${backendUrl}/api/images/search?limit=50`);
+      const response = await fetch(`${backendUrl}/api/images/section/trending`);
       const data = await response.json();
       if (data.success) {
-        const trending = data.images
-          .filter((img) => img.isTrending === true)
-          .slice(0, 12);
-        setTrendingImages(trending);
+        setTrendingImages(data.images.slice(0, 12));
       }
     } catch (error) {
       console.error("Error fetching trending images:", error);
@@ -393,6 +390,14 @@ const PhotoTabs = () => {
                       onClick={() => navigate(`/image/${image._id}`)}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
+                    {/* Ambassador's Pick Badge */}
+                    {image.isAmbassadorsPick && (
+                      <div className="absolute top-2 right-2 z-10">
+                        <span className="inline-block bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded-full">
+                          🏆 Pick
+                        </span>
+                      </div>
+                    )}
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
                       {/* Uploader Info & Price */}

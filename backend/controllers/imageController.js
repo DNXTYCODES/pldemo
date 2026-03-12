@@ -1127,6 +1127,133 @@ export const buyImageRequest = async (req, res) => {
   }
 };
 
+/**
+ * Get all images for admin management
+ */
+export const getAllImagesForAdmin = async (req, res) => {
+  try {
+    const images = await imageModel
+      .find({ status: "active" })
+      .select("title imageUrl isPopular isEditorsChoice isAmbassadorsPick isTrending priceEth priceUsd sellerId")
+      .populate("sellerId", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      images,
+    });
+  } catch (error) {
+    console.error("Error fetching admin images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching images",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Update image section assignment
+ */
+export const updateImageSections = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const { section, assigned } = req.body;
+
+    // Validate section
+    const validSections = ["trending", "popular", "editors-choice", "ambassadors-pick"];
+    if (!validSections.includes(section)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid section",
+      });
+    }
+
+    // Map section names to schema fields
+    const sectionMap = {
+      trending: "isTrending",
+      popular: "isPopular",
+      "editors-choice": "isEditorsChoice",
+      "ambassadors-pick": "isAmbassadorsPick",
+    };
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    // Update the section field
+    image[sectionMap[section]] = assigned;
+    await image.save();
+
+    res.json({
+      success: true,
+      message: `Image ${assigned ? "added to" : "removed from"} ${section}`,
+      image,
+    });
+  } catch (error) {
+    console.error("Error updating image sections:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating sections",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get images by section
+ */
+export const getImagesBySection = async (req, res) => {
+  try {
+    const { section } = req.params;
+
+    // Validate section
+    const validSections = ["trending", "popular", "editors-choice", "ambassadors-pick"];
+    if (!validSections.includes(section)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid section",
+      });
+    }
+
+    // Map section names to schema fields
+    const sectionMap = {
+      trending: "isTrending",
+      popular: "isPopular",
+      "editors-choice": "isEditorsChoice",
+      "ambassadors-pick": "isAmbassadorsPick",
+    };
+
+    const query = {
+      status: "active",
+      [sectionMap[section]]: true,
+    };
+
+    const images = await imageModel
+      .find(query)
+      .select("title imageUrl thumbnailUrl priceEth priceUsd isAmbassadorsPick")
+      .populate("sellerId", "name")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      images,
+      section,
+    });
+  } catch (error) {
+    console.error("Error fetching section images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching images",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   uploadImage,
   getImages,
@@ -1145,4 +1272,7 @@ export default {
   addToFavourite,
   reportImage,
   buyImageRequest,
+  getAllImagesForAdmin,
+  updateImageSections,
+  getImagesBySection,
 };
