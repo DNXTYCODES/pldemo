@@ -7,22 +7,28 @@ const Hero = () => {
       id: 0,
       href: "/collection",
       title: "Explore Gallery",
-      backgroundStyle: "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(51, 51, 51, 0.6) 100%)",
-      backgroundImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&h=600&fit=crop",
+      backgroundStyle:
+        "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(51, 51, 51, 0.6) 100%)",
+      backgroundImage:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&h=600&fit=crop",
     },
     {
       id: 1,
       href: "/shop",
       title: "Shop Prints",
-      backgroundStyle: "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
-      backgroundImage: "https://images.unsplash.com/photo-1495854035989-cebdf40d5e6d?w=1200&h=600&fit=crop",
+      backgroundStyle:
+        "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
+      backgroundImage:
+        "https://images.unsplash.com/photo-1495854035989-cebdf40d5e6d?w=1200&h=600&fit=crop",
     },
     {
       id: 2,
       href: "/about",
       title: "Get Inspired",
-      backgroundStyle: "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(85, 85, 85, 0.6) 100%)",
-      backgroundImage: "https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=1200&h=600&fit=crop",
+      backgroundStyle:
+        "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(85, 85, 85, 0.6) 100%)",
+      backgroundImage:
+        "https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=1200&h=600&fit=crop",
     },
   ];
 

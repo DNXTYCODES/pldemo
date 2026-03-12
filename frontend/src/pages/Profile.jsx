@@ -3,7 +3,8 @@ import { ShopContext } from "../context/ShopContext";
 import { getFormattedPrice } from "../utils/ethPrice";
 
 const Profile = () => {
-  const { navigate, backendUrl, ethPrice, currencyPreference } = useContext(ShopContext);
+  const { navigate, backendUrl, ethPrice, currencyPreference } =
+    useContext(ShopContext);
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -224,31 +225,35 @@ const Profile = () => {
           <p className="text-gray-600 text-sm mb-2">Account Balance</p>
           <div className="flex items-baseline gap-4">
             <div>
-              {currencyPreference === 'eth' ? (
+              {currencyPreference === "eth" ? (
                 <>
                   <p className="text-4xl font-bold text-amber-600">
-                    {getFormattedPrice(user.balance || 0, ethPrice, 'eth')}
+                    {getFormattedPrice(user.balance || 0, ethPrice, "eth")}
                   </p>
                   <p className="text-gray-600 text-sm">ETH</p>
                 </>
               ) : (
                 <>
                   <p className="text-4xl font-bold text-green-600">
-                    {getFormattedPrice(user.balance || 0, ethPrice, 'usd')}
+                    {getFormattedPrice(user.balance || 0, ethPrice, "usd")}
                   </p>
                   <p className="text-gray-600 text-sm">USD</p>
                 </>
               )}
             </div>
             <div>
-              {currencyPreference === 'eth' ? (
+              {currencyPreference === "eth" ? (
                 <>
-                  <p className="text-2xl font-bold text-green-600">{getFormattedPrice(user.balance || 0, ethPrice, 'usd')}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {getFormattedPrice(user.balance || 0, ethPrice, "usd")}
+                  </p>
                   <p className="text-gray-600 text-sm">USD Equivalent</p>
                 </>
               ) : (
                 <>
-                  <p className="text-2xl font-bold text-amber-600">{getFormattedPrice(user.balance || 0, ethPrice, 'eth')}</p>
+                  <p className="text-2xl font-bold text-amber-600">
+                    {getFormattedPrice(user.balance || 0, ethPrice, "eth")}
+                  </p>
                   <p className="text-gray-600 text-sm">ETH Equivalent</p>
                 </>
               )}
