@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-  const { getCartCount, navigate, token, setToken, setCartItems, backendUrl } =
+  const { getCartCount, navigate, token, setToken, setCartItems, backendUrl, currencyPreference, setCurrencyPreference } =
     useContext(ShopContext);
   const [searchType, setSearchType] = useState("keywords");
   const [searchQuery, setSearchQuery] = useState("");
@@ -252,6 +252,36 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
+
+            {/* Currency Toggle */}
+            <button
+              onClick={() => setCurrencyPreference(currencyPreference === 'eth' ? 'usd' : 'eth')}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium border border-gray-300"
+              title="Toggle between ETH and USD prices"
+            >
+              {currencyPreference === 'eth' ? (
+                <>
+                  <span className="font-semibold">ETH</span>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">USD</span>
+                </>
+              )}
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7h12M8 11h12m-12 4h12M3 7l1.293 1.293a1 1 0 000 1.414L3 11m0 4l1.293 1.293a1 1 0 000 1.414L3 19"
+                />
+              </svg>
+            </button>
 
             {/* Auth - Profile Icon when Logged In, Login/Signup when Not */}
             {token ? (

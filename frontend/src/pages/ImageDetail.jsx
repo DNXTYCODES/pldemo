@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
+import { getFormattedPrice } from "../utils/ethPrice";
 import { toast } from "react-toastify";
 
 const ImageDetail = () => {
   const { imageId } = useParams();
   const navigate = useNavigate();
-  const { backendUrl, token } = useContext(ShopContext);
+  const { backendUrl, token, currencyPreference, ethPrice } = useContext(ShopContext);
 
   const [imageData, setImageData] = useState(null);
   const [relatedImages, setRelatedImages] = useState([]);
@@ -15,7 +16,6 @@ const ImageDetail = () => {
   const [isFavourite, setIsFavourite] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [priceInETH, setPriceInETH] = useState(true);
 
   // Fetch image details
   useEffect(() => {
@@ -342,7 +342,14 @@ const ImageDetail = () => {
                     strokeWidth="2"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -431,32 +438,26 @@ const ImageDetail = () => {
               </h3>
               <div className="flex items-center justify-between">
                 <div>
-                  {priceInETH ? (
+                  {currencyPreference === 'eth' ? (
                     <div>
                       <p className="text-3xl font-bold text-gray-900">
-                        {parseFloat(imageData.priceEth).toFixed(4)} ETH
+                        {getFormattedPrice(imageData.priceEth, ethPrice, 'eth')}
                       </p>
                       <p className="text-xs text-gray-600 mt-1">
-                        ≈ ${parseFloat(imageData.priceUsd).toFixed(2)} USD
+                        ≈ {getFormattedPrice(imageData.priceEth, ethPrice, 'usd')}
                       </p>
                     </div>
                   ) : (
                     <div>
                       <p className="text-3xl font-bold text-gray-900">
-                        ${parseFloat(imageData.priceUsd).toFixed(2)}
+                        {getFormattedPrice(imageData.priceEth, ethPrice, 'usd')}
                       </p>
                       <p className="text-xs text-gray-600 mt-1">
-                        ≈ {parseFloat(imageData.priceEth).toFixed(4)} ETH
+                        ≈ {getFormattedPrice(imageData.priceEth, ethPrice, 'eth')}
                       </p>
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={() => setPriceInETH(!priceInETH)}
-                  className="px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition"
-                >
-                  {priceInETH ? "USD" : "ETH"}
-                </button>
               </div>
             </div>
 
@@ -548,16 +549,27 @@ const ImageDetail = () => {
                   />
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                    {/* Uploader Info on Hover */}
-                    <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                      <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">
-                          {image.sellerId?.name?.charAt(0).toUpperCase()}
+                    {/* Uploader Info & Price */}
+                    <div className="flex flex-col gap-2 w-full">
+                      {/* Price */}
+                      {image.priceEth && (
+                        <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                          <p className="text-xs font-semibold text-gray-900">
+                            {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                          </p>
+                        </div>
+                      )}
+                      {/* Uploader Info */}
+                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 truncate">
+                          {image.sellerId?.name || "Unknown"}
                         </span>
                       </div>
-                      <span className="text-xs font-medium text-gray-900 truncate">
-                        {image.sellerId?.name || "Unknown"}
-                      </span>
                     </div>
                     {/* Like & Menu Icons */}
                     <div className="flex gap-2">
@@ -641,13 +653,24 @@ const ImageDetail = () => {
                   />
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                    {/* Category/Type Badge */}
-                    <div className="bg-white/90 rounded px-2 py-1">
-                      <span className="text-xs font-medium text-gray-900">
-                        {image.category || "Photo"}
-                      </span>
+                    {/* Price & Uploader Info */}
+                    <div className="flex flex-col gap-2 w-full">
+                      {/* Price */}
+                      {image.priceEth && (
+                        <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                          <p className="text-xs font-semibold text-gray-900">
+                            {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                          </p>
+                        </div>
+                      )}
+                      {/* Category Badge */}
+                      <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                        <span className="text-xs font-medium text-gray-900">
+                          {image.category || "Photo"}
+                        </span>
+                      </div>
                     </div>
-                    {/* Like & Menu Icons */}
+                    {/* Action Buttons */}
                     <div className="flex gap-2">
                       <button
                         onClick={(e) => {

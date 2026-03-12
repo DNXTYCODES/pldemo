@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
 const Favorites = () => {
@@ -58,39 +57,38 @@ const Favorites = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-gray-900 flex items-center justify-center">
         <p className="text-xl">Loading favorites...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-20">
+    <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Title text1="My" text2="Favorites" />
 
         {error && (
-          <div className="mt-6 p-4 bg-red-900 border border-red-700 rounded text-red-200">
+          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded text-red-800">
             {error}
           </div>
         )}
 
         {favorites.length === 0 ? (
-          <div className="mt-12 text-center py-16 bg-gray-800 rounded-lg border border-gray-700">
+          <div className="mt-12 text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
             <svg
-              className="w-16 h-16 mx-auto text-gray-500 mb-4"
+              className="w-16 h-16 mx-auto text-gray-400 mb-4"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
-            <p className="text-2xl font-bold mb-4">No Favorites Yet</p>
-            <p className="text-gray-400 mb-8">
+            <p className="text-2xl font-bold mb-4 text-gray-900">No Favorites Yet</p>
+            <p className="text-gray-600 mb-8">
               Add photos to your favorites while browsing
             </p>
             <button
               onClick={() => navigate("/collection")}
-              className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium"
+              className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
             >
               Browse Gallery
             </button>

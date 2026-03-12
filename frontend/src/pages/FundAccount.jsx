@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-import Title from "../components/Title";
 import { assets } from "../assets/assets";
 
 const FundAccount = () => {
@@ -128,27 +127,26 @@ const FundAccount = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-20">
+    <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        <Title text1="Fund Your" text2="Account" />
 
         <div className="mt-12 space-y-8">
           {/* Step-by-step instructions */}
-          <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-6">
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
+            <h2 className="text-2xl font-bold text-amber-600 mb-6">
               How to Fund Your Account
             </h2>
 
             <div className="space-y-6">
               {/* Step 1: Enter Amount */}
-              <div className="bg-gray-700 rounded p-4">
+              <div className="bg-white rounded border border-gray-200 p-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-gray-900 flex-shrink-0">
+                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0">
                     1
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Enter Amount</h3>
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Enter the amount of Ethereum (ETH) you want to deposit
                       into your account.
                     </p>
@@ -157,16 +155,16 @@ const FundAccount = () => {
               </div>
 
               {/* Step 2: Send ETH */}
-              <div className="bg-gray-700 rounded p-4">
+              <div className="bg-white rounded border border-gray-200 p-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-gray-900 flex-shrink-0">
+                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0">
                     2
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
                       Send Ethereum
                     </h3>
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Send the exact amount of ETH to the address provided below
                       using any Ethereum wallet (MetaMask, Ledger, etc.)
                     </p>
@@ -175,16 +173,16 @@ const FundAccount = () => {
               </div>
 
               {/* Step 3: Admin Confirmation */}
-              <div className="bg-gray-700 rounded p-4">
+              <div className="bg-white rounded border border-gray-200 p-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-gray-900 flex-shrink-0">
+                  <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0">
                     3
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
                       Admin Confirmation
                     </h3>
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Our team will verify the transaction and add funds to your
                       account. You'll receive a notification once approved.
                     </p>
@@ -195,20 +193,20 @@ const FundAccount = () => {
           </div>
 
           {/* Deposit Form */}
-          <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-            <h3 className="text-xl font-bold mb-6">Initiate Deposit</h3>
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
+            <h3 className="text-xl font-bold mb-6 text-gray-900">Initiate Deposit</h3>
 
             {/* ETH Price Display */}
-            <div className="mb-6 p-4 bg-gradient-to-r from-amber-900 to-gray-700 rounded border border-amber-700">
-              <p className="text-sm text-gray-300 mb-2">Current ETH Price</p>
-              <p className="text-2xl font-bold text-amber-400">
+            <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-amber-100 rounded border border-amber-200">
+              <p className="text-sm text-gray-600 mb-2">Current ETH Price</p>
+              <p className="text-2xl font-bold text-amber-600">
                 ${currentEthPrice.toFixed(2)} USD
               </p>
             </div>
 
             {/* Amount Input */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2 text-gray-900">
                 Amount to Deposit (ETH)
               </label>
               <input
@@ -216,7 +214,7 @@ const FundAccount = () => {
                 placeholder="Enter amount in ETH"
                 value={ethAmount}
                 onChange={(e) => setEthAmount(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-amber-400"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                 min="0"
                 step="0.01"
                 disabled={loading}
@@ -225,21 +223,21 @@ const FundAccount = () => {
 
             {/* USD Conversion Display */}
             {ethAmount && (
-              <div className="mb-6 p-4 bg-gray-700 rounded border border-gray-600">
-                <p className="text-sm text-gray-300">USD Equivalent</p>
-                <p className="text-2xl font-bold text-green-400">${usdValue}</p>
+              <div className="mb-6 p-4 bg-green-50 rounded border border-green-200">
+                <p className="text-sm text-gray-600">USD Equivalent</p>
+                <p className="text-2xl font-bold text-green-600">${usdValue}</p>
               </div>
             )}
 
             {/* Error/Success Messages */}
             {error && (
-              <div className="mb-4 p-4 bg-red-900 border border-red-700 rounded text-red-200">
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-800">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-4 p-4 bg-green-900 border border-green-700 rounded text-green-200">
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded text-green-800">
                 {success}
               </div>
             )}
@@ -255,14 +253,14 @@ const FundAccount = () => {
           </div>
 
           {/* Deposit Address */}
-          <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-            <h3 className="text-xl font-bold mb-6">Deposit Address</h3>
-            <p className="text-gray-300 text-sm mb-4">
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
+            <h3 className="text-xl font-bold mb-6 text-gray-900">Deposit Address</h3>
+            <p className="text-gray-600 text-sm mb-4">
               Send Ethereum to this address:
             </p>
 
-            <div className="mb-4 p-4 bg-gray-700 rounded border border-amber-600 flex items-center justify-between gap-4">
-              <code className="text-amber-400 font-mono text-sm break-all">
+            <div className="mb-4 p-4 bg-gray-100 rounded border border-amber-300 flex items-center justify-between gap-4">
+              <code className="text-amber-600 font-mono text-sm break-all">
                 {DEPOSIT_ADDRESS}
               </code>
               <button
@@ -273,8 +271,8 @@ const FundAccount = () => {
               </button>
             </div>
 
-            <div className="bg-yellow-900 border border-yellow-700 p-4 rounded text-yellow-200 text-sm">
-              <p className="font-semibold mb-2">⚠️ Important:</p>
+            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded text-yellow-800 text-sm">
+              <p className="font-semibold mb-2 text-yellow-900">⚠️ Important:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Only send Ethereum (ETH) to this address</li>
                 <li>Sending other tokens may result in permanent loss</li>
@@ -285,15 +283,15 @@ const FundAccount = () => {
           </div>
 
           {/* Recent Deposits */}
-          <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-            <h3 className="text-xl font-bold mb-6">Pending Deposits</h3>
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
+            <h3 className="text-xl font-bold mb-6 text-gray-900">Pending Deposits</h3>
 
             {loadingDeposits ? (
-              <div className="text-center py-4 text-gray-400">
+              <div className="text-center py-4 text-gray-500">
                 Loading deposits...
               </div>
             ) : deposits.length === 0 ? (
-              <div className="text-center py-4 text-gray-400">
+              <div className="text-center py-4 text-gray-500">
                 No pending deposits at this time
               </div>
             ) : (

@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-import Title from "../components/Title";
 
 const MySales = () => {
   const { navigate } = useContext(ShopContext);
@@ -154,16 +153,15 @@ const MySales = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-gray-900 flex items-center justify-center">
         <p className="text-xl">Loading your images...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-20">
+    <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Title text1="My" text2="Sales" />
 
         {/* Tabs */}
         <div className="flex gap-4 mt-8 mb-6 border-b border-gray-700">
@@ -203,9 +201,9 @@ const MySales = () => {
         {!showPending ? (
           <>
             {images.length === 0 ? (
-              <div className="mt-12 text-center py-16 bg-gray-800 rounded-lg border border-gray-700">
+              <div className="mt-12 text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
                 <svg
-                  className="w-16 h-16 mx-auto text-gray-500 mb-4"
+                  className="w-16 h-16 mx-auto text-gray-400 mb-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -217,13 +215,13 @@ const MySales = () => {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-2xl font-bold mb-4">No Images Yet</p>
-                <p className="text-gray-400 mb-8">
+                <p className="text-2xl font-bold mb-4 text-gray-900">No Images Yet</p>
+                <p className="text-gray-600 mb-8">
                   Start selling your photos by uploading images
                 </p>
                 <button
                   onClick={() => navigate("/upload-photo")}
-                  className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium"
+                  className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
                 >
                   Upload Your First Photo
                 </button>
@@ -233,10 +231,10 @@ const MySales = () => {
                 {images.map((image) => (
                   <div
                     key={image._id}
-                    className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-amber-500 transition-colors"
+                    className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-amber-500 transition-colors"
                   >
                     {/* Image Thumbnail */}
-                    <div className="relative h-48 bg-gray-700">
+                    <div className="relative h-48 bg-gray-100">
                       <img
                         src={image.thumbnailUrl || image.imageUrl}
                         alt={image.title}
@@ -245,8 +243,8 @@ const MySales = () => {
                       <span
                         className={`absolute top-2 right-2 px-3 py-1 rounded text-sm font-medium ${
                           image.status === "active"
-                            ? "bg-green-600 text-white"
-                            : "bg-gray-600 text-gray-300"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-200 text-gray-700"
                         }`}
                       >
                         {image.status.charAt(0).toUpperCase() +
@@ -256,23 +254,23 @@ const MySales = () => {
 
                     {/* Image Info */}
                     <div className="p-4">
-                      <h3 className="font-bold text-lg mb-2 truncate">
+                      <h3 className="font-bold text-lg mb-2 truncate text-gray-900">
                         {image.title}
                       </h3>
 
                       {/* Stats */}
                       <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
-                        <div className="bg-gray-700 p-2 rounded">
-                          <p className="text-gray-400">Views</p>
-                          <p className="font-bold">{image.views}</p>
+                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
+                          <p className="text-gray-600">Views</p>
+                          <p className="font-bold text-gray-900">{image.views}</p>
                         </div>
-                        <div className="bg-gray-700 p-2 rounded">
-                          <p className="text-gray-400">Purchases</p>
-                          <p className="font-bold">{image.purchaseCount}</p>
+                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
+                          <p className="text-gray-600">Purchases</p>
+                          <p className="font-bold text-gray-900">{image.purchaseCount}</p>
                         </div>
-                        <div className="bg-gray-700 p-2 rounded">
-                          <p className="text-gray-400">Favorites</p>
-                          <p className="font-bold">{image.favoriteCount}</p>
+                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
+                          <p className="text-gray-600">Favorites</p>
+                          <p className="font-bold text-gray-900">{image.favoriteCount}</p>
                         </div>
                       </div>
 
@@ -286,32 +284,32 @@ const MySales = () => {
                             placeholder="New price (ETH)"
                             step="0.001"
                             min="0"
-                            className="flex-1 px-2 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-amber-400"
+                            className="flex-1 px-2 py-2 bg-white border border-gray-300 rounded text-gray-900 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                           />
                           <button
                             onClick={() => handleUpdatePrice(image._id)}
-                            className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded text-sm font-medium"
+                            className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded text-sm font-medium text-white"
                           >
                             Save
                           </button>
                           <button
                             onClick={() => setEditingPrice(null)}
-                            className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm font-medium"
+                            className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium text-gray-900"
                           >
                             Cancel
                           </button>
                         </div>
                       ) : (
-                        <div className="mb-4 p-3 bg-gradient-to-r from-amber-900 to-gray-700 rounded">
-                          <p className="text-sm text-gray-300 mb-1">
+                        <div className="mb-4 p-3 bg-gradient-to-r from-amber-50 to-amber-100 rounded border border-amber-200">
+                          <p className="text-sm text-gray-600 mb-1">
                             Current Price
                           </p>
                           <div className="flex justify-between items-center">
                             <div>
-                              <p className="font-bold text-amber-400">
+                              <p className="font-bold text-amber-600">
                                 {parseFloat(image.priceEth).toFixed(8)} ETH
                               </p>
-                              <p className="text-xs text-gray-400">
+                              <p className="text-xs text-gray-500">
                                 ${parseFloat(image.priceUsd).toFixed(2)}
                               </p>
                             </div>
@@ -320,7 +318,7 @@ const MySales = () => {
                                 setEditingPrice(image._id);
                                 setNewPrice(image.priceEth);
                               }}
-                              className="text-amber-400 hover:text-amber-300 text-sm"
+                              className="text-amber-600 hover:text-amber-700 text-sm font-medium"
                             >
                               Edit
                             </button>
@@ -332,13 +330,13 @@ const MySales = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={() => navigate(`/product/${image._id}`)}
-                          className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm font-medium"
+                          className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded text-sm font-medium text-white"
                         >
                           View
                         </button>
                         <button
                           onClick={() => handleDeleteImage(image._id)}
-                          className="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded text-sm font-medium"
+                          className="flex-1 py-2 bg-red-500 hover:bg-red-600 rounded text-sm font-medium text-white"
                         >
                           Delete
                         </button>
@@ -353,7 +351,7 @@ const MySales = () => {
               <div className="mt-12 text-center">
                 <button
                   onClick={() => navigate("/upload-photo")}
-                  className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium"
+                  className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
                 >
                   Upload Another Photo
                 </button>
@@ -364,12 +362,12 @@ const MySales = () => {
           <div>
             {loadingPending ? (
               <div className="text-center py-12">
-                <p className="text-gray-400">Loading pending uploads...</p>
+                <p className="text-gray-500">Loading pending uploads...</p>
               </div>
             ) : pendingImages.length === 0 ? (
-              <div className="mt-12 text-center py-16 bg-gray-800 rounded-lg border border-gray-700">
+              <div className="mt-12 text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
                 <svg
-                  className="w-16 h-16 mx-auto text-gray-500 mb-4"
+                  className="w-16 h-16 mx-auto text-gray-400 mb-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -381,8 +379,8 @@ const MySales = () => {
                     d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p className="text-2xl font-bold mb-4">No Pending Uploads</p>
-                <p className="text-gray-400 mb-8">
+                <p className="text-2xl font-bold mb-4 text-gray-900">No Pending Uploads</p>
+                <p className="text-gray-600 mb-8">
                   All your uploads have been processed
                 </p>
               </div>
@@ -391,7 +389,7 @@ const MySales = () => {
                 {pendingImages.map((image) => (
                   <div
                     key={image._id}
-                    className="p-6 bg-gray-800 border border-yellow-600 rounded-lg hover:border-yellow-500 transition-colors"
+                    className="p-6 bg-white border border-amber-300 rounded-lg hover:border-amber-400 transition-colors"
                   >
                     <div className="grid grid-cols-4 gap-6">
                       {/* Image Thumbnail */}

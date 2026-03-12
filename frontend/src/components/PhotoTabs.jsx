@@ -1,9 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
+import { getFormattedPrice } from "../utils/ethPrice";
 
 const PhotoTabs = () => {
-  const { backendUrl } = useContext(ShopContext);
+  const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("explore");
   const [allImages, setAllImages] = useState([]);
@@ -154,7 +155,9 @@ const PhotoTabs = () => {
         {/* Explore Tab */}
         {activeTab === "explore" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Explore</h3>
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">
+              Explore
+            </h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
@@ -175,16 +178,27 @@ const PhotoTabs = () => {
                     />
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                      {/* Uploader Info */}
-                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                      {/* Uploader Info & Price */}
+                      <div className="flex flex-col gap-2 w-full">
+                        {/* Price */}
+                        {image.priceEth && (
+                          <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                            <p className="text-xs font-semibold text-gray-900">
+                              {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                            </p>
+                          </div>
+                        )}
+                        {/* Uploader Info */}
+                        <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                          <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              {image.sellerId?.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-gray-900 truncate">
+                            {image.sellerId?.name || "Unknown"}
                           </span>
                         </div>
-                        <span className="text-xs font-medium text-gray-900 truncate">
-                          {image.sellerId?.name || "Unknown"}
-                        </span>
                       </div>
                       {/* Action Buttons */}
                       <div className="flex gap-2">
@@ -241,7 +255,9 @@ const PhotoTabs = () => {
         {/* For You Tab */}
         {activeTab === "for-you" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Photography Categories</h3>
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">
+              Photography Categories
+            </h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
@@ -268,16 +284,29 @@ const PhotoTabs = () => {
                           />
                           {/* Hover Overlay */}
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                            {/* Uploader Info */}
-                            <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                              <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">
-                                  {image.sellerId?.name?.charAt(0).toUpperCase()}
+                            {/* Uploader Info & Price */}
+                            <div className="flex flex-col gap-2 w-full">
+                              {/* Price */}
+                              {image.priceEth && (
+                                <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                                  <p className="text-xs font-semibold text-gray-900">
+                                    {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                                  </p>
+                                </div>
+                              )}
+                              {/* Uploader Info */}
+                              <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                                <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                                  <span className="text-white text-xs font-bold">
+                                    {image.sellerId?.name
+                                      ?.charAt(0)
+                                      .toUpperCase()}
+                                  </span>
+                                </div>
+                                <span className="text-xs font-medium text-gray-900 truncate">
+                                  {image.sellerId?.name || "Unknown"}
                                 </span>
                               </div>
-                              <span className="text-xs font-medium text-gray-900 truncate">
-                                {image.sellerId?.name || "Unknown"}
-                              </span>
                             </div>
                             {/* Action Buttons */}
                             <div className="flex gap-2">
@@ -337,7 +366,9 @@ const PhotoTabs = () => {
         {/* Trending Tab */}
         {activeTab === "trending" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Trending This Week</h3>
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">
+              Trending This Week
+            </h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
@@ -358,16 +389,27 @@ const PhotoTabs = () => {
                     />
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                      {/* Uploader Info */}
-                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                      {/* Uploader Info & Price */}
+                      <div className="flex flex-col gap-2 w-full">
+                        {/* Price */}
+                        {image.priceEth && (
+                          <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                            <p className="text-xs font-semibold text-gray-900">
+                              {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                            </p>
+                          </div>
+                        )}
+                        {/* Uploader Info */}
+                        <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                          <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              {image.sellerId?.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-gray-900 truncate">
+                            {image.sellerId?.name || "Unknown"}
                           </span>
                         </div>
-                        <span className="text-xs font-medium text-gray-900 truncate">
-                          {image.sellerId?.name || "Unknown"}
-                        </span>
                       </div>
                       {/* Action Buttons */}
                       <div className="flex gap-2">
@@ -428,7 +470,9 @@ const PhotoTabs = () => {
         {/* Recently Added Tab */}
         {activeTab === "recent" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">Recently Added</h3>
+            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">
+              Recently Added
+            </h3>
 
             {loading ? (
               <div className="text-center py-8 text-gray-500">
@@ -449,16 +493,27 @@ const PhotoTabs = () => {
                     />
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                      {/* Uploader Info */}
-                      <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            {image.sellerId?.name?.charAt(0).toUpperCase()}
+                      {/* Uploader Info & Price */}
+                      <div className="flex flex-col gap-2 w-full">
+                        {/* Price */}
+                        {image.priceEth && (
+                          <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                            <p className="text-xs font-semibold text-gray-900">
+                              {getFormattedPrice(image.priceEth, ethPrice, currencyPreference)}
+                            </p>
+                          </div>
+                        )}
+                        {/* Uploader Info */}
+                        <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                          <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              {image.sellerId?.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-gray-900 truncate">
+                            {image.sellerId?.name || "Unknown"}
                           </span>
                         </div>
-                        <span className="text-xs font-medium text-gray-900 truncate">
-                          {image.sellerId?.name || "Unknown"}
-                        </span>
                       </div>
                       {/* Action Buttons */}
                       <div className="flex gap-2">

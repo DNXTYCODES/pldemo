@@ -1,42 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-import Title from "../components/Title";
+import { getFormattedPrice } from "../utils/ethPrice";
 
 const Profile = () => {
-  const { navigate, backendUrl } = useContext(ShopContext);
+  const { navigate, backendUrl, ethPrice, currencyPreference } = useContext(ShopContext);
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [error, setError] = useState("");
-  const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");
-
-  useEffect(() => {
-    // Fetch ETH price
-    const fetchEthPrice = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.ethereum && data.ethereum.usd) {
-          setCurrentEthPrice(data.ethereum.usd);
-        } else {
-          setCurrentEthPrice(3000);
-        }
-      } catch (err) {
-        console.error("Error fetching ETH price:", err);
-        setCurrentEthPrice(3000); // Fallback price
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
 
   useEffect(() => {
     const fetchProfileAndStats = async () => {
@@ -203,8 +177,6 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        <Title text1="My" text2="Profile" />
-
         {error && (
           <div className="mt-6 p-4 bg-red-100 border border-red-400 rounded text-red-800">
             {error}
@@ -256,14 +228,34 @@ const Profile = () => {
           <p className="text-gray-600 text-sm mb-2">Account Balance</p>
           <div className="flex items-baseline gap-4">
             <div>
-              <p className="text-4xl font-bold text-amber-600">
-                {parseFloat(user.balance || 0).toFixed(8)}
-              </p>
-              <p className="text-gray-600 text-sm">ETH</p>
+              {currencyPreference === 'eth' ? (
+                <>
+                  <p className="text-4xl font-bold text-amber-600">
+                    {getFormattedPrice(user.balance || 0, ethPrice, 'eth')}
+                  </p>
+                  <p className="text-gray-600 text-sm">ETH</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-4xl font-bold text-green-600">
+                    {getFormattedPrice(user.balance || 0, ethPrice, 'usd')}
+                  </p>
+                  <p className="text-gray-600 text-sm">USD</p>
+                </>
+              )}
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-600">${usdBalance}</p>
-              <p className="text-gray-600 text-sm">USD</p>
+              {currencyPreference === 'eth' ? (
+                <>
+                  <p className="text-2xl font-bold text-green-600">{getFormattedPrice(user.balance || 0, ethPrice, 'usd')}</p>
+                  <p className="text-gray-600 text-sm">USD Equivalent</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-amber-600">{getFormattedPrice(user.balance || 0, ethPrice, 'eth')}</p>
+                  <p className="text-gray-600 text-sm">ETH Equivalent</p>
+                </>
+              )}
             </div>
           </div>
         </div>

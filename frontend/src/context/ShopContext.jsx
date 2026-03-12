@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { fetchCurrentEthPrice } from "../utils/ethPrice";
 
 export const ShopContext = createContext();
 
@@ -25,6 +26,15 @@ const ShopContextProvider = (props) => {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
 
+  // Currency preference state (default: 'eth')
+  const [currencyPreference, setCurrencyPreference] = useState(() => {
+    const saved = localStorage.getItem("currencyPreference");
+    return saved || "eth";
+  });
+
+  // ETH price in USD
+  const [ethPrice, setEthPrice] = useState(3000);
+
   // Payment status tracking
   const [paymentStatus, setPaymentStatus] = useState(null);
   
@@ -32,6 +42,31 @@ const ShopContextProvider = (props) => {
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const popupMessageRef = useRef("");
+
+  // Keep ref updated
+  useEffect(() => {
+    popupMessageRef.current = popupMessage;
+  }, [popupMessage]);
+
+  // Fetch initial ETH price and set up interval
+  useEffect(() => {
+    const initEthPrice = async () => {
+      const price = await fetchCurrentEthPrice();
+      setEthPrice(price);
+    };
+
+    initEthPrice();
+
+    // Refresh ETH price every 5 minutes
+    const priceInterval = setInterval(initEthPrice, 5 * 60 * 1000);
+
+    return () => clearInterval(priceInterval);
+  }, []);
+
+  // Save currency preference to localStorage
+  useEffect(() => {
+    localStorage.setItem("currencyPreference", currencyPreference);
+  }, [currencyPreference]);
 
   // Keep ref updated
   useEffect(() => {
@@ -361,6 +396,10 @@ const ShopContextProvider = (props) => {
     setSearch,
     showSearch,
     setShowSearch,
+    // Currency and ETH price
+    ethPrice,
+    currencyPreference,
+    setCurrencyPreference,
     cartItems,
     addToCart,
     setCartItems,

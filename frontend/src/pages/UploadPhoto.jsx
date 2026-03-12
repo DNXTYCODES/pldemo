@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-import Title from "../components/Title";
 
 const UploadPhoto = () => {
   const { navigate } = useContext(ShopContext);
@@ -180,13 +179,12 @@ const UploadPhoto = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-20">
+    <div className="min-h-screen bg-white text-gray-900 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
-        <Title text1="Upload" text2="Photo for Sale" />
 
         <form onSubmit={handleSubmit} className="mt-12 space-y-6">
           {/* Image Upload Area */}
-          <div className="bg-gray-800 rounded-lg border-2 border-dashed border-gray-600 p-8">
+          <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8">
             {imagePreview ? (
               <div className="space-y-4">
                 <img
@@ -197,7 +195,7 @@ const UploadPhoto = () => {
                 <button
                   type="button"
                   onClick={() => document.getElementById("imageInput").click()}
-                  className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 rounded font-medium"
+                  className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
                 >
                   Change Image
                 </button>
@@ -220,10 +218,10 @@ const UploadPhoto = () => {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-xl font-semibold mb-2">
+                <p className="text-xl font-semibold mb-2 text-gray-900">
                   Click to upload image
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-500 text-sm">
                   PNG, JPG, WebP up to 10MB
                 </p>
               </div>
@@ -239,8 +237,8 @@ const UploadPhoto = () => {
 
           {/* Title (Required) */}
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Photo Title <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium mb-2 text-gray-900">
+              Photo Title <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
@@ -248,14 +246,14 @@ const UploadPhoto = () => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Enter photo title"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-900">
               Description
             </label>
             <textarea
@@ -264,20 +262,20 @@ const UploadPhoto = () => {
               onChange={handleInputChange}
               placeholder="Describe your photo (optional)"
               rows="4"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Category <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium mb-2 text-gray-900">
+              Category <span className="text-red-600">*</span>
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
               required
             >
               <option value="">Select a category</option>
@@ -291,21 +289,21 @@ const UploadPhoto = () => {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium mb-2">Tags</label>
+            <label className="block text-sm font-medium mb-2 text-gray-900">Tags</label>
             <input
               type="text"
               name="tags"
               value={formData.tags}
               onChange={handleInputChange}
               placeholder="Separate tags with commas (e.g. sunset, mountain, nature)"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             />
           </div>
 
           {/* Price (Required) */}
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Price (ETH) <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium mb-2 text-gray-900">
+              Price (ETH) <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <input
@@ -316,21 +314,21 @@ const UploadPhoto = () => {
                 placeholder="0.01"
                 step="0.001"
                 min="0"
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-amber-400"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                 required
               />
             </div>
 
             {/* USD Conversion */}
             {formData.priceEth && (
-              <div className="mt-2 p-3 bg-gray-700 rounded">
-                <p className="text-sm text-gray-300">
+              <div className="mt-2 p-3 bg-amber-50 rounded border border-amber-200">
+                <p className="text-sm text-gray-600">
                   Equivalent to:{" "}
-                  <span className="text-amber-400 font-semibold">
+                  <span className="text-amber-600 font-semibold">
                     ${usdValue} USD
                   </span>
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-500 mt-1">
                   1 ETH = ${currentEthPrice.toFixed(2)}
                 </p>
               </div>
@@ -339,14 +337,14 @@ const UploadPhoto = () => {
 
           {/* Usage Rights */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-900">
               Usage Rights
             </label>
             <select
               name="usageRights"
               value={formData.usageRights}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             >
               <option value="personal_use">Personal Use Only</option>
               <option value="commercial_use">Commercial Use Only</option>
@@ -356,14 +354,14 @@ const UploadPhoto = () => {
 
           {/* License Type */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-900">
               License Type
             </label>
             <select
               name="licenseType"
               value={formData.licenseType}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             >
               <option value="exclusive">Exclusive</option>
               <option value="non-exclusive">Non-Exclusive</option>
@@ -372,14 +370,14 @@ const UploadPhoto = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="p-4 bg-red-900 border border-red-700 rounded text-red-200">
+            <div className="p-4 bg-red-50 border border-red-200 rounded text-red-800">
               {error}
             </div>
           )}
 
           {/* Success Message */}
           {success && (
-            <div className="p-4 bg-green-900 border border-green-700 rounded text-green-200">
+            <div className="p-4 bg-green-50 border border-green-200 rounded text-green-800">
               {success}
             </div>
           )}
@@ -388,16 +386,16 @@ const UploadPhoto = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-semibold text-lg transition-colors"
+            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-gray-400 disabled:cursor-not-allowed rounded font-semibold text-lg transition-colors text-white"
           >
             {loading ? "Uploading..." : "Upload & List Photo"}
           </button>
         </form>
 
         {/* Info Box */}
-        <div className="mt-12 p-6 bg-blue-900 border border-blue-700 rounded">
-          <h3 className="font-semibold mb-3 text-blue-300">Tips for Success</h3>
-          <ul className="text-sm text-blue-200 space-y-2">
+        <div className="mt-12 p-6 bg-blue-50 border border-blue-200 rounded">
+          <h3 className="font-semibold mb-3 text-blue-900">Tips for Success</h3>
+          <ul className="text-sm text-blue-800 space-y-2">
             <li>✓ Use high-quality, original images</li>
             <li>✓ Add descriptive titles and tags to improve visibility</li>
             <li>✓ Price competitively based on image quality</li>
