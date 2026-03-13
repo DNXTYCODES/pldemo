@@ -17,7 +17,7 @@ const Categories = () => {
           `${backendUrl}/api/images/search?limit=1000`,
         );
         const data = await response.json();
-        
+
         if (data.success && data.images && data.images.length > 0) {
           // Extract unique categories from images
           const uniqueCategoriesSet = new Set();
@@ -26,7 +26,7 @@ const Categories = () => {
               uniqueCategoriesSet.add(image.category);
             }
           });
-          
+
           // Convert to array of category objects
           const uniqueCategories = Array.from(uniqueCategoriesSet)
             .sort()
@@ -35,7 +35,7 @@ const Categories = () => {
               count: data.images.filter((img) => img.category === categoryName)
                 .length,
             }));
-          
+
           setCategories(uniqueCategories);
           // Fetch images for each category
           uniqueCategories.forEach((category) => {

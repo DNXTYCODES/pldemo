@@ -2,41 +2,15 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const MySales = () => {
-  const { navigate, backendUrl } = useContext(ShopContext);
+  const { navigate, backendUrl, ethPrice } = useContext(ShopContext);
   const [images, setImages] = useState([]);
   const [pendingImages, setPendingImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingPending, setLoadingPending] = useState(false);
   const [error, setError] = useState("");
-  const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [editingPrice, setEditingPrice] = useState(null);
   const [newPrice, setNewPrice] = useState("");
   const [showPending, setShowPending] = useState(false);
-
-  useEffect(() => {
-    // Fetch ETH price
-    const fetchEthPrice = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.ethereum && data.ethereum.usd) {
-          setCurrentEthPrice(data.ethereum.usd);
-        } else {
-          setCurrentEthPrice(3000);
-        }
-      } catch (err) {
-        console.error("Error fetching ETH price:", err);
-        setCurrentEthPrice(3000);
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
 
   useEffect(() => {
     const fetchMyImages = async () => {
@@ -136,7 +110,7 @@ const MySales = () => {
               ? {
                   ...img,
                   priceEth: newPrice,
-                  priceUsd: (parseFloat(newPrice) * currentEthPrice).toFixed(2),
+                  priceUsd: (parseFloat(newPrice) * ethPrice).toFixed(2),
                 }
               : img,
           ),

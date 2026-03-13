@@ -13,6 +13,7 @@ import reviewRouter from "./routes/reviewRoute.js";
 import newsletterRouter from "./routes/newsletterRoute.js"; // Import newsletter route
 import imageRouter from "./routes/imageRoute.js"; // Import image route
 import depositRouter from "./routes/depositRoute.js"; // Import deposit route
+import purchaseRouter from "./routes/purchaseRoute.js"; // Import purchase route
 
 // App Config
 const app = express();
@@ -35,6 +36,7 @@ app.use("/api/review", reviewRouter);
 // app.use("/api/restaurant-review", restaurantReviewRoute); // COMMENTED OUT - legacy restaurant review endpoints
 app.use("/api/images", imageRouter); // Add image route
 app.use("/api/deposit", depositRouter); // Add deposit route
+app.use("/api/purchase", purchaseRouter); // Add purchase route
 
 app.get("/", (req, res) => {
   res.send("API Working");

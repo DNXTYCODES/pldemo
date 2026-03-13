@@ -8,7 +8,7 @@ const Explore = () => {
   const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   const [images, setImages] = useState([]);
   const [filteredImages, setFilteredImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -27,16 +27,16 @@ const Explore = () => {
         const url = `${backendUrl}/api/images/search?limit=1000`;
         const response = await fetch(url);
         const data = await response.json();
-        
+
         if (!response.ok) {
           console.error(`HTTP error! status: ${response.status}`);
           setImages([]);
           return;
         }
-        
+
         if (data.success && data.images) {
           setImages(data.images);
-          
+
           // Extract unique categories
           const uniqueCategoriesSet = new Set();
           data.images.forEach((image) => {
@@ -44,7 +44,7 @@ const Explore = () => {
               uniqueCategoriesSet.add(image.category);
             }
           });
-          
+
           const categoryOptions = [
             { value: "all", label: "All Categories" },
             ...Array.from(uniqueCategoriesSet)
@@ -77,17 +77,19 @@ const Explore = () => {
       filtered = filtered.filter(
         (image) =>
           image.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          image.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          image.description
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           image.tags?.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
-          )
+            tag.toLowerCase().includes(searchQuery.toLowerCase()),
+          ),
       );
     }
 
     // Category filter
     if (selectedCategory !== "all") {
       filtered = filtered.filter(
-        (image) => image.category === selectedCategory
+        (image) => image.category === selectedCategory,
       );
     }
 
@@ -97,16 +99,22 @@ const Explore = () => {
         filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       case "trending":
-        filtered.sort((a, b) => (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0));
+        filtered.sort(
+          (a, b) => (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0),
+        );
         break;
       case "popular":
         filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
         break;
       case "price-low":
-        filtered.sort((a, b) => parseFloat(a.priceUsd || 0) - parseFloat(b.priceUsd || 0));
+        filtered.sort(
+          (a, b) => parseFloat(a.priceUsd || 0) - parseFloat(b.priceUsd || 0),
+        );
         break;
       case "price-high":
-        filtered.sort((a, b) => parseFloat(b.priceUsd || 0) - parseFloat(a.priceUsd || 0));
+        filtered.sort(
+          (a, b) => parseFloat(b.priceUsd || 0) - parseFloat(a.priceUsd || 0),
+        );
         break;
       default:
         break;
@@ -170,7 +178,8 @@ const Explore = () => {
           {/* Results Counter */}
           {!loading && (
             <p className="text-sm text-gray-600 mb-6">
-              Showing <span className="font-semibold">{filteredImages.length}</span> of{" "}
+              Showing{" "}
+              <span className="font-semibold">{filteredImages.length}</span> of{" "}
               <span className="font-semibold">{images.length}</span> images
             </p>
           )}
@@ -300,7 +309,9 @@ const Explore = () => {
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <p className="text-gray-500 text-lg font-medium">No images found</p>
+              <p className="text-gray-500 text-lg font-medium">
+                No images found
+              </p>
               <p className="text-gray-400 text-sm mt-2">
                 Try adjusting your filters or search terms
               </p>

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const UploadPhoto = () => {
-  const { navigate } = useContext(ShopContext);
+  const { navigate, ethPrice } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -18,7 +18,6 @@ const UploadPhoto = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [usdValue, setUsdValue] = useState("0");
 
   const categories = [
@@ -35,38 +34,13 @@ const UploadPhoto = () => {
   ];
 
   useEffect(() => {
-    // Fetch current ETH price
-    const fetchEthPrice = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.ethereum && data.ethereum.usd) {
-          setCurrentEthPrice(data.ethereum.usd);
-        } else {
-          setCurrentEthPrice(3000);
-        }
-      } catch (err) {
-        console.error("Error fetching ETH price:", err);
-        setCurrentEthPrice(3000);
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
-
-  useEffect(() => {
-    if (formData.priceEth && currentEthPrice) {
-      const usd = (parseFloat(formData.priceEth) * currentEthPrice).toFixed(2);
+    if (formData.priceEth && ethPrice) {
+      const usd = (parseFloat(formData.priceEth) * ethPrice).toFixed(2);
       setUsdValue(usd);
     } else {
       setUsdValue("0");
     }
-  }, [formData.priceEth, currentEthPrice]);
+  }, [formData.priceEth, ethPrice]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -330,7 +304,7 @@ const UploadPhoto = () => {
                   </span>
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  1 ETH = ${currentEthPrice.toFixed(2)}
+                  1 ETH = ${ethPrice.toFixed(2)}
                 </p>
               </div>
             )}

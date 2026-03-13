@@ -3,13 +3,12 @@ import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 
 const FundAccount = () => {
-  const { navigate, backendUrl, token } = useContext(ShopContext);
+  const { navigate, backendUrl, token, ethPrice } = useContext(ShopContext);
   const [ethAmount, setEthAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [deposits, setDeposits] = useState([]);
-  const [currentEthPrice, setCurrentEthPrice] = useState(0);
   const [usdValue, setUsdValue] = useState("0");
   const [loadingDeposits, setLoadingDeposits] = useState(false);
 
@@ -43,43 +42,18 @@ const FundAccount = () => {
   };
 
   useEffect(() => {
-    // Fetch current ETH price
-    const fetchEthPrice = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.ethereum && data.ethereum.usd) {
-          setCurrentEthPrice(data.ethereum.usd);
-        } else {
-          setCurrentEthPrice(3000);
-        }
-      } catch (err) {
-        console.error("Error fetching ETH price:", err);
-        setCurrentEthPrice(3000); // Fallback price
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
-
-  useEffect(() => {
     fetchUserDeposits();
   }, [token]);
 
   // Calculate USD value when ETH amount changes
   useEffect(() => {
-    if (ethAmount && currentEthPrice) {
-      const usd = (parseFloat(ethAmount) * currentEthPrice).toFixed(2);
+    if (ethAmount && ethPrice) {
+      const usd = (parseFloat(ethAmount) * ethPrice).toFixed(2);
       setUsdValue(usd);
     } else {
       setUsdValue("0");
     }
-  }, [ethAmount, currentEthPrice]);
+  }, [ethAmount, ethPrice]);
 
   const handleInitiateDeposit = async () => {
     setError("");
@@ -201,7 +175,7 @@ const FundAccount = () => {
             <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-amber-100 rounded border border-amber-200">
               <p className="text-sm text-gray-600 mb-2">Current ETH Price</p>
               <p className="text-2xl font-bold text-amber-600">
-                ${currentEthPrice.toFixed(2)} USD
+                ${ethPrice.toFixed(2)} USD
               </p>
             </div>
 

@@ -2,43 +2,17 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const MyPurchases = () => {
-  const { navigate, backendUrl } = useContext(ShopContext);
+  const { navigate, backendUrl, ethPrice } = useContext(ShopContext);
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentEthPrice, setCurrentEthPrice] = useState(0);
-
-  useEffect(() => {
-    // Fetch ETH price
-    const fetchEthPrice = async () => {
-      try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.ethereum && data.ethereum.usd) {
-          setCurrentEthPrice(data.ethereum.usd);
-        } else {
-          setCurrentEthPrice(3000);
-        }
-      } catch (err) {
-        console.error("Error fetching ETH price:", err);
-        setCurrentEthPrice(3000);
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
 
   useEffect(() => {
     const fetchPurchases = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch(`${backendUrl}/api/purchases/history`, {
+        const response = await fetch(`${backendUrl}/api/purchase/history`, {
           headers: { Authorization: token },
         });
         const data = await response.json();
