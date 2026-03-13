@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const MySales = () => {
-  const { navigate } = useContext(ShopContext);
+  const { navigate, backendUrl } = useContext(ShopContext);
   const [images, setImages] = useState([]);
   const [pendingImages, setPendingImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const MySales = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/images/user/my-images", {
+        const response = await fetch(`${backendUrl}/api/images/user/my-images`, {
           headers: { Authorization: token },
         });
         const data = await response.json();
@@ -61,14 +61,14 @@ const MySales = () => {
     };
 
     fetchMyImages();
-  }, []);
+  }, [backendUrl]);
 
   useEffect(() => {
     const fetchPendingImages = async () => {
       try {
         setLoadingPending(true);
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/images/user/pending", {
+        const response = await fetch(`${backendUrl}/api/images/user/pending`, {
           headers: { Authorization: token },
         });
         const data = await response.json();
@@ -84,7 +84,7 @@ const MySales = () => {
     };
 
     fetchPendingImages();
-  }, []);
+  }, [backendUrl]);
 
   const handleDeleteImage = async (imageId) => {
     if (!window.confirm("Are you sure you want to delete this image?")) {
@@ -93,7 +93,7 @@ const MySales = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/images/${imageId}`, {
+      const response = await fetch(`${backendUrl}/api/images/${imageId}`, {
         method: "DELETE",
         headers: { Authorization: token },
       });
@@ -118,7 +118,7 @@ const MySales = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/images/${imageId}/price`, {
+      const response = await fetch(`${backendUrl}/api/images/${imageId}/price`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -5,7 +5,9 @@ import {
     removeProduct, 
     singleProduct, 
     getAvailableProducts,
-    updateProduct
+    updateProduct,
+    getCategories,
+    getProductsByCategory
 } from '../controllers/productController.js'
 import upload from '../middleware/multer.js';
 import adminAuth from '../middleware/adminAuth.js';
@@ -32,7 +34,9 @@ productRouter.post('/remove', adminAuth, removeProduct);
 // Public routes
 productRouter.post('/single', singleProduct);
 productRouter.get('/list', listProducts);
-productRouter.get('/available', getAvailableProducts); // New endpoint for available products
+productRouter.get('/available', getAvailableProducts);
+productRouter.get('/categories', getCategories);
+productRouter.get('/category/:category', getProductsByCategory);
 
 export default productRouter;
 

@@ -28,6 +28,7 @@ import FundAccount from "./pages/FundAccount";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
 import Photographers from "./pages/Photographers";
+import Explore from "./pages/Explore";
 
 const App = () => {
   return (
@@ -58,6 +59,7 @@ const App = () => {
           <Route path="/gallery" element={<Collection />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/shop" element={<Collection />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/product/:productId" element={<Product />} />

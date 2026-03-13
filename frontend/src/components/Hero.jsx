@@ -14,6 +14,15 @@ const Hero = () => {
     },
     {
       id: 1,
+      href: "/collection",
+      title: "Shop NFT",
+      backgroundStyle:
+        "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
+      backgroundImage:
+        "https://images.unsplash.com/photo-1614613535308-eb5fbd8d2c17?w=1200&h=600&fit=crop",
+    },
+    {
+      id: 2,
       href: "/shop",
       title: "Shop Prints",
       backgroundStyle:
@@ -22,7 +31,7 @@ const Hero = () => {
         "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=600&fit=crop",
     },
     {
-      id: 2,
+      id: 3,
       href: "/about",
       title: "Get Inspired",
       backgroundStyle:

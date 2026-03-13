@@ -332,47 +332,6 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  // Add restaurant review
-  const addRestaurantReview = async (rating, comment) => {
-    try {
-      const response = await axios.post(
-        backendUrl + "/api/restaurant-review",
-        { rating, comment },
-        { headers: { token } },
-      );
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || error.message);
-      return { success: false };
-    }
-  };
-
-  // Get restaurant reviews
-  const getRestaurantReviews = async () => {
-    try {
-      const response = await axios.get(backendUrl + "/api/restaurant-review");
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return { success: false, reviews: [] };
-    }
-  };
-
-  // Get user's restaurant review
-  const getUserRestaurantReview = async () => {
-    try {
-      const response = await axios.get(
-        backendUrl + "/api/restaurant-review/user",
-        { headers: { token } },
-      );
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return { success: false, review: null };
-    }
-  };
-
   // Clear cart after successful payment
   const clearCart = async () => {
     setCartItems({});
@@ -420,9 +379,6 @@ const ShopContextProvider = (props) => {
     getReviews,
     getUserReview,
     getAvailableProducts,
-    addRestaurantReview,
-    getRestaurantReviews,
-    getUserRestaurantReview,
     paymentStatus,
     setPaymentStatus,
     clearCart,

@@ -17,6 +17,7 @@ import CustomerReviews from "../components/CustomerReviews";
 import LoyaltyProgram from "../components/LoyaltyProgram";
 import DynamicMenu from "../components/DynamicMenu";
 import FeaturedPhotographers from "../components/FeaturedPhotographers";
+import Categories from "../components/Categories";
 
 const Home = () => {
   return (
@@ -30,6 +31,7 @@ const Home = () => {
       {/* <EditorsChoice /> */}
       <AmbassadorsPick />
       <FeaturedPhotographers />
+      <Categories />
       <PhotoStories />
       {/* <CustomerReviews /> */}
       {/* <LoyaltyProgram />

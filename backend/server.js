@@ -9,7 +9,7 @@ import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import popupRoute from "./routes/popupRoute.js";
 import reviewRouter from "./routes/reviewRoute.js";
-import restaurantReviewRoute from "./routes/restaurantReviewRoute.js";
+// import restaurantReviewRoute from "./routes/restaurantReviewRoute.js"; // COMMENTED OUT - legacy restaurant review module
 import newsletterRouter from "./routes/newsletterRoute.js"; // Import newsletter route
 import imageRouter from "./routes/imageRoute.js"; // Import image route
 import depositRouter from "./routes/depositRoute.js"; // Import deposit route
@@ -32,7 +32,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/newsletter", newsletterRouter); // Add newsletter route
 app.use("/api/popup", popupRoute);
 app.use("/api/review", reviewRouter);
-app.use("/api/restaurant-review", restaurantReviewRoute);
+// app.use("/api/restaurant-review", restaurantReviewRoute); // COMMENTED OUT - legacy restaurant review endpoints
 app.use("/api/images", imageRouter); // Add image route
 app.use("/api/deposit", depositRouter); // Add deposit route
 

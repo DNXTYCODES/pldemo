@@ -43,7 +43,7 @@ const Photographers = () => {
           (photographer.location &&
             photographer.location
               .toLowerCase()
-              .includes(searchTerm.toLowerCase()))
+              .includes(searchTerm.toLowerCase())),
       );
     }
 
@@ -57,8 +57,7 @@ const Photographers = () => {
         break;
       case "images":
         filtered.sort(
-          (a, b) =>
-            (b.ownedImages?.length || 0) - (a.ownedImages?.length || 0)
+          (a, b) => (b.ownedImages?.length || 0) - (a.ownedImages?.length || 0),
         );
         break;
       case "featured":
@@ -184,7 +183,8 @@ const Photographers = () => {
                             <span className="font-semibold text-gray-900">
                               {photographer.ownedImages.length}
                             </span>{" "}
-                            image{photographer.ownedImages.length !== 1 ? "s" : ""}
+                            image
+                            {photographer.ownedImages.length !== 1 ? "s" : ""}
                           </div>
                         )}
                         {photographer.expertise_level && (
@@ -205,7 +205,9 @@ const Photographers = () => {
 
                       {/* View Profile Button */}
                       <button
-                        onClick={() => navigate(`/uploader/${photographer._id}`)}
+                        onClick={() =>
+                          navigate(`/uploader/${photographer._id}`)
+                        }
                         className="w-full px-4 py-2 text-sm font-semibold bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition duration-300"
                       >
                         View Profile
@@ -240,7 +242,7 @@ const Photographers = () => {
                                   No image
                                 </span>
                               </div>
-                            )
+                            ),
                           )}
                         </div>
                       </div>

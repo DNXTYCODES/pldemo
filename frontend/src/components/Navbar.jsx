@@ -18,9 +18,11 @@ const Navbar = () => {
   const [showSearchTypeDropdown, setShowSearchTypeDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showNavMenu, setShowNavMenu] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
+  const navMenuRef = useRef(null);
   const cartCount = getCartCount ? getCartCount() : 0;
 
   // Fetch user profile when token changes
@@ -59,7 +61,7 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/collection?search=${searchQuery}&type=${searchType}`);
+      navigate(`/explore?search=${searchQuery}&type=${searchType}`);
       setSearchQuery("");
     }
   };
@@ -81,6 +83,9 @@ const Navbar = () => {
         !profileDropdownRef.current.contains(event.target)
       ) {
         setShowProfileDropdown(false);
+      }
+      if (navMenuRef.current && !navMenuRef.current.contains(event.target)) {
+        setShowNavMenu(false);
       }
     };
 
@@ -189,10 +194,10 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
             <Link
-              to="/collection"
+              to="/explore"
               className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
             >
-              Gallery
+              Explore
             </Link>
             <Link
               to="/shop"
@@ -243,29 +248,7 @@ const Navbar = () => {
             </button>
 
             {/* Shopping Cart */}
-            <Link
-              to="/cart"
-              className="relative flex items-center text-gray-700 hover:text-amber-500 transition-colors"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-amber-500 text-gray-900 text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            {/* Cart removed as per requirements */}
 
             {/* Currency Toggle */}
             <button
@@ -534,12 +517,160 @@ const Navbar = () => {
                 Login / Signup
               </Link>
             )}
+
+            {/* Navigation Menu */}
+            <div ref={navMenuRef} className="relative">
+              <button
+                onClick={() => setShowNavMenu(!showNavMenu)}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors cursor-pointer text-gray-700 lg:hidden"
+                title="Navigation Menu"
+              >
+                <svg
+                  className={`w-6 h-6 transition-transform duration-300 ${
+                    showNavMenu ? "rotate-90" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+
+              {/* Navigation Menu Dropdown */}
+              {showNavMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 lg:hidden">
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        navigate("/");
+                        setShowNavMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m0 0l4 4m-4-4v4m0-11l-4 4m0 0L3 7m4 4h12m0 0v4m0-4l4-4"
+                        />
+                      </svg>
+                      Home
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        navigate("/explore");
+                        setShowNavMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                      Explore
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        navigate("/photographers");
+                        setShowNavMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                      Photographers
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        navigate("/about");
+                        setShowNavMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      About
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        navigate("/contact");
+                        setShowNavMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Contact
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Mobile Search Form */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-700 px-4 py-4">
+          <div className="lg:hidden border-t border-gray-200 px-4 py-4 bg-white">
             <form
               onSubmit={handleSearchSubmit}
               className="flex items-center gap-0"
@@ -550,7 +681,7 @@ const Navbar = () => {
                   onClick={() =>
                     setShowSearchTypeDropdown(!showSearchTypeDropdown)
                   }
-                  className="flex items-center gap-1 px-3 py-2 bg-gray-700 border border-r-0 border-gray-600 text-gray-200 text-xs hover:bg-gray-600 transition-colors font-medium"
+                  className="flex items-center gap-1 px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 text-gray-700 text-xs hover:bg-gray-200 transition-colors font-medium"
                 >
                   <span>
                     {
@@ -572,13 +703,13 @@ const Navbar = () => {
                 </button>
 
                 {showSearchTypeDropdown && (
-                  <div className="absolute top-full left-0 w-40 bg-gray-700 border border-gray-600 border-t-0 shadow-md z-10">
+                  <div className="absolute top-full left-0 w-40 bg-white border border-gray-300 border-t-0 shadow-md z-10">
                     {searchTypeOptions.map((option) => (
                       <button
                         key={option.value}
                         type="button"
                         onClick={() => handleSearchTypeSelect(option.value)}
-                        className="w-full text-left px-3 py-2 text-xs text-gray-200 hover:bg-gray-600 transition-colors border-b border-gray-600 last:border-b-0"
+                        className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-colors border-b border-gray-200 last:border-b-0"
                       >
                         {option.label}
                       </button>
@@ -592,7 +723,7 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search photos..."
-                className="flex-1 px-3 py-2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-400"
+                className="flex-1 px-3 py-2 border border-gray-300 bg-white text-gray-900 placeholder-gray-500 text-sm focus:outline-none focus:border-amber-400"
               />
 
               <button
@@ -615,34 +746,34 @@ const Navbar = () => {
               </button>
             </form>
 
-            <div className="mt-4 pt-4 border-t border-gray-700 space-y-3">
+            <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
               <Link
-                to="/collection"
-                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+                to="/explore"
+                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
-                Gallery
+                Explore
               </Link>
               <Link
                 to="/shop"
-                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 Shop
               </Link>
               <Link
                 to="/photographers"
-                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 Photographers
               </Link>
               <Link
                 to="/about"
-                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className="block text-sm text-gray-300 hover:text-amber-400 transition-colors font-medium"
+                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 Contact
               </Link>
@@ -650,52 +781,52 @@ const Navbar = () => {
               {/* Mobile Auth Menu */}
               {token && (
                 <>
-                  <div className="border-t border-gray-700 pt-3 space-y-2">
+                  <div className="border-t border-gray-200 pt-3 space-y-2">
                     <Link
                       to="/profile"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       View Profile
                     </Link>
                     <Link
                       to="/edit-profile"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       Edit Profile
                     </Link>
                     <Link
                       to="/upload-photo"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       Upload Photos
                     </Link>
                     <Link
                       to="/my-sales"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       My Sales
                     </Link>
                     <Link
                       to="/my-purchases"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       My Purchases
                     </Link>
                     <Link
                       to="/favorites"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       My Favorites
                     </Link>
                     <Link
                       to="/fund-account"
-                      className="block text-sm text-gray-300 hover:text-amber-400 transition-colors"
+                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       Fund Account
                     </Link>
                     <button
                       onClick={logout}
-                      className="block w-full text-left text-sm text-red-400 hover:text-red-300 transition-colors"
+                      className="block w-full text-left text-sm text-red-600 hover:text-red-500 transition-colors"
                     >
                       Logout
                     </button>

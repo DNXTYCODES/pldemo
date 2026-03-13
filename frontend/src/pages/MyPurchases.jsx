@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const MyPurchases = () => {
-  const { navigate } = useContext(ShopContext);
+  const { navigate, backendUrl } = useContext(ShopContext);
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,7 +38,7 @@ const MyPurchases = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/purchases/history", {
+        const response = await fetch(`${backendUrl}/api/purchases/history`, {
           headers: { Authorization: token },
         });
         const data = await response.json();
@@ -56,7 +56,7 @@ const MyPurchases = () => {
     };
 
     fetchPurchases();
-  }, []);
+  }, [backendUrl]);
 
   if (loading) {
     return (
@@ -97,8 +97,8 @@ const MyPurchases = () => {
               Start exploring and buying amazing photos
             </p>
             <button
-              onClick={() => navigate("/collection")}
-              className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium"
+              onClick={() => navigate("/explore")}
+              className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
             >
               Browse Gallery
             </button>
@@ -108,7 +108,7 @@ const MyPurchases = () => {
             {purchases.map((purchase) => (
               <div
                 key={purchase._id}
-                className="bg-gray-800 rounded-lg border border-gray-700 p-4 hover:border-amber-500 transition-colors"
+                className="bg-white rounded-lg border border-gray-200 p-4 hover:border-amber-500 hover:shadow-md transition-all"
               >
                 <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                   {/* Image Info */}
@@ -123,10 +123,10 @@ const MyPurchases = () => {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold truncate">
+                      <h3 className="font-bold truncate text-gray-900">
                         {purchase.imageId?.title || "Unknown Image"}
                       </h3>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-600">
                         by {purchase.sellerId?.name || "Unknown Artist"}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -137,11 +137,11 @@ const MyPurchases = () => {
 
                   {/* Price Info */}
                   <div className="text-right">
-                    <p className="text-sm text-gray-400">Price Paid</p>
-                    <p className="font-bold text-amber-400">
+                    <p className="text-sm text-gray-600">Price Paid</p>
+                    <p className="font-bold text-amber-600">
                       {parseFloat(purchase.amountEth).toFixed(8)} ETH
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600">
                       ${parseFloat(purchase.amountUsd).toFixed(2)}
                     </p>
                   </div>
@@ -151,7 +151,7 @@ const MyPurchases = () => {
                     onClick={() =>
                       navigate(`/product/${purchase.imageId?._id}`)
                     }
-                    className="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium text-sm"
+                    className="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium text-sm transition-colors"
                   >
                     View
                   </button>

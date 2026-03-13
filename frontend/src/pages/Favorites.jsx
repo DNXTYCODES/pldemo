@@ -3,7 +3,7 @@ import { ShopContext } from "../context/ShopContext";
 import ProductItem from "../components/ProductItem";
 
 const Favorites = () => {
-  const { navigate } = useContext(ShopContext);
+  const { navigate, backendUrl } = useContext(ShopContext);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -13,7 +13,7 @@ const Favorites = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/users/profile", {
+        const response = await fetch(`${backendUrl}/api/users/profile`, {
           headers: { Authorization: token },
         });
         const data = await response.json();
@@ -33,12 +33,12 @@ const Favorites = () => {
     };
 
     fetchFavorites();
-  }, []);
+  }, [backendUrl]);
 
   const handleRemoveFavorite = async (imageId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/images/${imageId}/favorite`, {
+      const response = await fetch(`${backendUrl}/api/images/${imageId}/favorite`, {
         method: "PUT",
         headers: { Authorization: token },
       });
@@ -88,7 +88,7 @@ const Favorites = () => {
               Add photos to your favorites while browsing
             </p>
             <button
-              onClick={() => navigate("/collection")}
+              onClick={() => navigate("/explore")}
               className="px-8 py-3 bg-amber-500 hover:bg-amber-600 rounded font-medium text-white"
             >
               Browse Gallery

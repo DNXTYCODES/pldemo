@@ -8,6 +8,12 @@ const ManageImages = ({ token }) => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [savingImageId, setSavingImageId] = useState(null);
+  const [deletingImageId, setDeletingImageId] = useState(null);
+  const [editingImageId, setEditingImageId] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+  });
 
   // Fetch all images for admin
   const fetchImagesForAdmin = async () => {
@@ -73,6 +79,81 @@ const ManageImages = ({ token }) => {
     }
   };
 
+  // Handle delete image
+  const handleDeleteImage = async (imageId) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) {
+      return;
+    }
+
+    try {
+      setDeletingImageId(imageId);
+      const response = await axios.delete(
+        `${backendUrl}/api/images/${imageId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (response.data.success) {
+        setImages((prevImages) =>
+          prevImages.filter((img) => img._id !== imageId),
+        );
+        setError("");
+      }
+    } catch (err) {
+      console.error("Error deleting image:", err);
+      setError("Failed to delete image");
+    } finally {
+      setDeletingImageId(null);
+    }
+  };
+
+  // Handle edit image
+  const startEditImage = (image) => {
+    setEditingImageId(image._id);
+    setEditFormData({
+      title: image.title,
+      description: image.description || "",
+    });
+  };
+
+  const handleSaveEdit = async (imageId) => {
+    try {
+      setSavingImageId(imageId);
+      const response = await axios.put(
+        `${backendUrl}/api/images/${imageId}`,
+        {
+          title: editFormData.title,
+          description: editFormData.description,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (response.data.success) {
+        setImages((prevImages) =>
+          prevImages.map((img) =>
+            img._id === imageId
+              ? {
+                  ...img,
+                  title: editFormData.title,
+                  description: editFormData.description,
+                }
+              : img,
+          ),
+        );
+        setEditingImageId(null);
+        setError("");
+      }
+    } catch (err) {
+      console.error("Error updating image:", err);
+      setError("Failed to update image");
+    } finally {
+      setSavingImageId(null);
+    }
+  };
+
   // Filter images based on search
   const filteredImages = images.filter(
     (img) =>
@@ -98,7 +179,7 @@ const ManageImages = ({ token }) => {
             Manage Images
           </h1>
           <p className="text-gray-600">
-            Assign images to home page sections (Trending, Popular, Editor's
+            Edit, delete, or assign images to home page sections (Trending, Popular, Editor's
             Pick)
           </p>
         </div>
@@ -144,73 +225,140 @@ const ManageImages = ({ token }) => {
 
               {/* Image Info */}
               <div className="p-4">
-                <h3 className="mb-1 truncate font-semibold text-gray-900">
-                  {image.title}
-                </h3>
-                <p className="mb-3 text-sm text-gray-600">
-                  By {image.sellerId?.name || "Unknown"}
-                </p>
-                <p className="mb-3 text-sm font-medium text-gray-900">
-                  Ξ {image.priceEth} / ${image.priceUsd}
-                </p>
+                {editingImageId === image._id ? (
+                  <div className="space-y-3 mb-3">
+                    <input
+                      type="text"
+                      value={editFormData.title}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          title: e.target.value,
+                        })
+                      }
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      placeholder="Title"
+                    />
+                    <textarea
+                      value={editFormData.description}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          description: e.target.value,
+                        })
+                      }
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      placeholder="Description"
+                      rows="2"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleSaveEdit(image._id)}
+                        disabled={savingImageId === image._id}
+                        className="flex-1 rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:bg-gray-400"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingImageId(null)}
+                        className="flex-1 rounded bg-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-400"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h3 className="mb-1 truncate font-semibold text-gray-900">
+                      {image.title}
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600">
+                      By {image.sellerId?.name || "Unknown"}
+                    </p>
+                    <p className="mb-3 text-sm font-medium text-gray-900">
+                      Ξ {image.priceEth} / ${image.priceUsd}
+                    </p>
+                  </>
+                )}
 
                 {/* Section Checkboxes */}
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={image.isTrending || false}
-                      onChange={() =>
-                        handleSectionToggle(
-                          image._id,
-                          "trending",
-                          image.isTrending,
-                        )
-                      }
-                      disabled={savingImageId === image._id}
-                      className="h-4 w-4 cursor-pointer rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">Trending</span>
-                  </label>
+                {editingImageId !== image._id && (
+                  <div className="space-y-2 mb-3">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={image.isTrending || false}
+                        onChange={() =>
+                          handleSectionToggle(
+                            image._id,
+                            "trending",
+                            image.isTrending,
+                          )
+                        }
+                        disabled={savingImageId === image._id}
+                        className="h-4 w-4 cursor-pointer rounded border-gray-300"
+                      />
+                      <span className="text-sm text-gray-700">Trending</span>
+                    </label>
 
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={image.isPopular || false}
-                      onChange={() =>
-                        handleSectionToggle(
-                          image._id,
-                          "popular",
-                          image.isPopular,
-                        )
-                      }
-                      disabled={savingImageId === image._id}
-                      className="h-4 w-4 cursor-pointer rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">
-                      Popular Photos
-                    </span>
-                  </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={image.isPopular || false}
+                        onChange={() =>
+                          handleSectionToggle(
+                            image._id,
+                            "popular",
+                            image.isPopular,
+                          )
+                        }
+                        disabled={savingImageId === image._id}
+                        className="h-4 w-4 cursor-pointer rounded border-gray-300"
+                      />
+                      <span className="text-sm text-gray-700">
+                        Popular Photos
+                      </span>
+                    </label>
 
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={image.isAmbassadorsPick || false}
-                      onChange={() =>
-                        handleSectionToggle(
-                          image._id,
-                          "ambassadors-pick",
-                          image.isAmbassadorsPick,
-                        )
-                      }
-                      disabled={savingImageId === image._id}
-                      className="h-4 w-4 cursor-pointer rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">
-                      📌 Editor's Pick
-                    </span>
-                  </label>
-                </div>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={image.isAmbassadorsPick || false}
+                        onChange={() =>
+                          handleSectionToggle(
+                            image._id,
+                            "ambassadors-pick",
+                            image.isAmbassadorsPick,
+                          )
+                        }
+                        disabled={savingImageId === image._id}
+                        className="h-4 w-4 cursor-pointer rounded border-gray-300"
+                      />
+                      <span className="text-sm text-gray-700">
+                        📌 Editor's Pick
+                      </span>
+                    </label>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                {editingImageId !== image._id && (
+                  <div className="flex gap-2 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => startEditImage(image)}
+                      className="flex-1 rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteImage(image._id)}
+                      disabled={deletingImageId === image._id}
+                      className="flex-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200 disabled:bg-gray-300 disabled:text-gray-600"
+                    >
+                      {deletingImageId === image._id ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                )}
 
                 {/* Saving Indicator */}
                 {savingImageId === image._id && (

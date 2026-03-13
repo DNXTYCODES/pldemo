@@ -211,13 +211,44 @@ const updateProduct = async (req, res) => {
     }
 };
 
+// Get all categories
+const getCategories = async (req, res) => {
+    try {
+        const categories = await productModel.distinct("category");
+        const categoriesWithCount = await Promise.all(
+            categories.map(async (category) => {
+                const count = await productModel.countDocuments({ category });
+                return { name: category, count };
+            })
+        );
+        res.json({ success: true, categories: categoriesWithCount });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+// Get products by category
+const getProductsByCategory = async (req, res) => {
+    try {
+        const { category } = req.params;
+        const products = await productModel.find({ category, inStock: true });
+        res.json({ success: true, products });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
 export { 
     listProducts, 
     addProduct, 
     removeProduct, 
     singleProduct, 
     getAvailableProducts,
-    updateProduct
+    updateProduct,
+    getCategories,
+    getProductsByCategory
 };
 
 
