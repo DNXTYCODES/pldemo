@@ -32,7 +32,7 @@ const Home = () => {
       <AmbassadorsPick />
       <FeaturedPhotographers />
       <Categories />
-      <PhotoStories />
+      {/* <PhotoStories /> */}
       {/* <CustomerReviews /> */}
       {/* <LoyaltyProgram />
       <DynamicMenu />

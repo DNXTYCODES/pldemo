@@ -38,10 +38,13 @@ const Favorites = () => {
   const handleRemoveFavorite = async (imageId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${backendUrl}/api/images/${imageId}/favorite`, {
-        method: "PUT",
-        headers: { Authorization: token },
-      });
+      const response = await fetch(
+        `${backendUrl}/api/images/${imageId}/favorite`,
+        {
+          method: "PUT",
+          headers: { Authorization: token },
+        },
+      );
 
       const data = await response.json();
 

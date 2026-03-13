@@ -1,28 +1,28 @@
-import React from 'react';
+import React from "react";
 
-const DishLoader = ({ size = 'md', message = 'Preparing your meal...' }) => {
+const DishLoader = ({ size = "md", message = "Exploring gallery..." }) => {
   // Size configuration
   const sizeConfig = {
     sm: {
-      container: 'w-16 h-16',
-      spinner: 'w-14 h-14 border-2',
-      icon: 'w-8 h-8',
-      text: 'text-base'
+      container: "w-16 h-16",
+      spinner: "w-14 h-14 border-2",
+      icon: "w-8 h-8",
+      text: "text-base",
     },
     md: {
-      container: 'w-24 h-24',
-      spinner: 'w-20 h-20 border-4',
-      icon: 'w-12 h-12',
-      text: 'text-lg'
+      container: "w-24 h-24",
+      spinner: "w-20 h-20 border-4",
+      icon: "w-12 h-12",
+      text: "text-lg",
     },
     lg: {
-      container: 'w-32 h-32',
-      spinner: 'w-28 h-28 border-4',
-      icon: 'w-16 h-16',
-      text: 'text-xl'
-    }
+      container: "w-32 h-32",
+      spinner: "w-28 h-28 border-4",
+      icon: "w-16 h-16",
+      text: "text-xl",
+    },
   };
-  
+
   const { container, spinner, icon, text } = sizeConfig[size] || sizeConfig.md;
 
   return (
@@ -30,18 +30,18 @@ const DishLoader = ({ size = 'md', message = 'Preparing your meal...' }) => {
       <div className={`relative ${container} mb-6`}>
         {/* Spinner */}
         <div className={`absolute inset-0 flex items-center justify-center`}>
-          <div 
+          <div
             className={`${spinner} rounded-full border-[#d97706] border-t-transparent animate-spin`}
           ></div>
         </div>
-        
+
         {/* Camera Icon */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg 
-            className={`${icon} text-[#d97706] animate-pulse`} 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className={`${icon} text-[#d97706] animate-pulse`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
             strokeWidth="2"
           >
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
@@ -49,7 +49,7 @@ const DishLoader = ({ size = 'md', message = 'Preparing your meal...' }) => {
           </svg>
         </div>
       </div>
-      
+
       <p className={`prata-regular ${text} text-[#d97706] text-center`}>
         {message}
       </p>
@@ -58,44 +58,6 @@ const DishLoader = ({ size = 'md', message = 'Preparing your meal...' }) => {
 };
 
 export default DishLoader;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React from 'react';
 
@@ -121,7 +83,7 @@ export default DishLoader;
 //       text: 'text-lg'
 //     }
 //   };
-  
+
 //   const { container, plate, utensils, text } = sizeConfig[size] || sizeConfig.md;
 
 //   return (
@@ -129,10 +91,10 @@ export default DishLoader;
 //       <div className={`relative ${container} mb-4`}>
 //         {/* Plate */}
 //         <div className={`absolute inset-0 rounded-full bg-white border-[#008753] ${plate} animate-spin`}></div>
-        
+
 //         {/* Spoon */}
 //         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-//           <svg 
+//           <svg
 //             className={`${utensils} text-[#008753]`}
 //             viewBox="0 0 24 24"
 //             fill="currentColor"
@@ -140,10 +102,10 @@ export default DishLoader;
 //             <path d="M3,4v2c0,3.31 2.69,6 6,6c0.85,0 1.64,-0.26 2.28,-0.7l0.72,4.7H5v2h7v-2h-2l-0.78,-5.08C14.36,11.74 15.15,12 16,12c3.31,0 6,-2.69 6,-6V4H15v2c0,1.1 -0.9,2 -2,2c-1.1,0 -2,-0.9 -2,-2V4H3Z" />
 //           </svg>
 //         </div>
-        
+
 //         {/* Fork */}
 //         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-90">
-//           <svg 
+//           <svg
 //             className={`${utensils} text-[#008753]`}
 //             viewBox="0 0 24 24"
 //             fill="currentColor"
@@ -152,7 +114,7 @@ export default DishLoader;
 //           </svg>
 //         </div>
 //       </div>
-      
+
 //       <p className={`prata-regular ${text} text-[#008753] text-center`}>
 //         {message}
 //       </p>
@@ -161,28 +123,6 @@ export default DishLoader;
 // };
 
 // export default DishLoader;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React from 'react';
 
@@ -195,14 +135,14 @@ export default DishLoader;
 //           <div className="absolute inset-0 flex items-center justify-center">
 //             <div className="w-20 h-20 rounded-full border-4 border-[#008753] border-t-transparent animate-spin"></div>
 //           </div>
-          
+
 //           {/* Food Icon */}
 //           <div className="absolute inset-0 flex items-center justify-center">
-//             <svg 
-//               className="w-12 h-12 text-[#008753] animate-pulse" 
-//               viewBox="0 0 24 24" 
-//               fill="none" 
-//               stroke="currentColor" 
+//             <svg
+//               className="w-12 h-12 text-[#008753] animate-pulse"
+//               viewBox="0 0 24 24"
+//               fill="none"
+//               stroke="currentColor"
 //               strokeWidth="2"
 //             >
 //               <path d="M12 22s7-4 7-10V5l-7-3-7 3v7c0 6 7 10 7 10z" />
@@ -211,7 +151,7 @@ export default DishLoader;
 //             </svg>
 //           </div>
 //         </div>
-        
+
 //         <p className="prata-regular text-xl text-[#008753] mt-2">
 //           Preparing your meal...
 //         </p>

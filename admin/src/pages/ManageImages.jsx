@@ -179,8 +179,8 @@ const ManageImages = ({ token }) => {
             Manage Images
           </h1>
           <p className="text-gray-600">
-            Edit, delete, or assign images to home page sections (Trending, Popular, Editor's
-            Pick)
+            Edit, delete, or assign images to home page sections (Trending,
+            Popular, Editor's Pick)
           </p>
         </div>
 

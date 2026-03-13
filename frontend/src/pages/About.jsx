@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  FaCamera,
-  FaPalette,
-  FaGlobeAmericas,
-  FaLock,
-} from "react-icons/fa";
+import { FaCamera, FaPalette, FaGlobeAmericas, FaLock } from "react-icons/fa";
 
 const About = () => {
   const features = [
@@ -66,13 +61,16 @@ const About = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-gray-900 to-black text-white py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">Peak Lens Photography</h1>
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            Peak Lens Photography
+          </h1>
           <p className="text-xl md:text-2xl text-amber-400 mb-4">
             Where Every Moment Reaches Its Peak
           </p>
           <p className="text-gray-300 max-w-3xl mx-auto text-lg">
-            A premier photography platform combining traditional artistry with digital innovation,
-            empowering creators and collectors in the modern visual economy
+            A premier photography platform combining traditional artistry with
+            digital innovation, empowering creators and collectors in the modern
+            visual economy
           </p>
         </div>
       </div>
@@ -80,7 +78,9 @@ const About = () => {
       {/* Our Story Section */}
       <div className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Our Story</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
+            Our Story
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
@@ -89,9 +89,10 @@ const About = () => {
                   Photography Services Excellence
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Peak Lens Photography is a premier photography studio dedicated to capturing
-                  life's most extraordinary moments with unmatched precision and artistry. We
-                  specialize in professional photography services including portraits, events,
+                  Peak Lens Photography is a premier photography studio
+                  dedicated to capturing life's most extraordinary moments with
+                  unmatched precision and artistry. We specialize in
+                  professional photography services including portraits, events,
                   commercial shoots, and creative projects.
                 </p>
               </div>
@@ -101,11 +102,12 @@ const About = () => {
                   Our Philosophy
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Every frame tells a story. Using state-of-the-art equipment and a keen
-                  artistic eye, we transform moments into timeless visual experiences. Our team
-                  of experienced photographers combines technical expertise with creative vision
-                  to ensure that every image reflects authentic emotion, stunning composition,
-                  and impeccable quality.
+                  Every frame tells a story. Using state-of-the-art equipment
+                  and a keen artistic eye, we transform moments into timeless
+                  visual experiences. Our team of experienced photographers
+                  combines technical expertise with creative vision to ensure
+                  that every image reflects authentic emotion, stunning
+                  composition, and impeccable quality.
                 </p>
               </div>
             </div>
@@ -143,10 +145,11 @@ const About = () => {
                   Cutting-Edge Platform
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Peak Lens Photography is a cutting-edge online platform for photographers,
-                  digital artists, and collectors to buy, sell, and showcase high-quality
-                  photography and NFT assets. We bridge the gap between creative talent and
-                  collectors, offering a secure, intuitive, and professional marketplace for
+                  Peak Lens Photography is a cutting-edge online platform for
+                  photographers, digital artists, and collectors to buy, sell,
+                  and showcase high-quality photography and NFT assets. We
+                  bridge the gap between creative talent and collectors,
+                  offering a secure, intuitive, and professional marketplace for
                   visual content.
                 </p>
               </div>
@@ -156,10 +159,11 @@ const About = () => {
                   Empowering Creators & Collectors
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Artists can monetize their work, reach a global audience, and maintain
-                  ownership of their creations. Buyers gain access to exclusive photography and
-                  limited edition digital assets. With a focus on trust, transparency, and
-                  innovation, we empower creators and collectors to thrive in the modern digital
+                  Artists can monetize their work, reach a global audience, and
+                  maintain ownership of their creations. Buyers gain access to
+                  exclusive photography and limited edition digital assets. With
+                  a focus on trust, transparency, and innovation, we empower
+                  creators and collectors to thrive in the modern digital
                   economy.
                 </p>
               </div>
@@ -202,15 +206,21 @@ const About = () => {
       {/* Core Values */}
       <div className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Our Core Values</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
+            Our Core Values
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
               <div
                 key={index}
                 className="bg-gradient-to-br from-amber-50 to-white border-l-4 border-amber-500 rounded-lg p-6 shadow-sm"
               >
-                <h3 className="text-2xl font-semibold text-gray-900 mb-3">{value.title}</h3>
-                <p className="text-gray-700 leading-relaxed">{value.description}</p>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                  {value.title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {value.description}
+                </p>
               </div>
             ))}
           </div>
@@ -222,8 +232,9 @@ const About = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Join Our Community</h2>
           <p className="text-xl mb-8 opacity-90">
-            Whether you're a photographer looking to showcase your work or a collector seeking
-            exclusive visual art, Peak Lens Photography is your destination.
+            Whether you're a photographer looking to showcase your work or a
+            collector seeking exclusive visual art, Peak Lens Photography is
+            your destination.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

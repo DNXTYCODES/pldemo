@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import ProductItem from "../components/ProductItem";
 import DishLoader from "../components/DishLoader";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { getFormattedPrice } from "../utils/ethPrice";
 
 const Explore = () => {
-  const { backendUrl } = useContext(ShopContext);
+  const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
   const [images, setImages] = useState([]);
   const [filteredImages, setFilteredImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,64 +18,49 @@ const Explore = () => {
     { value: "all", label: "All Categories" },
   ]);
   const [sortBy, setSortBy] = useState("latest");
-  const [priceRange, setPriceRange] = useState([0, 100000]);
-  const [ratings, setRatings] = useState(0);
 
-  const sortOptions = [
-    { value: "latest", label: "Latest" },
-    { value: "trending", label: "Trending" },
-    { value: "popular", label: "Popular" },
-    { value: "price-low", label: "Price: Low to High" },
-    { value: "price-high", label: "Price: High to Low" },
-    { value: "rating", label: "Top Rated" },
-  ];
-
-  // Fetch categories from backend and set from query params
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`${backendUrl}/api/product/categories`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        if (data.success && data.categories) {
-          const categoryOptions = [
-            { value: "all", label: "All Categories" },
-            ...data.categories.map((cat) => ({
-              value: cat.name,
-              label: cat.name.charAt(0).toUpperCase() + cat.name.slice(1),
-            })),
-          ];
-          setDynamicCategories(categoryOptions);
-
-          // Check if category is in query params
-          const categoryParam = searchParams.get("category");
-          if (
-            categoryParam &&
-            categoryOptions.some((cat) => cat.value === categoryParam)
-          ) {
-            setSelectedCategory(categoryParam);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, [backendUrl, searchParams]);
-
-  // Fetch all images
+  // Fetch all images using the search endpoint
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${backendUrl}/api/product/list`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const url = `${backendUrl}/api/images/search?limit=1000`;
+        const response = await fetch(url);
         const data = await response.json();
-        if (data.success) {
-          setImages(data.products);
+        
+        if (!response.ok) {
+          console.error(`HTTP error! status: ${response.status}`);
+          setImages([]);
+          return;
+        }
+        
+        if (data.success && data.images) {
+          setImages(data.images);
+          
+          // Extract unique categories
+          const uniqueCategoriesSet = new Set();
+          data.images.forEach((image) => {
+            if (image.category) {
+              uniqueCategoriesSet.add(image.category);
+            }
+          });
+          
+          const categoryOptions = [
+            { value: "all", label: "All Categories" },
+            ...Array.from(uniqueCategoriesSet)
+              .sort()
+              .map((cat) => ({
+                value: cat,
+                label: cat.charAt(0).toUpperCase() + cat.slice(1),
+              })),
+          ];
+          setDynamicCategories(categoryOptions);
+        } else {
+          setImages([]);
         }
       } catch (error) {
         console.error("Error fetching images:", error);
+        setImages([]);
       } finally {
         setLoading(false);
       }
@@ -91,8 +78,8 @@ const Explore = () => {
         (image) =>
           image.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           image.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          image.keywords?.some((keyword) =>
-            keyword.toLowerCase().includes(searchQuery.toLowerCase())
+          image.tags?.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
           )
       );
     }
@@ -104,84 +91,55 @@ const Explore = () => {
       );
     }
 
-    // Price range filter
-    filtered = filtered.filter(
-      (image) => image.basePrice >= priceRange[0] && image.basePrice <= priceRange[1]
-    );
-
-    // Rating filter
-    if (ratings > 0) {
-      filtered = filtered.filter(
-        (image) => (image.averageRating || 0) >= ratings
-      );
-    }
-
     // Sorting
     switch (sortBy) {
       case "latest":
-        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       case "trending":
-        filtered.sort((a, b) => (b.trendingCount || 0) - (a.trendingCount || 0));
+        filtered.sort((a, b) => (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0));
         break;
       case "popular":
-        filtered.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+        filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
         break;
       case "price-low":
-        filtered.sort((a, b) => a.basePrice - b.basePrice);
+        filtered.sort((a, b) => parseFloat(a.priceUsd || 0) - parseFloat(b.priceUsd || 0));
         break;
       case "price-high":
-        filtered.sort((a, b) => b.basePrice - a.basePrice);
-        break;
-      case "rating":
-        filtered.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+        filtered.sort((a, b) => parseFloat(b.priceUsd || 0) - parseFloat(a.priceUsd || 0));
         break;
       default:
         break;
     }
 
     setFilteredImages(filtered);
-  }, [images, searchQuery, selectedCategory, priceRange, ratings, sortBy]);
+  }, [images, searchQuery, selectedCategory, sortBy]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="bg-white min-h-screen">
       {/* Header */}
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-center text-gray-900 mb-2">
-          Explore Our <span className="text-amber-500">Gallery</span>
-        </h1>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mt-4">
-          Discover amazing photography from talented artists around the world.
-          Search, filter, and find the perfect images for any occasion.
-        </p>
-      </div>
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+            Explore Gallery
+          </h1>
 
-      {/* Filters Section - Desktop */}
-      <div className="hidden lg:block mb-8 bg-white rounded-lg shadow-sm p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Search */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Search
-            </label>
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            {/* Search */}
             <input
               type="text"
-              placeholder="Search by title, keywords..."
+              placeholder="Search images..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
             />
-          </div>
 
-          {/* Category */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Category
-            </label>
+            {/* Category Filter */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 min-w-[200px]"
             >
               {dynamicCategories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -189,158 +147,167 @@ const Explore = () => {
                 </option>
               ))}
             </select>
-          </div>
 
-          {/* Sort */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Sort By
-            </label>
+            {/* Sort */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 min-w-[160px]"
             >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+              <option value="latest">Latest</option>
+              <option value="trending">Trending</option>
+              <option value="popular">Popular</option>
+              <option value="price-low">Price: Low → High</option>
+              <option value="price-high">Price: High → Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Results Counter */}
+          {!loading && (
+            <p className="text-sm text-gray-600 mb-6">
+              Showing <span className="font-semibold">{filteredImages.length}</span> of{" "}
+              <span className="font-semibold">{images.length}</span> images
+            </p>
+          )}
+
+          {/* Loading State */}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-200 aspect-square rounded-sm animate-pulse"
+                />
               ))}
-            </select>
-          </div>
-
-          {/* Price Range */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Price Range
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                value={priceRange[0]}
-                onChange={(e) =>
-                  setPriceRange([parseFloat(e.target.value), priceRange[1]])
-                }
-                className="w-1/2 px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                placeholder="Min"
-              />
-              <span className="text-gray-500">-</span>
-              <input
-                type="number"
-                min="0"
-                value={priceRange[1]}
-                onChange={(e) =>
-                  setPriceRange([priceRange[0], parseFloat(e.target.value)])
-                }
-                className="w-1/2 px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                placeholder="Max"
-              />
             </div>
-          </div>
+          ) : filteredImages.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {filteredImages.map((image) => (
+                <div
+                  key={image._id}
+                  className="group relative cursor-pointer bg-gray-100 aspect-square rounded-sm overflow-hidden"
+                >
+                  {/* Image */}
+                  <img
+                    src={image.thumbnailUrl || image.imageUrl}
+                    alt={image.title}
+                    onClick={() => navigate(`/image/${image._id}`)}
+                    className="w-full h-full object-cover group-hover:brightness-110 transition duration-300"
+                  />
 
-          {/* Rating */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Minimum Rating
-            </label>
-            <select
-              value={ratings}
-              onChange={(e) => setRatings(parseFloat(e.target.value))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-            >
-              <option value="0">All Ratings</option>
-              <option value="1">1 Star & Up</option>
-              <option value="2">2 Stars & Up</option>
-              <option value="3">3 Stars & Up</option>
-              <option value="4">4 Stars & Up</option>
-              <option value="5">5 Stars Only</option>
-            </select>
-          </div>
+                  {/* Trending Badge */}
+                  {image.isTrending && (
+                    <div className="absolute top-2 right-2">
+                      <span className="inline-block rounded-full bg-amber-400 px-2 py-1 text-xs font-semibold text-gray-900">
+                        🔥 Trending
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
+                    {/* Top: Price and Uploader */}
+                    <div className="flex flex-col gap-2 w-full">
+                      {image.priceEth && (
+                        <div className="bg-white/90 rounded-md px-2 py-1 w-full">
+                          <p className="text-xs font-semibold text-gray-900">
+                            {getFormattedPrice(
+                              image.priceEth,
+                              ethPrice,
+                              currencyPreference,
+                            )}
+                          </p>
+                        </div>
+                      )}
+                      {image.sellerId?.name && (
+                        <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
+                          <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              {image.sellerId?.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-gray-900 truncate">
+                            {image.sellerId.name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bottom: Actions */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                        title="Like"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-red-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/image/${image._id}`);
+                        }}
+                        className="p-1.5 rounded bg-white/90 hover:bg-white transition"
+                        title="View"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-gray-700"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="4"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <svg
+                className="w-16 h-16 mx-auto text-gray-300 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <p className="text-gray-500 text-lg font-medium">No images found</p>
+              <p className="text-gray-400 text-sm mt-2">
+                Try adjusting your filters or search terms
+              </p>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Filters Section - Mobile */}
-      <div className="lg:hidden mb-8 bg-white rounded-lg shadow-sm p-4 space-y-4">
-        <input
-          type="text"
-          placeholder="Search by title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-        />
-
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-        >
-          {dynamicCategories.map((cat) => (
-            <option key={cat.value} value={cat.value}>
-              {cat.label}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-        >
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Results Counter */}
-      <div className="mb-6 text-center text-sm text-gray-600">
-        {loading ? (
-          <p>Loading images...</p>
-        ) : (
-          <p>
-            Showing <span className="font-semibold">{filteredImages.length}</span> of{" "}
-            <span className="font-semibold">{images.length}</span> images
-          </p>
-        )}
-      </div>
-
-      {/* Images Grid */}
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {[...Array(10)].map((_, i) => (
-            <DishLoader key={i} />
-          ))}
-        </div>
-      ) : filteredImages.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {filteredImages.map((product) => (
-            <ProductItem key={product._id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <svg
-            className="w-16 h-16 mx-auto text-gray-300 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          <p className="text-gray-500 text-lg font-medium">No images found</p>
-          <p className="text-gray-400 text-sm mt-2">
-            Try adjusting your filters or search terms
-          </p>
-        </div>
-      )}
     </div>
   );
 };

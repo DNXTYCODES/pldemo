@@ -36,7 +36,8 @@ const Contact = () => {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold mb-4">Get In Touch</h1>
           <p className="text-xl text-gray-300">
-            Have questions about Peak Lens Photography? We'd love to hear from you.
+            Have questions about Peak Lens Photography? We'd love to hear from
+            you.
           </p>
         </div>
       </div>
@@ -52,8 +53,9 @@ const Contact = () => {
                   Contact Information
                 </h2>
                 <p className="text-gray-600 mb-8 leading-relaxed">
-                  Whether you're interested in showcasing your work, purchasing exclusive
-                  photography, or learning more about our platform, we're here to help.
+                  Whether you're interested in showcasing your work, purchasing
+                  exclusive photography, or learning more about our platform,
+                  we're here to help.
                 </p>
               </div>
 
@@ -67,8 +69,12 @@ const Contact = () => {
                     <h3 className="font-semibold text-lg text-gray-900 mb-1">
                       Email
                     </h3>
-                    <p className="text-gray-600">contact@peaklensphotography.com</p>
-                    <p className="text-gray-600">support@peaklensphotography.com</p>
+                    <p className="text-gray-600">
+                      contact@peaklensphotography.com
+                    </p>
+                    <p className="text-gray-600">
+                      support@peaklensphotography.com
+                    </p>
                   </div>
                 </div>
 
@@ -111,7 +117,9 @@ const Contact = () => {
                     <h3 className="font-semibold text-lg text-gray-900 mb-1">
                       Business Hours
                     </h3>
-                    <p className="text-gray-600">Monday - Friday: 9am - 6pm EST</p>
+                    <p className="text-gray-600">
+                      Monday - Friday: 9am - 6pm EST
+                    </p>
                     <p className="text-gray-600">Saturday: 10am - 4pm EST</p>
                     <p className="text-gray-600">Sunday: Closed</p>
                   </div>
@@ -164,7 +172,10 @@ const Contact = () => {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
                     Full Name *
                   </label>
                   <input
@@ -180,7 +191,10 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
                     Email Address *
                   </label>
                   <input
@@ -196,7 +210,10 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-gray-700 font-medium mb-2">
+                  <label
+                    htmlFor="subject"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
                     Subject *
                   </label>
                   <select
@@ -210,7 +227,9 @@ const Contact = () => {
                     <option value="">Select a subject</option>
                     <option value="artist-inquiry">Artist Inquiry</option>
                     <option value="collector-inquiry">Collector Inquiry</option>
-                    <option value="commercial-services">Commercial Services</option>
+                    <option value="commercial-services">
+                      Commercial Services
+                    </option>
                     <option value="nft-marketplace">NFT Marketplace</option>
                     <option value="general-inquiry">General Inquiry</option>
                     <option value="technical-support">Technical Support</option>
@@ -218,7 +237,10 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-gray-700 font-medium mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
                     Message *
                   </label>
                   <textarea
@@ -293,8 +315,9 @@ const Contact = () => {
                 How do I become an artist on Peak Lens?
               </h3>
               <p className="text-gray-600">
-                Simply create an account, verify your email, and upload your portfolio. Our
-                team reviews submissions to ensure quality standards.
+                Simply create an account, verify your email, and upload your
+                portfolio. Our team reviews submissions to ensure quality
+                standards.
               </p>
             </div>
 
@@ -303,8 +326,8 @@ const Contact = () => {
                 How do I purchase photography or NFTs?
               </h3>
               <p className="text-gray-600">
-                Browse our gallery or NFT marketplace, select items you love, and proceed to
-                checkout. We accept multiple payment methods.
+                Browse our gallery or NFT marketplace, select items you love,
+                and proceed to checkout. We accept multiple payment methods.
               </p>
             </div>
 
@@ -313,8 +336,8 @@ const Contact = () => {
                 Do you offer commercial services?
               </h3>
               <p className="text-gray-600">
-                Yes! We provide professional photography for events, portraits, and commercial
-                projects. Contact us for custom pricing.
+                Yes! We provide professional photography for events, portraits,
+                and commercial projects. Contact us for custom pricing.
               </p>
             </div>
 
@@ -323,8 +346,9 @@ const Contact = () => {
                 What makes Peak Lens different?
               </h3>
               <p className="text-gray-600">
-                We combine professional photography expertise with cutting-edge NFT technology,
-                offering the best of both traditional and digital art.
+                We combine professional photography expertise with cutting-edge
+                NFT technology, offering the best of both traditional and
+                digital art.
               </p>
             </div>
           </div>
@@ -336,8 +360,8 @@ const Contact = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Connect?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Start your journey with Peak Lens Photography today. Whether you're an artist or
-            collector, we're here to support your vision.
+            Start your journey with Peak Lens Photography today. Whether you're
+            an artist or collector, we're here to support your vision.
           </p>
           <a
             href="/collection"
@@ -352,31 +376,6 @@ const Contact = () => {
 };
 
 export default Contact;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React from "react";
 // import Title from "../components/Title";

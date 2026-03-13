@@ -8,16 +8,37 @@ const Categories = () => {
   const [categoryImages, setCategoryImages] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Fetch all categories
+  // Fetch actual categories from backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${backendUrl}/api/product/categories`);
+        // Fetch all images to extract unique categories
+        const response = await fetch(
+          `${backendUrl}/api/images/search?limit=1000`,
+        );
         const data = await response.json();
-        if (data.success && data.categories) {
-          setCategories(data.categories);
+        
+        if (data.success && data.images && data.images.length > 0) {
+          // Extract unique categories from images
+          const uniqueCategoriesSet = new Set();
+          data.images.forEach((image) => {
+            if (image.category) {
+              uniqueCategoriesSet.add(image.category);
+            }
+          });
+          
+          // Convert to array of category objects
+          const uniqueCategories = Array.from(uniqueCategoriesSet)
+            .sort()
+            .map((categoryName) => ({
+              name: categoryName,
+              count: data.images.filter((img) => img.category === categoryName)
+                .length,
+            }));
+          
+          setCategories(uniqueCategories);
           // Fetch images for each category
-          data.categories.forEach((category) => {
+          uniqueCategories.forEach((category) => {
             fetchCategoryImages(category.name);
           });
         }
@@ -28,20 +49,20 @@ const Categories = () => {
     fetchCategories();
   }, [backendUrl]);
 
-  // Fetch products for a specific category and pick a random one
+  // Fetch images for a specific category and pick a random one
   const fetchCategoryImages = async (categoryName) => {
     try {
       const response = await fetch(
-        `${backendUrl}/api/product/category/${categoryName}`
+        `${backendUrl}/api/images/search?category=${categoryName}&limit=100`,
       );
       const data = await response.json();
-      if (data.success && data.products && data.products.length > 0) {
-        // Select a random product from the category
-        const randomProduct =
-          data.products[Math.floor(Math.random() * data.products.length)];
+      if (data.success && data.images && data.images.length > 0) {
+        // Select a random image from the category
+        const randomImage =
+          data.images[Math.floor(Math.random() * data.images.length)];
         setCategoryImages((prev) => ({
           ...prev,
-          [categoryName]: randomProduct,
+          [categoryName]: randomImage,
         }));
       }
     } catch (error) {
@@ -96,8 +117,8 @@ const Categories = () => {
               {/* Category Image */}
               {categoryImage ? (
                 <img
-                  src={categoryImage.image[0]}
-                  alt={category.name}
+                  src={categoryImage.thumbnailUrl || categoryImage.imageUrl}
+                  alt={categoryImage.name || categoryImage.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
