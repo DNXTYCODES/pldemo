@@ -137,7 +137,8 @@ const registerUser = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Account created! Please check your email to verify your account.",
+      message:
+        "Account created! Please check your email to verify your account.",
       user: {
         _id: user._id,
         name: user.name,
@@ -156,13 +157,13 @@ const verifyEmail = async (req, res) => {
     const { token } = req.body;
 
     if (!token) {
-      return res.json({ success: false, message: "Verification token is required" });
+      return res.json({
+        success: false,
+        message: "Verification token is required",
+      });
     }
 
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await userModel.findOne({
       verificationToken: hashedToken,
@@ -208,13 +209,13 @@ const verifyEmailPage = async (req, res) => {
     const { token } = req.params;
 
     if (!token) {
-      return res.json({ success: false, message: "Verification token is required" });
+      return res.json({
+        success: false,
+        message: "Verification token is required",
+      });
     }
 
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await userModel.findOne({
       verificationToken: hashedToken,
@@ -1109,11 +1110,9 @@ const updateFeaturedPhotographer = async (req, res) => {
       });
     }
 
-    const user = await userModel.findByIdAndUpdate(
-      userId,
-      { isFeatured },
-      { new: true },
-    ).select("name profilePicture bio location isFeatured");
+    const user = await userModel
+      .findByIdAndUpdate(userId, { isFeatured }, { new: true })
+      .select("name profilePicture bio location isFeatured");
 
     if (!user) {
       return res.json({

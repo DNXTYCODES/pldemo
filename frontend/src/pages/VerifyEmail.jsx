@@ -24,7 +24,7 @@ const VerifyEmail = () => {
         }
 
         const response = await axios.get(
-          `${backendUrl}/api/users/verify-email/${token}`
+          `${backendUrl}/api/users/verify-email/${token}`,
         );
 
         if (response.data.success) {
@@ -49,7 +49,10 @@ const VerifyEmail = () => {
         }
       } catch (error) {
         console.error("Error verifying email:", error);
-        setMessage(error.response?.data?.message || "An error occurred during verification");
+        setMessage(
+          error.response?.data?.message ||
+            "An error occurred during verification",
+        );
         setSuccess(false);
         toast.error("Email verification failed");
       } finally {
@@ -90,8 +93,12 @@ const VerifyEmail = () => {
                   </svg>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Verifying Email</h2>
-              <p className="text-gray-400">Please wait while we verify your email address...</p>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Verifying Email
+              </h2>
+              <p className="text-gray-400">
+                Please wait while we verify your email address...
+              </p>
             </>
           ) : success ? (
             <>
@@ -112,7 +119,9 @@ const VerifyEmail = () => {
                   </svg>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Email Verified!</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Email Verified!
+              </h2>
               <p className="text-gray-400 mb-6">{message}</p>
               <p className="text-sm text-gray-500">
                 Redirecting you to the home page in a few seconds...
@@ -143,7 +152,9 @@ const VerifyEmail = () => {
                   </svg>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Verification Failed</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Verification Failed
+              </h2>
               <p className="text-gray-400 mb-6">{message}</p>
               <div className="space-y-3">
                 <button

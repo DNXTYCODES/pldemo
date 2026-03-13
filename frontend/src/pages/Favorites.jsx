@@ -13,17 +13,25 @@ const Favorites = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch(`${backendUrl}/api/users/profile`, {
+        const profileResponse = await fetch(`${backendUrl}/api/users/profile`, {
           headers: { Authorization: token },
         });
-        const data = await response.json();
+        const profileData = await profileResponse.json();
 
-        if (data.success && data.user.favorites) {
-          // Note: In a real implementation, you'd fetch full image details
-          // For now, we'll show a message about the favorites
-          setFavorites(data.user.favorites || []);
+        if (profileData.success && profileData.user.favorites) {
+          const favoriteIds = profileData.user.favorites;
+          
+          // Fetch full image details for each favorite
+          const imagePromises = favoriteIds.map(imageId =>
+            fetch(`${backendUrl}/api/images/${imageId}`)
+              .then(res => res.json())
+              .then(data => data.success ? data.image : null)
+          );
+          
+          const images = await Promise.all(imagePromises);
+          setFavorites(images.filter(img => img !== null));
         } else {
-          setError(data.message || "Failed to load favorites");
+          setError(profileData.message || "Failed to load favorites");
         }
       } catch (err) {
         setError("Error loading favorites: " + err.message);
@@ -42,7 +50,10 @@ const Favorites = () => {
         `${backendUrl}/api/images/${imageId}/favorite`,
         {
           method: "PUT",
-          headers: { Authorization: token },
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
         },
       );
 
@@ -50,6 +61,7 @@ const Favorites = () => {
 
       if (data.success) {
         setFavorites(favorites.filter((fav) => fav._id !== imageId));
+        alert(data.message || "Removed from favorites");
       } else {
         alert(data.message || "Failed to remove favorite");
       }
@@ -107,7 +119,7 @@ const Favorites = () => {
                 {/* Image */}
                 <div className="relative h-48 bg-gray-700 overflow-hidden">
                   <img
-                    src={favorite.imageUrl}
+                    src={favorite.thumbnailUrl || favorite.imageUrl}
                     alt={favorite.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -148,10 +160,10 @@ const Favorites = () => {
 
                   {/* Buy Button */}
                   <button
-                    onClick={() => navigate(`/product/${favorite._id}`)}
+                    onClick={() => navigate(`/image/${favorite._id}`)}
                     className="w-full py-2 bg-green-600 hover:bg-green-700 rounded font-medium text-sm"
                   >
-                    Buy Now
+                    View & Buy
                   </button>
                 </div>
               </div>

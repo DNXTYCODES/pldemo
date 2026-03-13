@@ -40,7 +40,7 @@ const NewsletterBox = () => {
         <h2 className="text-xs font-semibold text-gray-700 uppercase tracking-widest mb-6">
           Stay Updated
         </h2>
-        
+
         {/* Form Container */}
         <div className="flex justify-center">
           <div className="w-full max-w-[500px]">

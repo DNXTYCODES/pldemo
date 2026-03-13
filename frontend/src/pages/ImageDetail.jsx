@@ -17,6 +17,7 @@ const ImageDetail = () => {
   const [isFavourite, setIsFavourite] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userFavorites, setUserFavorites] = useState(new Set());
 
   // Fetch image details
   useEffect(() => {
@@ -70,6 +71,32 @@ const ImageDetail = () => {
     fetchImageDetails();
   }, [imageId, backendUrl, navigate]);
 
+  // Load user's favorites to check if this image is favorited
+  useEffect(() => {
+    if (token) {
+      const loadFavorites = async () => {
+        try {
+          const response = await fetch(`${backendUrl}/api/users/profile`, {
+            headers: { Authorization: token },
+          });
+          const data = await response.json();
+          if (data.success && data.user.favorites) {
+            const favoriteIds = new Set(
+              data.user.favorites.map(fav =>
+                typeof fav === 'object' ? fav._id || fav : fav
+              )
+            );
+            setUserFavorites(favoriteIds);
+            setIsFavourite(favoriteIds.has(imageId));
+          }
+        } catch (error) {
+          console.error("Error loading favorites:", error);
+        }
+      };
+      loadFavorites();
+    }
+  }, [token, backendUrl, imageId]);
+
   const handleFavourite = async () => {
     if (!token) {
       toast.error("Please log in to favourite images");
@@ -79,11 +106,11 @@ const ImageDetail = () => {
 
     try {
       const response = await fetch(
-        `${backendUrl}/api/images/${imageId}/favourite`,
+        `${backendUrl}/api/images/${imageId}/favorite`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
             "Content-Type": "application/json",
           },
         },
@@ -91,10 +118,23 @@ const ImageDetail = () => {
 
       const data = await response.json();
       if (data.success) {
-        setIsFavourite(!isFavourite);
-        toast.success(
-          isFavourite ? "Removed from favourites" : "Added to favourites",
-        );
+        // Reload user's favorites from backend to ensure visual state matches database
+        const profileResponse = await fetch(`${backendUrl}/api/users/profile`, {
+          headers: { Authorization: token },
+        });
+        const profileData = await profileResponse.json();
+        if (profileData.success && profileData.user.favorites) {
+          const favoriteIds = new Set(
+            profileData.user.favorites.map(fav =>
+              typeof fav === 'object' ? fav._id || fav : fav
+            )
+          );
+          setUserFavorites(favoriteIds);
+          setIsFavourite(favoriteIds.has(imageId));
+          toast.success(
+            favoriteIds.has(imageId) ? "Added to favourites" : "Removed from favourites",
+          );
+        }
       } else {
         toast.error(data.message || "Failed to update favourite");
       }

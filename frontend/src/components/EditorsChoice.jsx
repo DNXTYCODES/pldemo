@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { getFormattedPrice } from "../utils/ethPrice";
+import { toast } from "react-toastify";
 
 const EditorsChoice = () => {
-  const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
+  const { backendUrl, currencyPreference, ethPrice, token } = useContext(ShopContext);
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState(new Set());
 
   useEffect(() => {
     const fetchEditorsChoice = async () => {
@@ -29,6 +31,67 @@ const EditorsChoice = () => {
 
     fetchEditorsChoice();
   }, [backendUrl]);
+
+  useEffect(() => {
+    if (token) {
+      loadUserFavorites();
+    }
+  }, [token, backendUrl]);
+
+  const loadUserFavorites = async () => {
+    if (token) {
+      try {
+        const response = await fetch(`${backendUrl}/api/users/profile`, {
+          headers: { Authorization: token },
+        });
+        const data = await response.json();
+        if (data.success && data.user.favorites) {
+          const favoriteIds = new Set(
+            data.user.favorites.map(fav => 
+              typeof fav === 'object' ? fav._id || fav : fav
+            )
+          );
+          setFavorites(favoriteIds);
+        }
+      } catch (error) {
+        console.error("Error loading favorites:", error);
+      }
+    }
+  };
+
+  const handleFavorite = async (e, imageId) => {
+    e.stopPropagation();
+    
+    if (!token) {
+      toast.error("Please log in to favorite images");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${backendUrl}/api/images/${imageId}/favorite`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        await loadUserFavorites();
+        toast.success(data.isFavorited ? "Added to favorites" : "Removed from favorites");
+      } else {
+        toast.error(data.message || "Failed to update favorite");
+      }
+    } catch (error) {
+      console.error("Error updating favorite:", error);
+      toast.error("Error updating favorite");
+    }
+  };
 
   if (loading) {
     return (
@@ -98,9 +161,7 @@ const EditorsChoice = () => {
                 {/* Bottom: Actions */}
                 <div className="flex gap-1.5">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
+                    onClick={(e) => handleFavorite(e, image._id)}
                     className="p-1 rounded-xs bg-white hover:bg-gray-100"
                     title="Like"
                   >
@@ -108,7 +169,7 @@ const EditorsChoice = () => {
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
-                      fill="none"
+                      fill={favorites.has(image._id) ? "currentColor" : "none"}
                       stroke="currentColor"
                       strokeWidth="2"
                       className="text-red-500"

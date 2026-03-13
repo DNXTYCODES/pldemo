@@ -82,7 +82,7 @@ const userSchema = new mongoose.Schema(
     emailVerified: { type: Boolean, default: false },
     verificationToken: { type: String },
     verificationExpires: { type: Date },
-    
+
     // Google OAuth
     googleId: { type: String },
     authProvider: { type: String, enum: ["email", "google"], default: "email" },

@@ -12,7 +12,7 @@ const ResetPassword = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
@@ -62,7 +62,9 @@ const ResetPassword = () => {
         {/* Form Card */}
         <div className="bg-gray-800 rounded-lg border border-gray-700 p-8 shadow-2xl">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Reset Password
+            </h2>
             <p className="text-gray-400 text-sm">
               Enter a new password below to regain access to your account.
             </p>
@@ -70,7 +72,10 @@ const ResetPassword = () => {
 
           <form onSubmit={onSubmitHandler} className="space-y-5">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 New Password
               </label>
               <input
@@ -165,7 +170,10 @@ const ResetPassword = () => {
         {/* Footer Text */}
         <p className="text-center text-gray-500 text-xs mt-6">
           Didn't receive a reset email?{" "}
-          <Link to="/forgot-password" className="text-amber-400 hover:text-amber-300 font-medium">
+          <Link
+            to="/forgot-password"
+            className="text-amber-400 hover:text-amber-300 font-medium"
+          >
             Try again
           </Link>
         </p>

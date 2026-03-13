@@ -15,11 +15,11 @@ const Hero = () => {
     {
       id: 1,
       href: "/collection",
-      title: "Shop NFT",
+      title: "Shop NFTs",
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1614613535308-eb5fbd8d2c17?w=1200&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1620321503375-490c06e17d27?w=1200&h=600&fit=crop",
     },
     {
       id: 2,
