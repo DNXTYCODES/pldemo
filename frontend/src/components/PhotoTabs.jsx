@@ -5,7 +5,8 @@ import { getFormattedPrice } from "../utils/ethPrice";
 import { toast } from "react-toastify";
 
 const PhotoTabs = () => {
-  const { backendUrl, currencyPreference, ethPrice, token } = useContext(ShopContext);
+  const { backendUrl, currencyPreference, ethPrice, token } =
+    useContext(ShopContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("explore");
   const [allImages, setAllImages] = useState([]);
@@ -100,9 +101,9 @@ const PhotoTabs = () => {
         const data = await response.json();
         if (data.success && data.user.favorites) {
           const favoriteIds = new Set(
-            data.user.favorites.map(fav => 
-              typeof fav === 'object' ? fav._id || fav : fav
-            )
+            data.user.favorites.map((fav) =>
+              typeof fav === "object" ? fav._id || fav : fav,
+            ),
           );
           setFavorites(favoriteIds);
         }
@@ -127,7 +128,7 @@ const PhotoTabs = () => {
 
   const handleFavorite = async (e, imageId) => {
     e.stopPropagation();
-    
+
     if (!token) {
       toast.error("Please log in to favorite images");
       navigate("/login");
@@ -149,7 +150,9 @@ const PhotoTabs = () => {
       const data = await response.json();
       if (data.success) {
         await loadUserFavorites();
-        toast.success(data.isFavorited ? "Added to favorites" : "Removed from favorites");
+        toast.success(
+          data.isFavorited ? "Added to favorites" : "Removed from favorites",
+        );
       } else {
         toast.error(data.message || "Failed to update favorite");
       }
@@ -275,7 +278,9 @@ const PhotoTabs = () => {
                             width="16"
                             height="16"
                             viewBox="0 0 24 24"
-                            fill={favorites.has(image._id) ? "currentColor" : "none"}
+                            fill={
+                              favorites.has(image._id) ? "currentColor" : "none"
+                            }
                             stroke="currentColor"
                             strokeWidth="2"
                             className="text-red-500"
@@ -386,7 +391,11 @@ const PhotoTabs = () => {
                                   width="16"
                                   height="16"
                                   viewBox="0 0 24 24"
-                                  fill={favorites.has(image._id) ? "currentColor" : "none"}
+                                  fill={
+                                    favorites.has(image._id)
+                                      ? "currentColor"
+                                      : "none"
+                                  }
                                   stroke="currentColor"
                                   strokeWidth="2"
                                   className="text-red-500"
@@ -500,7 +509,9 @@ const PhotoTabs = () => {
                             width="16"
                             height="16"
                             viewBox="0 0 24 24"
-                            fill={favorites.has(image._id) ? "currentColor" : "none"}
+                            fill={
+                              favorites.has(image._id) ? "currentColor" : "none"
+                            }
                             stroke="currentColor"
                             strokeWidth="2"
                             className="text-red-500"
@@ -607,7 +618,9 @@ const PhotoTabs = () => {
                             width="16"
                             height="16"
                             viewBox="0 0 24 24"
-                            fill={favorites.has(image._id) ? "currentColor" : "none"}
+                            fill={
+                              favorites.has(image._id) ? "currentColor" : "none"
+                            }
                             stroke="currentColor"
                             strokeWidth="2"
                             className="text-red-500"

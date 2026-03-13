@@ -20,16 +20,16 @@ const Favorites = () => {
 
         if (profileData.success && profileData.user.favorites) {
           const favoriteIds = profileData.user.favorites;
-          
+
           // Fetch full image details for each favorite
-          const imagePromises = favoriteIds.map(imageId =>
+          const imagePromises = favoriteIds.map((imageId) =>
             fetch(`${backendUrl}/api/images/${imageId}`)
-              .then(res => res.json())
-              .then(data => data.success ? data.image : null)
+              .then((res) => res.json())
+              .then((data) => (data.success ? data.image : null)),
           );
-          
+
           const images = await Promise.all(imagePromises);
-          setFavorites(images.filter(img => img !== null));
+          setFavorites(images.filter((img) => img !== null));
         } else {
           setError(profileData.message || "Failed to load favorites");
         }

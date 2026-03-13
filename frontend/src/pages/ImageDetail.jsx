@@ -82,9 +82,9 @@ const ImageDetail = () => {
           const data = await response.json();
           if (data.success && data.user.favorites) {
             const favoriteIds = new Set(
-              data.user.favorites.map(fav =>
-                typeof fav === 'object' ? fav._id || fav : fav
-              )
+              data.user.favorites.map((fav) =>
+                typeof fav === "object" ? fav._id || fav : fav,
+              ),
             );
             setUserFavorites(favoriteIds);
             setIsFavourite(favoriteIds.has(imageId));
@@ -125,14 +125,16 @@ const ImageDetail = () => {
         const profileData = await profileResponse.json();
         if (profileData.success && profileData.user.favorites) {
           const favoriteIds = new Set(
-            profileData.user.favorites.map(fav =>
-              typeof fav === 'object' ? fav._id || fav : fav
-            )
+            profileData.user.favorites.map((fav) =>
+              typeof fav === "object" ? fav._id || fav : fav,
+            ),
           );
           setUserFavorites(favoriteIds);
           setIsFavourite(favoriteIds.has(imageId));
           toast.success(
-            favoriteIds.has(imageId) ? "Added to favourites" : "Removed from favourites",
+            favoriteIds.has(imageId)
+              ? "Added to favourites"
+              : "Removed from favourites",
           );
         }
       } else {

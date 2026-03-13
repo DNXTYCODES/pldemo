@@ -5,7 +5,8 @@ import { getFormattedPrice } from "../utils/ethPrice";
 import { toast } from "react-toastify";
 
 const AmbassadorsPick = () => {
-  const { backendUrl, currencyPreference, ethPrice, token } = useContext(ShopContext);
+  const { backendUrl, currencyPreference, ethPrice, token } =
+    useContext(ShopContext);
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,9 +48,9 @@ const AmbassadorsPick = () => {
         const data = await response.json();
         if (data.success && data.user.favorites) {
           const favoriteIds = new Set(
-            data.user.favorites.map(fav => 
-              typeof fav === 'object' ? fav._id || fav : fav
-            )
+            data.user.favorites.map((fav) =>
+              typeof fav === "object" ? fav._id || fav : fav,
+            ),
           );
           setFavorites(favoriteIds);
         }
@@ -61,7 +62,7 @@ const AmbassadorsPick = () => {
 
   const handleFavorite = async (e, imageId) => {
     e.stopPropagation();
-    
+
     if (!token) {
       toast.error("Please log in to favorite images");
       navigate("/login");
@@ -83,7 +84,9 @@ const AmbassadorsPick = () => {
       const data = await response.json();
       if (data.success) {
         await loadUserFavorites();
-        toast.success(data.isFavorited ? "Added to favorites" : "Removed from favorites");
+        toast.success(
+          data.isFavorited ? "Added to favorites" : "Removed from favorites",
+        );
       } else {
         toast.error(data.message || "Failed to update favorite");
       }
