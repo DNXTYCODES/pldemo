@@ -332,7 +332,7 @@ const ImageDetail = () => {
                   </div>
                 )}
 
-                {/* Upload Date */}
+                {/* Views Count */}
                 <div className="flex items-center gap-2">
                   <svg
                     width="16"
@@ -343,25 +343,10 @@ const ImageDetail = () => {
                     strokeWidth="2"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <rect
-                      x="3"
-                      y="4"
-                      width="18"
-                      height="18"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
                   </svg>
-                  <span>
-                    {new Date(imageData.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <span>{imageData.views || 0} views</span>
                 </div>
               </div>
             </div>

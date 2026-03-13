@@ -40,14 +40,33 @@ const imageSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    likes: {
+      type: Number,
+      default: () => Math.floor(Math.random() * 100) + 50, // Random initial between 50-150
+      min: 0,
+      max: 4024, // Maximum likes hardcoded as specified
+    },
+    likeHistory: [
+      {
+        timestamp: { type: Date, default: Date.now },
+        change: { type: Number, default: 1 }, // +1 or -1
+      },
+    ],
     purchaseCount: {
       type: Number,
       default: 0,
     },
     favoriteCount: {
       type: Number,
-      default: 0,
+      default: () => Math.floor(Math.random() * 50) + 10, // Random initial between 10-60
+      min: 0,
     },
+    favoriteHistory: [
+      {
+        timestamp: { type: Date, default: Date.now },
+        change: { type: Number, default: 1 }, // +1 or -1
+      },
+    ],
 
     // Purchase History
     purchaseHistory: [

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
 
 const CommunityBanner = () => {
+  const { token } = useContext(ShopContext);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const banners = [
@@ -78,13 +80,15 @@ const CommunityBanner = () => {
               {currentBanner.description}
             </p>
 
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white font-medium text-sm rounded hover:bg-gray-800 transition-colors w-fit mb-5"
-              role="button"
-            >
-              <span>Sign up for free</span>
-            </Link>
+            {!token && (
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white font-medium text-sm rounded hover:bg-gray-800 transition-colors w-fit mb-5"
+                role="button"
+              >
+                <span>Sign up for free</span>
+              </Link>
+            )}
 
             {/* Indicator Dots - Compact */}
             <div className="flex items-center gap-2">

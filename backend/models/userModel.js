@@ -78,6 +78,15 @@ const userSchema = new mongoose.Schema(
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
 
+    // Email Verification
+    emailVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
+    verificationExpires: { type: Date },
+    
+    // Google OAuth
+    googleId: { type: String },
+    authProvider: { type: String, enum: ["email", "google"], default: "email" },
+
     // Metadata
     isFeatured: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },

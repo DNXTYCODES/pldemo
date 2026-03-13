@@ -2,6 +2,8 @@ import express from "express";
 import {
   loginUser,
   registerUser,
+  verifyEmail,
+  verifyEmailPage,
   adminLogin,
   forgotPassword,
   resetPassword,
@@ -31,6 +33,8 @@ const userRouter = express.Router();
 
 // Authentication Routes
 userRouter.post("/register", registerUser);
+userRouter.post("/verify-email", verifyEmail); // Verify email with token (for API calls)
+userRouter.get("/verify-email/:token", verifyEmailPage); // Verify email from link
 userRouter.post("/login", loginUser);
 userRouter.post("/admin", adminLogin);
 userRouter.post("/forgot-password", forgotPassword);

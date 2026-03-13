@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 import { ShopContext } from "./context/ShopContext";
 import VerifyPayment from "./pages/VerifyPayment";
 import Profile from "./pages/Profile";
@@ -69,6 +70,7 @@ const App = () => {
           <Route path="/orders" element={<Orders />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/verify" element={<VerifyPayment />} />
 
           {/* Profile Routes */}
