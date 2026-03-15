@@ -23,7 +23,6 @@ import EditProfile from "./pages/EditProfile";
 import UploadPhoto from "./pages/UploadPhoto";
 import MySales from "./pages/MySales";
 import MyPurchases from "./pages/MyPurchases";
-import Favorites from "./pages/Favorites";
 import FundAccount from "./pages/FundAccount";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
@@ -77,7 +76,6 @@ const App = () => {
           <Route path="/upload-photo" element={<UploadPhoto />} />
           <Route path="/my-sales" element={<MySales />} />
           <Route path="/my-purchases" element={<MyPurchases />} />
-          <Route path="/favorites" element={<Favorites />} />
           <Route path="/fund-account" element={<FundAccount />} />
 
           {/* Image Routes */}

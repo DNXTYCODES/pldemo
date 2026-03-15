@@ -380,66 +380,247 @@ const Profile = () => {
 
         {/* Content */}
         {activeTab === "overview" && stats && (
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Stats Cards */}
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Images Uploaded</p>
-              <p className="text-3xl font-bold text-amber-600">
-                {stats.totalImages}
+          <div className="mt-8">
+            {/* Portfolio Value Section */}
+            <div className="mb-8 bg-gradient-to-r from-purple-600 to-indigo-800 rounded-lg p-8 text-white shadow-lg">
+              <p className="text-blue-100 text-sm mb-2 uppercase tracking-wider">
+                Portfolio Value
               </p>
+              <div className="flex items-baseline gap-4">
+                <p className="text-4xl font-bold">
+                  {parseFloat(stats.earnings.totalEarned).toFixed(8)} ETH
+                </p>
+                <p className="text-xl text-blue-100">
+                  ($
+                  {(parseFloat(stats.earnings.totalEarned) * ethPrice).toFixed(
+                    2,
+                  )}
+                  )
+                </p>
+              </div>
+              <div className="mt-4 pt-4 border-t border-blue-400 flex gap-8">
+                <div>
+                  <p className="text-blue-100 text-xs uppercase">
+                    Total Earned
+                  </p>
+                  <p className="text-2xl font-semibold mt-1">
+                    {parseFloat(stats.earnings.totalEarned).toFixed(8)} ETH
+                  </p>
+                </div>
+                <div>
+                  <p className="text-blue-100 text-xs uppercase">Total Spent</p>
+                  <p className="text-2xl font-semibold mt-1 text-red-200">
+                    {parseFloat(stats.earnings.totalSpent).toFixed(8)} ETH
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Total Purchases</p>
-              <p className="text-3xl font-bold text-blue-600">
-                {stats.transactions.purchases}
-              </p>
-            </div>
+            {/* Stats Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Images Uploaded */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-amber-700 text-sm font-semibold uppercase tracking-wide">
+                    Images Uploaded
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-amber-600"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                  </svg>
+                </div>
+                <p className="text-4xl font-bold text-amber-700">
+                  {stats.totalImages}
+                </p>
+              </div>
 
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Total Sales</p>
-              <p className="text-3xl font-bold text-green-600">
-                {stats.transactions.sales}
-              </p>
-            </div>
+              {/* Purchases */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-blue-700 text-sm font-semibold uppercase tracking-wide">
+                    Purchases
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-blue-600"
+                  >
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </svg>
+                </div>
+                <p className="text-4xl font-bold text-blue-700">
+                  {stats.transactions.purchases}
+                </p>
+              </div>
 
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Favorites</p>
-              <p className="text-3xl font-bold text-pink-600">
-                {stats.totalFavorites}
-              </p>
-            </div>
+              {/* Sales */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-green-700 text-sm font-semibold uppercase tracking-wide">
+                    Sales
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-green-600"
+                  >
+                    <path d="M12 2v20m10-10H2" />
+                    <path d="M2 12l4-4m16 4l-4 4m0-8l4-4" />
+                  </svg>
+                </div>
+                <p className="text-4xl font-bold text-green-700">
+                  {stats.transactions.sales}
+                </p>
+              </div>
 
-            {/* Earnings */}
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Total Earned</p>
-              <p className="text-2xl font-bold text-green-600">
-                {parseFloat(stats.earnings.totalEarned).toFixed(8)} ETH
-              </p>
-            </div>
+              {/* Total Transactions */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-purple-700 text-sm font-semibold uppercase tracking-wide">
+                    Transactions
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-purple-600"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                  </svg>
+                </div>
+                <p className="text-4xl font-bold text-purple-700">
+                  {stats.transactions.total}
+                </p>
+              </div>
 
-            {/* Spent */}
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Total Spent</p>
-              <p className="text-2xl font-bold text-red-600">
-                {parseFloat(stats.earnings.totalSpent).toFixed(8)} ETH
-              </p>
-            </div>
+              {/* Member Since */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-gray-700 text-sm font-semibold uppercase tracking-wide">
+                    Member Since
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-gray-600"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M16 2v4M8 2v4M3 10h18" />
+                  </svg>
+                </div>
+                <p className="text-lg font-bold text-gray-700">
+                  {new Date(stats.memberSince).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
 
-            {/* Member Since */}
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Member Since</p>
-              <p className="text-lg font-bold text-gray-900">
-                {new Date(stats.memberSince).toLocaleDateString()}
-              </p>
-            </div>
+              {/* Net Balance */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-cyan-700 text-sm font-semibold uppercase tracking-wide">
+                    Net Balance
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-cyan-600"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                </div>
+                <p className="text-2xl font-bold text-cyan-700">
+                  {parseFloat(
+                    (
+                      stats.earnings.totalEarned - stats.earnings.totalSpent
+                    ).toFixed(8),
+                  )}{" "}
+                  ETH
+                </p>
+              </div>
 
-            {/* Total Transactions */}
-            <div className="bg-gray-50 border border-gray-300 rounded p-6">
-              <p className="text-gray-600 text-sm mb-2">Total Transactions</p>
-              <p className="text-3xl font-bold text-purple-600">
-                {stats.transactions.total}
-              </p>
+              {/* USD Equivalent */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-orange-700 text-sm font-semibold uppercase tracking-wide">
+                    USD Value
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-orange-600"
+                  >
+                    <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2m0 1a9 9 0 100 18 9 9 0 000-18" />
+                    <path d="M12 6v12m3-3h-6" />
+                  </svg>
+                </div>
+                <p className="text-2xl font-bold text-orange-700">
+                  $
+                  {(parseFloat(stats.earnings.totalEarned) * ethPrice).toFixed(
+                    2,
+                  )}
+                </p>
+              </div>
+
+              {/* ETH Price */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-indigo-700 text-sm font-semibold uppercase tracking-wide">
+                    ETH Price
+                  </p>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-indigo-600"
+                  >
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
+                  </svg>
+                </div>
+                <p className="text-2xl font-bold text-indigo-700">
+                  ${ethPrice.toFixed(2)}
+                </p>
+              </div>
             </div>
           </div>
         )}

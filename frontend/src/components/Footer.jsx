@@ -152,10 +152,10 @@ const Footer = () => {
                   ></path>
                 </svg>
                 <a
-                  href="mailto:contact@peaklensphotography.com"
+                  href="mailto:peaklensphotography@gmail.com"
                   className="hover:text-amber-400 transition-colors"
                 >
-                  contact@peaklensphotography.com
+                  peaklensphotography@gmail.com
                 </a>
               </li>
               <li className="flex items-start">

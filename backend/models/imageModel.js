@@ -40,6 +40,16 @@ const imageSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    fakeViewsAdded: {
+      type: Number,
+      default: 0, // Tracks cumulative fake views added
+    },
+    fakeViewsHistory: [
+      {
+        timestamp: { type: Date, default: Date.now },
+        change: { type: Number, default: 1 }, // Amount added
+      },
+    ],
     likes: {
       type: Number,
       default: () => Math.floor(Math.random() * 100) + 50, // Random initial between 50-150

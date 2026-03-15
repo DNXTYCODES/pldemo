@@ -34,7 +34,14 @@ const FeaturedPhotographers = () => {
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
             Featured Photographers
           </h2>
-          <div className="text-center py-8 text-gray-500">Loading...</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-gray-200 aspect-square rounded-sm animate-pulse"
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -52,12 +59,6 @@ const FeaturedPhotographers = () => {
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
             Featured Photographers
           </h2>
-          <button
-            onClick={() => navigate("/photographers")}
-            className="text-xs font-semibold text-gray-900 hover:text-gray-600 uppercase tracking-widest transition"
-          >
-            View All →
-          </button>
         </div>
 
         <p className="text-lg font-medium text-gray-900 mb-8">

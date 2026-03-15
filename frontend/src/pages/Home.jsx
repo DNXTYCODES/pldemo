@@ -5,7 +5,7 @@ import PhotoTabs from "../components/PhotoTabs";
 import LatestCollection from "../components/LatestCollection";
 import BestSeller from "../components/BestSeller";
 import PopularPhotos from "../components/PopularPhotos";
-import EditorsChoice from "../components/EditorsChoice";
+// import EditorsChoice from "../components/EditorsChoice";
 import AmbassadorsPick from "../components/AmbassadorsPick";
 import PhotoStories from "../components/PhotoStories";
 import OurPolicy from "../components/OurPolicy";

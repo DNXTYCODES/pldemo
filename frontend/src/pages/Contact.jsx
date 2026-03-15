@@ -70,10 +70,10 @@ const Contact = () => {
                       Email
                     </h3>
                     <p className="text-gray-600">
-                      contact@peaklensphotography.com
+                      peaklensphotography@gmail.com
                     </p>
                     <p className="text-gray-600">
-                      support@peaklensphotography.com
+                      peaklensphotography@gmail.com
                     </p>
                   </div>
                 </div>

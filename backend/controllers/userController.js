@@ -387,6 +387,7 @@ const getUserProfile = async (req, res) => {
         languages: user.languages,
         createdAt: user.createdAt,
         ownedImagesCount: user.ownedImages.length,
+        favorites: user.favorites,
         favoritesCount: user.favorites.length,
         transactions: user.transactions.length,
         unreadNotifications: user.notifications.filter((n) => !n.read).length,

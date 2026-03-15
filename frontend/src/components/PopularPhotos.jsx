@@ -10,7 +10,6 @@ const PopularPhotos = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState(new Set());
 
   useEffect(() => {
     const fetchPopularPhotos = async () => {
@@ -33,72 +32,6 @@ const PopularPhotos = () => {
     fetchPopularPhotos();
   }, [backendUrl]);
 
-  // Load user's existing favorites when token changes
-  useEffect(() => {
-    if (token) {
-      loadUserFavorites();
-    }
-  }, [token, backendUrl]);
-
-  const loadUserFavorites = async () => {
-    if (token) {
-      try {
-        const response = await fetch(`${backendUrl}/api/users/profile`, {
-          headers: { Authorization: token },
-        });
-        const data = await response.json();
-        if (data.success && data.user.favorites) {
-          // Convert array of favorite IDs to Set for efficient lookup
-          const favoriteIds = new Set(
-            data.user.favorites.map((fav) =>
-              typeof fav === "object" ? fav._id || fav : fav,
-            ),
-          );
-          setFavorites(favoriteIds);
-        }
-      } catch (error) {
-        console.error("Error loading favorites:", error);
-      }
-    }
-  };
-
-  const handleFavorite = async (e, imageId) => {
-    e.stopPropagation();
-
-    if (!token) {
-      toast.error("Please log in to favorite images");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${backendUrl}/api/images/${imageId}/favorite`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        // Reload favorites from backend to ensure state matches database
-        await loadUserFavorites();
-        toast.success(
-          data.isFavorited ? "Added to favorites" : "Removed from favorites",
-        );
-      } else {
-        toast.error(data.message || "Failed to update favorite");
-      }
-    } catch (error) {
-      console.error("Error updating favorite:", error);
-      toast.error("Error updating favorite");
-    }
-  };
-
   if (loading) {
     return (
       <div className="bg-white py-12">
@@ -106,7 +39,14 @@ const PopularPhotos = () => {
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
             Popular Photos
           </h2>
-          <div className="text-center py-8 text-gray-500">Loading...</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-gray-200 aspect-square rounded-sm animate-pulse"
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -180,24 +120,6 @@ const PopularPhotos = () => {
 
                 {/* Bottom: Actions */}
                 <div className="flex gap-2">
-                  <button
-                    onClick={(e) => handleFavorite(e, image._id)}
-                    className="p-1.5 rounded bg-white/90 hover:bg-white transition"
-                    title="Like"
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill={favorites.has(image._id) ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="text-red-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

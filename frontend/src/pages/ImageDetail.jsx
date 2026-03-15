@@ -14,10 +14,10 @@ const ImageDetail = () => {
   const [relatedImages, setRelatedImages] = useState([]);
   const [uploaderInfo, setUploaderInfo] = useState(null);
   const [uploaderOtherImages, setUploaderOtherImages] = useState([]);
-  const [isFavourite, setIsFavourite] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userFavorites, setUserFavorites] = useState(new Set());
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   // Fetch image details
   useEffect(() => {
@@ -28,8 +28,24 @@ const ImageDetail = () => {
         const data = await response.json();
 
         if (data.success) {
-          setImageData(data.image);
-          setIsFavourite(data.image.isFavourite || false);
+          // First, add fake views to boost social proof
+          try {
+            await fetch(`${backendUrl}/api/images/${imageId}/fake-views`, {
+              method: "POST",
+            });
+            // After adding fake views, fetch the updated image data
+            const updatedResponse = await fetch(`${backendUrl}/api/images/${imageId}`);
+            const updatedData = await updatedResponse.json();
+            if (updatedData.success) {
+              setImageData(updatedData.image);
+            } else {
+              setImageData(data.image);
+            }
+          } catch (error) {
+            // If fake views fail, just use the original data
+            console.log("Note: Could not add fake views");
+            setImageData(data.image);
+          }
 
           // Fetch related images (same category)
           const relatedResponse = await fetch(
@@ -71,92 +87,20 @@ const ImageDetail = () => {
     fetchImageDetails();
   }, [imageId, backendUrl, navigate]);
 
-  // Load user's favorites to check if this image is favorited
-  useEffect(() => {
-    if (token) {
-      const loadFavorites = async () => {
-        try {
-          const response = await fetch(`${backendUrl}/api/users/profile`, {
-            headers: { Authorization: token },
-          });
-          const data = await response.json();
-          if (data.success && data.user.favorites) {
-            const favoriteIds = new Set(
-              data.user.favorites.map((fav) =>
-                typeof fav === "object" ? fav._id || fav : fav,
-              ),
-            );
-            setUserFavorites(favoriteIds);
-            setIsFavourite(favoriteIds.has(imageId));
-          }
-        } catch (error) {
-          console.error("Error loading favorites:", error);
-        }
-      };
-      loadFavorites();
-    }
-  }, [token, backendUrl, imageId]);
-
-  const handleFavourite = async () => {
-    if (!token) {
-      toast.error("Please log in to favourite images");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${backendUrl}/api/images/${imageId}/favorite`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        // Reload user's favorites from backend to ensure visual state matches database
-        const profileResponse = await fetch(`${backendUrl}/api/users/profile`, {
-          headers: { Authorization: token },
-        });
-        const profileData = await profileResponse.json();
-        if (profileData.success && profileData.user.favorites) {
-          const favoriteIds = new Set(
-            profileData.user.favorites.map((fav) =>
-              typeof fav === "object" ? fav._id || fav : fav,
-            ),
-          );
-          setUserFavorites(favoriteIds);
-          setIsFavourite(favoriteIds.has(imageId));
-          toast.success(
-            favoriteIds.has(imageId)
-              ? "Added to favourites"
-              : "Removed from favourites",
-          );
-        }
-      } else {
-        toast.error(data.message || "Failed to update favourite");
-      }
-    } catch (error) {
-      console.error("Error updating favourite:", error);
-      toast.error("Failed to update favourite");
-    }
-  };
-
-  const handleReport = async () => {
+  const handleReport = () => {
     if (!token) {
       toast.error("Please log in to report images");
       navigate("/login");
       return;
     }
+    setShowReportModal(true);
+  };
 
-    const reason = prompt(
-      "Please describe the reason for reporting this image:",
-    );
-    if (!reason) return;
+  const handleSubmitReport = async () => {
+    if (!reportReason.trim()) {
+      toast.error("Please provide a reason for reporting");
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -167,13 +111,15 @@ const ImageDetail = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ reason }),
+          body: JSON.stringify({ reason: reportReason }),
         },
       );
 
       const data = await response.json();
       if (data.success) {
         toast.success("Image reported successfully");
+        setShowReportModal(false);
+        setReportReason("");
       } else {
         toast.error(data.message || "Failed to report image");
       }
@@ -275,29 +221,6 @@ const ImageDetail = () => {
 
             {/* Icon Action Buttons */}
             <div className="flex gap-3 mt-4 justify-center px-2">
-              {/* Favorite Button */}
-              <button
-                onClick={handleFavourite}
-                className={`p-3 rounded-lg transition ${
-                  isFavourite
-                    ? "bg-red-100 text-red-600 hover:bg-red-200"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-                title="Add to Favourite"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill={isFavourite ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-              </button>
-
               {/* Buy Request Button */}
               <button
                 onClick={handleBuyRequest}
@@ -313,7 +236,9 @@ const ImageDetail = () => {
                   strokeWidth="1.5"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path>
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
               </button>
 
@@ -332,7 +257,8 @@ const ImageDetail = () => {
                   strokeWidth="1.5"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path>
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                  <line x1="4" y1="22" x2="4" y2="15"></line>
                 </svg>
               </button>
             </div>
@@ -373,47 +299,12 @@ const ImageDetail = () => {
                     <span>{imageData.location}</span>
                   </div>
                 )}
-
-                {/* Views Count */}
-                <div className="flex items-center gap-2">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  <span>{imageData.views || 0} views</span>
-                </div>
               </div>
             </div>
 
             {/* Stats Section - Compact 500px Style */}
             <div className="border-b border-gray-200 py-4">
-              <div className="grid grid-cols-3 gap-4">
-                {/* Favorites Stat */}
-                <div className="flex flex-col items-center text-center">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="text-red-500 mb-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                  <p className="text-sm font-bold text-gray-900">
-                    {imageData.favouriteCount || 0}
-                  </p>
-                  <p className="text-xs text-gray-600">Likes</p>
-                </div>
-
+              <div className="grid grid-cols-1 gap-4">
                 {/* Views Stat */}
                 <div className="flex flex-col items-center text-center">
                   <svg
@@ -430,31 +321,9 @@ const ImageDetail = () => {
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
                   <p className="text-sm font-bold text-gray-900">
-                    {imageData.viewCount || 0}
+                    {imageData.views || 0}
                   </p>
                   <p className="text-xs text-gray-600">Views</p>
-                </div>
-
-                {/* Downloads Stat */}
-                <div className="flex flex-col items-center text-center">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-gray-700 mb-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  <p className="text-sm font-bold text-gray-900">
-                    {imageData.downloadCount || 0}
-                  </p>
-                  <p className="text-xs text-gray-600">Downloads</p>
                 </div>
               </div>
             </div>
@@ -526,10 +395,20 @@ const ImageDetail = () => {
                   className="flex items-start gap-3 cursor-pointer hover:opacity-70 transition"
                   onClick={() => navigate(`/uploader/${uploaderInfo._id}`)}
                 >
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">
-                      {uploaderInfo.name?.charAt(0).toUpperCase()}
-                    </span>
+                  <div className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
+                    {uploaderInfo.profilePicture ? (
+                      <img
+                        src={`${uploaderInfo.profilePicture}?w=100&h=100&c_fill&q_60`}
+                        alt={uploaderInfo.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                        <span className="text-white font-bold text-lg">
+                          {uploaderInfo.name?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-gray-900 text-sm mb-0.5">
@@ -540,7 +419,7 @@ const ImageDetail = () => {
                     </p>
                     {uploaderInfo.location && (
                       <p className="text-xs text-gray-600">
-                        📍 {uploaderInfo.location}
+                        {uploaderInfo.location}
                       </p>
                     )}
                     <button
@@ -607,27 +486,6 @@ const ImageDetail = () => {
                     </div>
                     {/* Like & Menu Icons */}
                     <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFavourite();
-                        }}
-                        className="p-1.5 rounded bg-white/90 hover:bg-white transition"
-                        title="Like"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          className="text-red-500"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                      </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -712,27 +570,6 @@ const ImageDetail = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleFavourite();
-                        }}
-                        className="p-1.5 rounded bg-white/90 hover:bg-white transition"
-                        title="Like"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          className="text-red-500"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
                           navigate(`/image/${image._id}`);
                         }}
                         className="p-1.5 rounded bg-white/90 hover:bg-white transition"
@@ -756,6 +593,57 @@ const ImageDetail = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Report Modal */}
+        {showReportModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-lg font-bold text-gray-900">
+                  Report Image
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportReason("");
+                  }}
+                  className="text-gray-500 hover:text-gray-700 transition"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Please describe the reason for reporting this image
+                </label>
+                <textarea
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  placeholder="Enter your reason here..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                  rows="4"
+                />
+              </div>
+              <div className="p-6 bg-gray-50 border-t border-gray-200 flex gap-3 justify-end rounded-b-lg">
+                <button
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportReason("");
+                  }}
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitReport}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium text-sm"
+                >
+                  Report
+                </button>
+              </div>
             </div>
           </div>
         )}

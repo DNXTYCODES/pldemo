@@ -199,18 +199,12 @@ const Navbar = () => {
             >
               Explore
             </Link>
-            <Link
-              to="/shop"
-              className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
-            >
-              Shop
-            </Link>
-            <Link
+            {/* <Link
               to="/photographers"
               className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
             >
               Photographers
-            </Link>
+            </Link> */}
             <Link
               to="/about"
               className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
@@ -257,14 +251,16 @@ const Navbar = () => {
                   currencyPreference === "eth" ? "usd" : "eth",
                 )
               }
-              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 text-sm font-medium border border-gray-300 group"
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-amber-50 text-gray-700 hover:text-amber-600 rounded-lg transition-all duration-300 text-sm font-medium border border-gray-300 hover:border-amber-400 active:scale-95 group"
               title="Toggle between ETH and USD prices"
             >
               {currencyPreference === "eth" ? (
                 <>
-                  <span className="font-semibold">ETH</span>
+                  <span className="font-semibold transition-colors duration-300">
+                    ETH
+                  </span>
                   <svg
-                    className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                    className="w-4 h-4 transition-transform duration-500 group-hover:-rotate-12 group-active:rotate-45"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -273,9 +269,11 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <span className="font-semibold">USD</span>
+                  <span className="font-semibold transition-colors duration-300">
+                    USD
+                  </span>
                   <svg
-                    className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                    className="w-4 h-4 transition-transform duration-500 group-hover:rotate-12 group-active:rotate-45"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -442,23 +440,6 @@ const Navbar = () => {
                         My Purchases
                       </button>
 
-                      <button
-                        onClick={() => {
-                          navigate("/favorites");
-                          setShowProfileDropdown(false);
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-amber-400 transition-colors flex items-center gap-3"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                        My Favorites
-                      </button>
-
                       <div className="border-t border-gray-700 my-2"></div>
 
                       <button
@@ -593,7 +574,7 @@ const Navbar = () => {
                       Explore
                     </button>
 
-                    <button
+                    {/* <button
                       onClick={() => {
                         navigate("/photographers");
                         setShowNavMenu(false);
@@ -614,7 +595,7 @@ const Navbar = () => {
                         />
                       </svg>
                       Photographers
-                    </button>
+                    </button> */}
 
                     <button
                       onClick={() => {
@@ -759,12 +740,12 @@ const Navbar = () => {
               >
                 Shop
               </Link>
-              <Link
+              {/* <Link
                 to="/photographers"
                 className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 Photographers
-              </Link>
+              </Link> */}
               <Link
                 to="/about"
                 className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
@@ -811,12 +792,6 @@ const Navbar = () => {
                       className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
                     >
                       My Purchases
-                    </Link>
-                    <Link
-                      to="/favorites"
-                      className="block text-sm text-gray-700 hover:text-amber-500 transition-colors"
-                    >
-                      My Favorites
                     </Link>
                     <Link
                       to="/fund-account"

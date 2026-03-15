@@ -10,7 +10,7 @@ const Hero = () => {
       backgroundStyle:
         "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(51, 51, 51, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&h=600&fit=crop",
+        "https://www.rehahnphotographer.com/wp-content/uploads/2024/05/art-gallery-ho-chi-minh-rehahn.webp",
     },
     {
       id: 1,
@@ -19,25 +19,25 @@ const Hero = () => {
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1620321503375-490c06e17d27?w=1200&h=600&fit=crop",
+        "https://www.glossy.co/wp-content/uploads/sites/4/2021/12/Fred.Segal_.Subnation.01.jpg",
     },
     {
       id: 2,
-      href: "/shop",
+      href: "/collection",
       title: "Shop Prints",
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=600&fit=crop",
+        "https://t4.ftcdn.net/jpg/10/13/82/55/360_F_1013825572_SYT88juzJQhO7rVXjlGrJ1PN6ejMDhTD.jpg",
     },
     {
       id: 3,
-      href: "/about",
+      href: "/collection",
       title: "Get Inspired",
       backgroundStyle:
         "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(85, 85, 85, 0.6) 100%)",
       backgroundImage:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=600&fit=crop",
     },
   ];
 

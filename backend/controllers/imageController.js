@@ -228,6 +228,19 @@ export const getImageById = async (req, res) => {
       success: true,
       image: {
         ...image.toObject(),
+        views: (() => {
+          const totalViews = image.views + image.fakeViewsAdded;
+          if (totalViews === 0) {
+            return 0;
+          } else if (totalViews === 1) {
+            return Math.floor(Math.random() * 27) + 41; // 1 view × (41-67)
+          } else {
+            // First view × (41-67), remaining views × (1-6)
+            const firstViewMultiplier = Math.floor(Math.random() * 27) + 41;
+            const restMultiplier = (totalViews - 1) * (Math.floor(Math.random() * 6) + 1);
+            return firstViewMultiplier + restMultiplier;
+          }
+        })(), // Custom multiplier: first view × 41-67, rest × 1-6
         isFavourite,
         currency: {
           eth: image.priceEth,
@@ -1266,6 +1279,65 @@ export const getImagesBySection = async (req, res) => {
   }
 };
 
+/**
+ * Add fake views to an image (for social proof)
+ * Generates random increments and records them
+ */
+export const addFakeViews = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    const image = await imageModel.findById(imageId);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    // Generate random fake views (minimum 149 total, randomize addition between 15-150)
+    // First ensure image has at least 149 total views
+    const currentTotal = image.views + image.fakeViewsAdded;
+    let fakeViewsAmount;
+
+    if (currentTotal < 149) {
+      // Add enough to reach 149 minimum
+      fakeViewsAmount = 149 - currentTotal;
+    } else {
+      // Already above minimum, add random amount for daily growth
+      fakeViewsAmount = Math.floor(Math.random() * 135) + 15;
+    }
+
+    // Add to fake views
+    image.fakeViewsAdded += fakeViewsAmount;
+
+    // Record in history
+    image.fakeViewsHistory.push({
+      timestamp: new Date(),
+      change: fakeViewsAmount,
+    });
+
+    // Save the image
+    await image.save();
+
+    res.json({
+      success: true,
+      message: "Fake views added successfully",
+      fakeViewsAdded: fakeViewsAmount,
+      totalViews: image.views + image.fakeViewsAdded,
+      image: image,
+    });
+  } catch (error) {
+    console.error("Error adding fake views:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error adding fake views",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   uploadImage,
   getImages,
@@ -1287,4 +1359,5 @@ export default {
   getAllImagesForAdmin,
   updateImageSections,
   getImagesBySection,
+  addFakeViews,
 };
