@@ -219,11 +219,14 @@ const MySales = () => {
                         className={`absolute top-2 right-2 px-3 py-1 rounded text-sm font-medium ${
                           image.status === "active"
                             ? "bg-green-100 text-green-800"
+                            : image.approvalStatus === "declined"
+                            ? "bg-red-100 text-red-800"
                             : "bg-gray-200 text-gray-700"
                         }`}
                       >
-                        {image.status.charAt(0).toUpperCase() +
-                          image.status.slice(1)}
+                        {image.approvalStatus === "declined"
+                          ? "Upload Declined"
+                          : image.status.charAt(0).toUpperCase() + image.status.slice(1)}
                       </span>
                     </div>
 
@@ -233,27 +236,7 @@ const MySales = () => {
                         {image.title}
                       </h3>
 
-                      {/* Stats */}
-                      <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
-                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
-                          <p className="text-gray-600">Views</p>
-                          <p className="font-bold text-gray-900">
-                            {image.views}
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
-                          <p className="text-gray-600">Purchases</p>
-                          <p className="font-bold text-gray-900">
-                            {image.purchaseCount}
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded border border-gray-200">
-                          <p className="text-gray-600">Favorites</p>
-                          <p className="font-bold text-gray-900">
-                            {image.favoriteCount}
-                          </p>
-                        </div>
-                      </div>
+
 
                       {/* Price */}
                       {editingPrice === image._id ? (
@@ -310,7 +293,7 @@ const MySales = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-2">
                         <button
-                          onClick={() => navigate(`/product/${image._id}`)}
+                          onClick={() => navigate(`/image/${image._id}`)}
                           className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded text-sm font-medium text-white"
                         >
                           View

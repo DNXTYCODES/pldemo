@@ -364,7 +364,7 @@ const Contact = () => {
             an artist or collector, we're here to support your vision.
           </p>
           <a
-            href="/collection"
+            href="/explore"
             className="inline-block bg-white text-amber-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Explore Our Gallery

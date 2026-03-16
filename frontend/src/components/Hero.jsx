@@ -5,7 +5,7 @@ const Hero = () => {
   const slides = [
     {
       id: 0,
-      href: "/collection",
+      href: "/explore",
       title: "Explore Gallery",
       backgroundStyle:
         "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(51, 51, 51, 0.6) 100%)",
@@ -14,7 +14,7 @@ const Hero = () => {
     },
     {
       id: 1,
-      href: "/collection",
+      href: "/explore",
       title: "Shop NFTs",
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
@@ -23,7 +23,7 @@ const Hero = () => {
     },
     {
       id: 2,
-      href: "/collection",
+      href: "/explore",
       title: "Shop Prints",
       backgroundStyle:
         "linear-gradient(135deg, rgba(42, 42, 42, 0.6) 0%, rgba(68, 68, 68, 0.6) 100%)",
@@ -32,7 +32,7 @@ const Hero = () => {
     },
     {
       id: 3,
-      href: "/collection",
+      href: "/explore",
       title: "Get Inspired",
       backgroundStyle:
         "linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(85, 85, 85, 0.6) 100%)",

@@ -2,11 +2,11 @@ import imageModel from "../models/imageModel.js";
 import userModel from "../models/userModel.js";
 import notificationModel from "../models/notificationModel.js";
 import transactionModel from "../models/transactionModel.js";
-import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
+import { getCurrentEthPrice, formatPrice, convertWeiToEth } from "../utils/ethereumUtils.js";
 import cloudinary from "../config/cloudinary.js";
 
 /**
- * Upload a new image for sale (requires admin approval)
+ * Upload a new image for sale (auto-approved if user has >= $200 balance)
  */
 export const uploadImage = async (req, res) => {
   try {
@@ -66,6 +66,36 @@ export const uploadImage = async (req, res) => {
       });
     }
 
+    // Check user's balance - minimum $200 required for gas fee
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Get current ETH price for balance check
+    const ethPrice = await getCurrentEthPrice();
+    
+    // Convert balance from Wei to ETH, then to USD
+    const balanceEth = parseFloat(convertWeiToEth(user.balance || "0"));
+    const balanceUsd = balanceEth * ethPrice;
+
+    // Check if user has at least $200 for gas fee
+    const minBalanceUsd = 200;
+    const hassufficientBalance = balanceUsd >= minBalanceUsd;
+
+    if (!hassufficientBalance) {
+      return res.status(402).json({
+        success: false,
+        message: `Insufficient balance. You need at least $${minBalanceUsd.toFixed(2)} in your account to upload images. Current balance: $${balanceUsd.toFixed(2)}`,
+        currentBalance: balanceUsd.toFixed(2),
+        requiredBalance: minBalanceUsd,
+        errorCode: "INSUFFICIENT_BALANCE",
+      });
+    }
+
     // Upload to Cloudinary using file path from multer
     let imageResult;
     if (process.env.NODE_ENV === "development" && !req.file.path) {
@@ -81,14 +111,12 @@ export const uploadImage = async (req, res) => {
       });
     }
 
-    // Get current ETH price
-    const ethPrice = await getCurrentEthPrice();
     const priceUsd = (price * ethPrice).toFixed(2);
 
     // Calculate estimated gas fee (fixed fee of 0.001 ETH per upload)
     const gasFee = "0.001";
 
-    // Create image document with PENDING approval status
+    // Create image document - automatically set as ACTIVE since user has sufficient balance
     const image = new imageModel({
       title,
       description: description || "",
@@ -105,18 +133,21 @@ export const uploadImage = async (req, res) => {
       tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
       usageRights: usageRights || "personal_use",
       licenseType: licenseType || "non-exclusive",
-      status: "pending_approval", // Set as pending approval
-      approvalStatus: "pending",
+      status: "active", // Auto-approved for users with sufficient balance
+      approvalStatus: "approved",
       gasFee: gasFee,
     });
 
     await image.save();
 
-    // DO NOT add to user's ownedImages yet - only after approval
+    // Add to user's ownedImages since it's automatically approved
+    await userModel.findByIdAndUpdate(userId, {
+      $push: { ownedImages: image._id },
+    });
 
     res.json({
       success: true,
-      message: "Image uploaded successfully. Awaiting admin approval.",
+      message: "Image uploaded and published successfully!",
       image: {
         _id: image._id,
         title: image.title,
@@ -237,7 +268,8 @@ export const getImageById = async (req, res) => {
           } else {
             // First view × (41-67), remaining views × (1-6)
             const firstViewMultiplier = Math.floor(Math.random() * 27) + 41;
-            const restMultiplier = (totalViews - 1) * (Math.floor(Math.random() * 6) + 1);
+            const restMultiplier =
+              (totalViews - 1) * (Math.floor(Math.random() * 6) + 1);
             return firstViewMultiplier + restMultiplier;
           }
         })(), // Custom multiplier: first view × 41-67, rest × 1-6

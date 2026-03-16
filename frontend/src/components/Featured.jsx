@@ -99,7 +99,7 @@ const FeaturedSection = () => {
           </div>
         ))}
       </div>
-      <a href='/collection' className='underline decoration-gray-700 bg-golden-brown bg-clip-text text-transparent bg-to-b'>view more</a>
+      <a href='/explore' className='underline decoration-gray-700 bg-golden-brown bg-clip-text text-transparent bg-to-b'>view more</a>
     </div>
   );
 };

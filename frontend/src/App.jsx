@@ -1,10 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Collection from "./pages/Collection";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Product from "./pages/Product";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import PlaceOrder from "./pages/PlaceOrder";
@@ -24,6 +22,8 @@ import UploadPhoto from "./pages/UploadPhoto";
 import MySales from "./pages/MySales";
 import MyPurchases from "./pages/MyPurchases";
 import FundAccount from "./pages/FundAccount";
+import Settings from "./pages/Settings";
+import Transactions from "./pages/Transactions";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
 import Photographers from "./pages/Photographers";
@@ -54,13 +54,9 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Collection />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/shop" element={<Collection />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/product/:productId" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/place-order" element={<PlaceOrder />} />
@@ -77,6 +73,8 @@ const App = () => {
           <Route path="/my-sales" element={<MySales />} />
           <Route path="/my-purchases" element={<MyPurchases />} />
           <Route path="/fund-account" element={<FundAccount />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/transactions" element={<Transactions />} />
 
           {/* Image Routes */}
           <Route path="/image/:imageId" element={<ImageDetail />} />

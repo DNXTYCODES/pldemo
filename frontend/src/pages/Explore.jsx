@@ -249,7 +249,6 @@ const Explore = () => {
 
                     {/* Bottom: Actions */}
                     <div className="flex gap-2">
-
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

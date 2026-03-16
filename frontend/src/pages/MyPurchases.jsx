@@ -123,7 +123,7 @@ const MyPurchases = () => {
                   {/* Action Button */}
                   <button
                     onClick={() =>
-                      navigate(`/product/${purchase.imageId?._id}`)
+                      navigate(`/image/${purchase.imageId?._id}`)
                     }
                     className="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium text-sm transition-colors"
                   >

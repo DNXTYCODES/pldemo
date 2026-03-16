@@ -1,35 +1,9 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { assets } from "../assets/assets";
 
 const Sidebar = () => {
-  return (
-    <div className="w-[18%] min-h-screen border-r-2">
-      <div className="flex flex-col gap-4 pt-6 pl-[20%] text-[15px]">
-        <NavLink
-          className="flex items-center gap-3 border border-gray-300 border-r-0 px-3 py-2 rounded-l"
-          to="/manage-images"
-        >
-          <img className="w-5 h-5" src={assets.product_icon} alt="" />
-          <p className="hidden md:block">Manage Images</p>
-        </NavLink>
-        <NavLink
-          className="flex items-center gap-3 border border-gray-300 border-r-0 px-3 py-2 rounded-l"
-          to="/manage-photographers"
-        >
-          <img className="w-5 h-5" src={assets.product_icon} alt="" />
-          <p className="hidden md:block">Manage Photographers</p>
-        </NavLink>
-        <NavLink
-          className="flex items-center gap-3 border border-gray-300 border-r-0 px-3 py-2 rounded-l"
-          to="/users"
-        >
-          <img className="w-5 h-5" src={assets.product_icon} alt="" />
-          <p className="hidden md:block">Users</p>
-        </NavLink>
-      </div>
-    </div>
-  );
+  // Sidebar navigation has been moved to Navbar
+  // This component is kept for backward compatibility but is empty
+  return null;
 };
 
 export default Sidebar;

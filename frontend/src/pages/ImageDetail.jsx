@@ -34,7 +34,9 @@ const ImageDetail = () => {
               method: "POST",
             });
             // After adding fake views, fetch the updated image data
-            const updatedResponse = await fetch(`${backendUrl}/api/images/${imageId}`);
+            const updatedResponse = await fetch(
+              `${backendUrl}/api/images/${imageId}`,
+            );
             const updatedData = await updatedResponse.json();
             if (updatedData.success) {
               setImageData(updatedData.image);

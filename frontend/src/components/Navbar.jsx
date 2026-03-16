@@ -217,6 +217,18 @@ const Navbar = () => {
             >
               Contact
             </Link>
+            {token && (
+              <>
+                {/* Divider */}
+                <div className="w-px h-6 bg-gray-300"></div>
+                <Link
+                  to="/settings"
+                  className="text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
+                >
+                  Settings
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Right Side Actions */}
@@ -734,18 +746,6 @@ const Navbar = () => {
               >
                 Explore
               </Link>
-              <Link
-                to="/shop"
-                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
-              >
-                Shop
-              </Link>
-              {/* <Link
-                to="/photographers"
-                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
-              >
-                Photographers
-              </Link> */}
               <Link
                 to="/about"
                 className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"

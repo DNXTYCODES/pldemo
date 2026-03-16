@@ -39,45 +39,53 @@ const Popup = ({ token }) => {
     };
 
     return (
-        <div className='w-full'>
-            <h2 className='text-2xl font-semibold mb-6'>Edit Global Popup Message</h2>
+        <div className='w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6'>
+            <div className='mb-8'>
+                <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 mb-2'>Global Popup Message</h1>
+                <p className='text-gray-600'>Manage popup notifications shown to all visitors</p>
+            </div>
             
-            <form onSubmit={handleSubmit} className='w-full max-w-2xl'>
-                <textarea 
-                    value={message} 
-                    onChange={e => setMessage(e.target.value)}
-                    placeholder="Enter your popup message here..."
-                    className='w-full h-40 p-3 border border-gray-300 rounded mb-4'
-                />
+            <form onSubmit={handleSubmit} className='w-full max-w-4xl'>
+                <div className='bg-white rounded-lg shadow-md p-6 sm:p-8 mb-6'>
+                    <label className='block text-sm font-semibold text-gray-700 mb-3'>Popup Message</label>
+                    <textarea 
+                        value={message} 
+                        onChange={e => setMessage(e.target.value)}
+                        placeholder="Enter your popup message here. This will appear as a notification to all visitors."
+                        className='w-full h-40 sm:h-48 p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none'
+                    />
+                    <p className='text-xs sm:text-sm text-gray-500 mt-2'>Characters: {message.length}</p>
+                </div>
                 
-                <div className='flex gap-3'>
+                <div className='flex flex-col sm:flex-row gap-3 mb-6'>
                     <button 
                         type="submit"
                         disabled={loading}
-                        className='px-6 py-2 bg-[#008753] text-white rounded hover:bg-[#006641] disabled:bg-gray-400'
+                        className='flex-1 sm:flex-none px-6 sm:px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-400 font-medium transition-all'
                     >
-                        {loading ? 'Saving...' : 'Save Changes'}
+                        {loading ? 'Saving...' : '✓ Save Changes'}
                     </button>
                     
                     <button 
                         type="button"
                         onClick={() => setMessage('')}
-                        className='px-6 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400'
+                        className='flex-1 sm:flex-none px-6 sm:px-8 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition-all'
                     >
                         Clear Message
                     </button>
                 </div>
                 
                 {success && (
-                    <p className='text-green-600 mt-3'>
-                        Popup updated successfully! The message will appear on all pages.
-                    </p>
+                    <div className='bg-green-50 border-l-4 border-green-600 p-4 rounded-lg mb-6'>
+                        <p className='text-green-700 font-medium'>✓ Popup updated successfully!</p>
+                        <p className='text-green-600 text-sm mt-1'>The message will appear on all pages.</p>
+                    </div>
                 )}
             </form>
             
-            <div className="mt-8 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                <h3 className="font-semibold text-[#008753] mb-2">How it works:</h3>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
+            <div className="bg-blue-50 border-l-4 border-blue-600 rounded-lg p-6 max-w-4xl">
+                <h3 className="font-bold text-blue-900 mb-3 text-lg">How it works:</h3>
+                <ul className="list-disc pl-5 space-y-2 text-blue-800 text-sm sm:text-base">
                     <li>This message will appear on every page of your website</li>
                     <li>Visitors will see it once per session</li>
                     <li>Leave empty to disable the popup</li>

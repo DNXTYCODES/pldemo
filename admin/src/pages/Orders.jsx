@@ -157,225 +157,244 @@ const Orders = ({ token }) => {
   }
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl font-bold text-gray-800">Order Management</h2>
-        <div className="flex gap-3">
-          <button
-            onClick={fetchAllOrders}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            <FaSync /> Refresh Orders
-          </button>
-        </div>
-      </div>
-
-      {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="bg-gray-100 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-            <img 
-              src={assets.order_icon} 
-              className="w-12 opacity-70" 
-              alt="No orders" 
-            />
-          </div>
-          <h3 className="text-2xl text-gray-700 mb-2">
-            No Orders Found
-          </h3>
-          <p className="text-gray-600 max-w-md mx-auto mb-6">
-            There are currently no orders to display
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {orders.map((order) => (
-            <div 
-              key={order._id} 
-              className="border rounded-lg p-4 bg-white shadow-sm transition-all"
+    <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Order Management</h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage and track all customer orders</p>
+            </div>
+            <button
+              onClick={fetchAllOrders}
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm sm:text-base"
             >
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-bold text-lg truncate">
-                      Order #{order._id.slice(-8).toUpperCase()}
-                    </h3>
-                    <span className={`min-w-2 h-2 rounded-full ${getStatusColor(order.status)}`}></span>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {new Date(order.date).toLocaleString()}
-                  </p>
-                </div>
-                
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => toggleOrderDetails(order._id)}
-                    className="flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                  >
-                    <FaInfoCircle />
-                    {expandedOrder === order._id ? 'Hide Details' : 'View Details'}
-                  </button>
-                  
-                  <button
-                    onClick={() => deleteOrderHandler(order._id)}
-                    disabled={updating === order._id}
-                    className="flex items-center gap-1 px-3 py-1 bg-red-100 hover:bg-red-500 hover:text-white rounded text-sm disabled:opacity-50"
-                  >
-                    <FaTrash /> Delete
-                  </button>
-                </div>
-              </div>
-              
-              <div className="mt-4 flex flex-wrap gap-4">
-                <div className="flex items-center">
-                  <span className={`min-w-2 h-2 rounded-full ${order.payment ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                  <p className="ml-2 font-medium">
-                    Payment: {order.payment ? 'Paid' : 'Pending'}
-                  </p>
-                </div>
-                
-                <p className="font-medium">
-                  Method: <span className="capitalize">{order.paymentMethod}</span>
-                </p>
-                
-                <p className="font-medium">
-                  Total: <span className="text-green-700">{currency}{order.amount.toFixed(2)}</span>
-                </p>
-              </div>
-              
-              {expandedOrder === order._id && (
-                <div className="mt-5 space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <h4 className="font-medium mb-2">Customer Information</h4>
-                      <div className="bg-gray-50 p-3 rounded">
-                        <p className="font-semibold">{order.address?.firstName} {order.address?.lastName}</p>
-                        <p className="mt-1">📱 {order.address?.phone}</p>
-                        <p>📧 {order.address?.email}</p>
-                        
-                        {order.userId && (
-                          <p className="mt-2 text-sm">
-                            User ID: <span className="font-mono text-gray-500">{order.userId?._id || 'N/A'}</span>
-                          </p>
-                        )}
+              <FaSync /> Refresh Orders
+            </button>
+          </div>
+        </div>
+
+        {/* Empty State */}
+        {orders.length === 0 ? (
+          <div className="text-center py-12 sm:py-16">
+            <div className="bg-gray-100 p-6 rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
+              <img 
+                src={assets.order_icon} 
+                className="w-10 sm:w-12 opacity-70" 
+                alt="No orders" 
+              />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+              No Orders Found
+            </h3>
+            <p className="text-gray-600 max-w-md mx-auto text-sm sm:text-base">
+              There are currently no orders to display
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-5 sm:space-y-6">
+            {orders.map((order) => (
+              <div 
+                key={order._id} 
+                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden"
+              >
+                {/* Order Header */}
+                <div className="p-4 sm:p-5 border-b border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                    {/* Order Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">
+                          Order #{order._id.slice(-8).toUpperCase()}
+                        </h3>
+                        <span className={`flex-shrink-0 w-3 h-3 rounded-full ${getStatusColor(order.status)}`}></span>
                       </div>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {new Date(order.date).toLocaleString()}
+                      </p>
                     </div>
                     
-                    <div>
-                      <h4 className="font-medium mb-2">Delivery Address</h4>
-                      <div className="bg-gray-50 p-3 rounded">
-                        <p>{order.address?.street}</p>
-                        <p>{order.address?.city}, {order.address?.state}</p>
-                        <p>{order.address?.zipcode}, {order.address?.country}</p>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <button
+                        onClick={() => toggleOrderDetails(order._id)}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm sm:text-base font-medium transition-colors text-gray-700"
+                      >
+                        <FaInfoCircle />
+                        <span className="hidden xs:inline">{expandedOrder === order._id ? 'Hide' : 'Details'}</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => deleteOrderHandler(order._id)}
+                        disabled={updating === order._id}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 sm:px-4 py-2 bg-red-100 hover:bg-red-600 text-red-700 hover:text-white rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FaTrash />
+                        <span className="hidden xs:inline">Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Order Summary Stats */}
+                  <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 xs:grid-cols-3 gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`flex-shrink-0 w-2 h-2 rounded-full ${order.payment ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                      <span className="text-sm text-gray-600">
+                        Payment: <span className="font-semibold text-gray-900">{order.payment ? 'Paid' : 'Pending'}</span>
+                      </span>
+                    </div>
+                    
+                    <div className="text-sm text-gray-600">
+                      Method: <span className="font-semibold text-gray-900 capitalize">{order.paymentMethod}</span>
+                    </div>
+                    
+                    <div className="text-sm text-gray-600">
+                      Total: <span className="font-bold text-green-600">{currency}{order.amount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expanded Details */}
+                {expandedOrder === order._id && (
+                  <div className="p-4 sm:p-5 space-y-5 sm:space-y-6 bg-gray-50">
+                    {/* Customer & Delivery Info */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">👤 Customer Information</h4>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 space-y-2">
+                          <p className="font-semibold text-gray-900">{order.address?.firstName} {order.address?.lastName}</p>
+                          <p className="text-sm text-gray-600">📱 {order.address?.phone}</p>
+                          <p className="text-sm text-gray-600">📧 {order.address?.email}</p>
+                          
+                          {order.userId && (
+                            <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                              ID: <span className="font-mono">{order.userId?._id?.slice(-8) || 'N/A'}</span>
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Order Items</h4>
-                    <div className="space-y-3">
-                      {order.items.map((item, index) => {
-                        // Generate variation description
-                        let variationDesc = "";
-                        if (item.variations?.base) variationDesc += `Base: ${item.variations.base}, `;
-                        if (item.variations?.side) variationDesc += `Side: ${item.variations.side}, `;
-                        if (item.variations?.size) variationDesc += `Size: ${item.variations.size}, `;
-                        if (item.variations?.wrap) variationDesc += `Wrap: Yes, `;
-                        variationDesc = variationDesc.replace(/,\s*$/, "");
-                        
-                        return (
-                          <div key={index} className="flex items-start gap-4 p-3 border rounded-lg">
-                            <div className="bg-gray-100 p-2 rounded flex-shrink-0">
-                              <img 
-                                className="w-16 h-16 object-contain rounded" 
-                                src={item.image?.[0] || assets.parcel_icon} 
-                                alt={item.name} 
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">{item.name}</p>
-                              {variationDesc && (
-                                <p className="text-sm text-gray-500 mt-1">{variationDesc}</p>
-                              )}
-                            </div>
-                            <div className="flex flex-col items-end">
-                              <p className="font-medium">{currency}{item.price.toFixed(2)}</p>
-                              <p className="text-gray-500">x {item.quantity}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <h4 className="font-medium mb-2">Delivery Status</h4>
-                      <div className="flex flex-col gap-3">
-                        <select
-                          value={order.status}
-                          onChange={(e) => statusHandler(e.target.value, order._id)}
-                          disabled={updating === order._id}
-                          className="w-full p-2 border rounded bg-white disabled:bg-gray-100"
-                        >
-                          {restaurantStatuses.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
-                        </select>
-                        
-                        <div className="flex gap-2">
-                          {restaurantStatuses.map(status => (
-                            <button
-                              key={status}
-                              onClick={() => statusHandler(status, order._id)}
-                              disabled={updating === order._id || order.status === status}
-                              className={`flex-1 py-1 px-2 text-xs rounded ${
-                                order.status === status 
-                                  ? 'bg-blue-500 text-white' 
-                                  : 'bg-gray-100 hover:bg-gray-200'
-                              } disabled:opacity-50`}
-                            >
-                              {status.split(' ')[0]}
-                            </button>
-                          ))}
+                      
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📍 Delivery Address</h4>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 space-y-1 text-sm text-gray-600">
+                          <p className="font-semibold text-gray-900">{order.address?.street}</p>
+                          <p>{order.address?.city}, {order.address?.state}</p>
+                          <p>{order.address?.zipcode}, {order.address?.country}</p>
                         </div>
                       </div>
                     </div>
                     
+                    {/* Order Items */}
                     <div>
-                      <h4 className="font-medium mb-2">Payment Status</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          onClick={() => paymentStatusHandler(order._id, true)}
-                          disabled={order.payment || updating === order._id}
-                          className={`py-2 px-3 rounded flex items-center justify-center gap-2 ${
-                            order.payment 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800 hover:bg-green-500 hover:text-white'
-                          } disabled:opacity-50`}
-                        >
-                          <FaCheck /> Mark Paid
-                        </button>
-                        
-                        <button
-                          onClick={() => paymentStatusHandler(order._id, false)}
-                          disabled={!order.payment || updating === order._id}
-                          className={`py-2 px-3 rounded flex items-center justify-center gap-2 ${
-                            !order.payment 
-                              ? 'bg-red-100 text-red-800' 
-                              : 'bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white'
-                          } disabled:opacity-50`}
-                        >
-                          <FaTimes /> Mark Unpaid
-                        </button>
+                      <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📦 Order Items</h4>
+                      <div className="space-y-3">
+                        {order.items.map((item, index) => {
+                          let variationDesc = "";
+                          if (item.variations?.base) variationDesc += `Base: ${item.variations.base}, `;
+                          if (item.variations?.side) variationDesc += `Side: ${item.variations.side}, `;
+                          if (item.variations?.size) variationDesc += `Size: ${item.variations.size}, `;
+                          if (item.variations?.wrap) variationDesc += `Wrap: Yes, `;
+                          variationDesc = variationDesc.replace(/,\s*$/, "");
+                          
+                          return (
+                            <div key={index} className="flex gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                              <div className="flex-shrink-0">
+                                <img 
+                                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded" 
+                                  src={item.image?.[0] || assets.parcel_icon} 
+                                  alt={item.name} 
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.name}</p>
+                                {variationDesc && (
+                                  <p className="text-xs sm:text-sm text-gray-500 mt-1">{variationDesc}</p>
+                                )}
+                              </div>
+                              <div className="flex flex-col items-end text-sm sm:text-base">
+                                <p className="font-semibold text-gray-900">{currency}{item.price.toFixed(2)}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">x {item.quantity}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Status Controls */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Delivery Status */}
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📦 Delivery Status</h4>
+                        <div className="flex flex-col gap-3">
+                          <select
+                            value={order.status}
+                            onChange={(e) => statusHandler(e.target.value, order._id)}
+                            disabled={updating === order._id}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          >
+                            {restaurantStatuses.map(status => (
+                              <option key={status} value={status}>{status}</option>
+                            ))}
+                          </select>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            {restaurantStatuses.map(status => (
+                              <button
+                                key={status}
+                                onClick={() => statusHandler(status, order._id)}
+                                disabled={updating === order._id || order.status === status}
+                                className={`py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                                  order.status === status 
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                              >
+                                {status.split(' ')[0]}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Payment Status */}
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">💳 Payment Status</h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={() => paymentStatusHandler(order._id, true)}
+                            disabled={order.payment || updating === order._id}
+                            className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-medium transition-all ${
+                              order.payment 
+                                ? 'bg-green-100 text-green-700' 
+                                : 'bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-600 hover:text-white'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            <FaCheck /> Paid
+                          </button>
+                          
+                          <button
+                            onClick={() => paymentStatusHandler(order._id, false)}
+                            disabled={!order.payment || updating === order._id}
+                            className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-medium transition-all ${
+                              !order.payment 
+                                ? 'bg-red-100 text-red-700' 
+                                : 'bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            <FaTimes /> Unpaid
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

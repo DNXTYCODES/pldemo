@@ -381,41 +381,6 @@ const Profile = () => {
         {/* Content */}
         {activeTab === "overview" && stats && (
           <div className="mt-8">
-            {/* Portfolio Value Section */}
-            <div className="mb-8 bg-gradient-to-r from-purple-600 to-indigo-800 rounded-lg p-8 text-white shadow-lg">
-              <p className="text-blue-100 text-sm mb-2 uppercase tracking-wider">
-                Portfolio Value
-              </p>
-              <div className="flex items-baseline gap-4">
-                <p className="text-4xl font-bold">
-                  {parseFloat(stats.earnings.totalEarned).toFixed(8)} ETH
-                </p>
-                <p className="text-xl text-blue-100">
-                  ($
-                  {(parseFloat(stats.earnings.totalEarned) * ethPrice).toFixed(
-                    2,
-                  )}
-                  )
-                </p>
-              </div>
-              <div className="mt-4 pt-4 border-t border-blue-400 flex gap-8">
-                <div>
-                  <p className="text-blue-100 text-xs uppercase">
-                    Total Earned
-                  </p>
-                  <p className="text-2xl font-semibold mt-1">
-                    {parseFloat(stats.earnings.totalEarned).toFixed(8)} ETH
-                  </p>
-                </div>
-                <div>
-                  <p className="text-blue-100 text-xs uppercase">Total Spent</p>
-                  <p className="text-2xl font-semibold mt-1 text-red-200">
-                    {parseFloat(stats.earnings.totalSpent).toFixed(8)} ETH
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Stats Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Images Uploaded */}
@@ -568,33 +533,6 @@ const Profile = () => {
                     ).toFixed(8),
                   )}{" "}
                   ETH
-                </p>
-              </div>
-
-              {/* USD Equivalent */}
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-6 hover:shadow-lg transition">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-orange-700 text-sm font-semibold uppercase tracking-wide">
-                    USD Value
-                  </p>
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-orange-600"
-                  >
-                    <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2m0 1a9 9 0 100 18 9 9 0 000-18" />
-                    <path d="M12 6v12m3-3h-6" />
-                  </svg>
-                </div>
-                <p className="text-2xl font-bold text-orange-700">
-                  $
-                  {(parseFloat(stats.earnings.totalEarned) * ethPrice).toFixed(
-                    2,
-                  )}
                 </p>
               </div>
 

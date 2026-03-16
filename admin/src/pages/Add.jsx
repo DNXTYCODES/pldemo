@@ -189,266 +189,310 @@ const Add = ({ token }) => {
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
-      <div>
-        <p className='mb-2'>Upload Image</p>
-        <div className='flex gap-2'>
-          {[1, 2, 3, 4].map((num) => (
-            <label key={num} htmlFor={`image${num}`}>
-              <img
-                className='w-20'
-                src={!eval(`image${num}`) ? assets.upload_area : URL.createObjectURL(eval(`image${num}`))}
-                alt=""
-              />
-              <input
-                onChange={(e) => eval(`setImage${num}`)(e.target.files[0])}
-                type="file"
-                id={`image${num}`}
-                hidden
-              />
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product name</p>
-        <input
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          className='w-full max-w-[500px] px-3 py-2 border rounded'
-          type="text"
-          placeholder='Type here'
-          required
-        />
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product description</p>
-        <textarea
-          onChange={(e) => setDescription(e.target.value)}
-          value={description}
-          className='w-full max-w-[500px] px-3 py-2 border rounded'
-          placeholder='Write content here'
-          required
-        />
-      </div>
-
-      <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
-        <div>
-          <p className='mb-2'>Base Price</p>
-          <input
-            onChange={(e) => {
-              if (validateDecimal(e.target.value)) {
-                setBasePrice(e.target.value);
-              }
-            }}
-            onBlur={() => formatPriceOnBlur(basePrice, setBasePrice)}
-            value={basePrice}
-            className='w-full px-3 py-2 sm:w-[120px] border rounded'
-            type="text"
-            inputMode="decimal"
-            placeholder='9.99'
-          />
+    <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Add New Product</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">Create a new product with images, pricing, and variations</p>
         </div>
 
-        <div>
-          <p className='mb-2'>Product Category</p>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className='w-full px-3 py-2 border rounded'
-            required
-          >
-            <option value="">Select category</option>
-            <option value="Main Dishes">Main Dishes</option>
-            <option value="Soups">Soups & Stews</option>
-            <option value="Appetizers">Appetizers</option>
-            <option value="Desserts">Desserts</option>
-            <option value="Drinks">Beverages</option>
-            <option value="Specials">Specials</option>
-          </select>
-        </div>
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Availability</p>
-        <div className='flex flex-wrap gap-2'>
-          <button
-            type="button"
-            onClick={() => setAvailableDays(['everyday'])}
-            className={`px-3 py-1 text-sm rounded-full ${
-              availableDays.includes('everyday') 
-                ? 'bg-green-500 text-white' 
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            Everyday
-          </button>
-          {days.map(day => (
-            <button
-              key={day}
-              type="button"
-              onClick={() => handleDayChange(day)}
-              className={`px-3 py-1 text-sm rounded-full ${
-                availableDays.includes(day) 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-gray-200 text-gray-700'
-              }`}
-            >
-              {day.substring(0, 3)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Stock Status */}
-      <div className='flex gap-2 mt-2 items-center'>
-        <input
-          type="checkbox"
-          id="inStock"
-          checked={inStock}
-          onChange={(e) => setInStock(e.target.checked)}
-          className="w-5 h-5"
-        />
-        <label htmlFor="inStock" className='cursor-pointer'>
-          In Stock
-        </label>
-      </div>
-
-      {/* Bestseller */}
-      <div className='flex gap-2 mt-2 items-center'>
-        <input
-          type="checkbox"
-          id='bestseller'
-          checked={bestseller}
-          onChange={(e) => setBestseller(e.target.checked)}
-          className="w-5 h-5"
-        />
-        <label htmlFor="bestseller" className='cursor-pointer'>
-          Add to bestseller
-        </label>
-      </div>
-
-      {/* Variations Section */}
-      <div className="w-full mt-6 border-t pt-4">
-        <h3 className="text-lg font-medium mb-4">Meal Variations</h3>
-        
-        {/* Base Options */}
-        <div className="mb-4">
-          <label className="block mb-2">Base Options (comma separated)</label>
-          <input
-            value={variations.base.options.join(', ')}
-            onChange={(e) => handleOptionsChange('base', e.target.value)}
-            className="w-full max-w-[500px] px-3 py-2 border rounded"
-            placeholder="e.g. Jerk Chicken, BBQ Chicken"
-          />
-        </div>
-
-        {/* Side Options */}
-        <div className="mb-4">
-          <label className="block mb-2">Side Options (comma separated)</label>
-          <input
-            value={variations.side.options.join(', ')}
-            onChange={(e) => handleOptionsChange('side', e.target.value)}
-            className="w-full max-w-[500px] px-3 py-2 border rounded"
-            placeholder="e.g. Jollof Rice, Fried Plantain"
-          />
-        </div>
-
-        {/* Sizes */}
-        <div className="mb-4">
-          <label className="block mb-2">Sizes</label>
-          {variations.sizes.map((size, index) => (
-            <div key={index} className="flex gap-2 mb-2">
-              <input
-                value={size.size}
-                onChange={(e) => handleSizeChange(index, 'size', e.target.value)}
-                className="flex-1 px-3 py-2 border rounded"
-                placeholder="Size name"
-              />
-              <input
-                value={size.price}
-                onChange={(e) => {
-                  if (validateDecimal(e.target.value)) {
-                    handleSizeChange(index, 'price', e.target.value);
-                  }
-                }}
-                onBlur={() => {
-                  formatPriceOnBlur(
-                    size.price, 
-                    (value) => handleSizeChange(index, 'price', value)
-                  );
-                }}
-                className="w-32 px-3 py-2 border rounded"
-                placeholder="Price"
-                type="text"
-                inputMode="decimal"
-              />
-              <button
-                type="button"
-                onClick={() => removeSize(index)}
-                className="px-3 py-2 bg-red-500 text-white rounded"
-              >
-                Remove
-              </button>
+        <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
+          {/* Image Upload Section */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">📸 Product Images</h2>
+            <p className="text-sm text-gray-600 mb-4">Upload up to 4 images (recommended: at least 2)</p>
+            <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
+              {[1, 2, 3, 4].map((num) => (
+                <label key={num} htmlFor={`image${num}`} className="cursor-pointer">
+                  <div className="overflow-hidden rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 transition-all bg-gray-50">
+                    <img
+                      className='w-full aspect-square object-cover'
+                      src={!eval(`image${num}`) ? assets.upload_area : URL.createObjectURL(eval(`image${num}`))}
+                      alt={`Product ${num}`}
+                    />
+                  </div>
+                  <input
+                    onChange={(e) => eval(`setImage${num}`)(e.target.files[0])}
+                    type="file"
+                    accept="image/*"
+                    id={`image${num}`}
+                    hidden
+                  />
+                </label>
+              ))}
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={addSize}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Add Size
-          </button>
-        </div>
-
-        {/* Wrap Option */}
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <input
-              type="checkbox"
-              id="wrapAvailable"
-              checked={variations.wrap.available}
-              onChange={(e) => handleVariationChange('wrap', 'available', e.target.checked)}
-              className="w-5 h-5"
-            />
-            <label htmlFor="wrapAvailable" className='cursor-pointer'>
-              Offer Wrap Option
-            </label>
           </div>
-          {variations.wrap.available && (
-            <div className="flex gap-2">
-              <input
-                value={variations.wrap.price}
-                onChange={(e) => {
-                  if (validateDecimal(e.target.value)) {
-                    handleVariationChange('wrap', 'price', e.target.value);
-                  }
-                }}
-                onBlur={() => {
-                  formatPriceOnBlur(
-                    variations.wrap.price, 
-                    (value) => handleVariationChange('wrap', 'price', value)
-                  );
-                }}
-                className="w-32 px-3 py-2 border rounded"
-                placeholder="Wrap price"
-                type="text"
-                inputMode="decimal"
-              />
-            </div>
-          )}
-        </div>
-      </div>
 
-      <button
-        type="submit"
-        className='w-28 py-3 mt-4 bg-black text-white rounded'
-      >
-        ADD
-      </button>
-    </form>
+          {/* Basic Information Section */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">📝 Basic Information</h2>
+            <div className="space-y-4">
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Product Name</label>
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                  type="text"
+                  placeholder='Enter product name'
+                  required
+                />
+              </div>
+
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Description</label>
+                <textarea
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                  className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base h-24 sm:h-28 resize-none'
+                  placeholder='Write a detailed description'
+                  required
+                />
+              </div>
+
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div>
+                  <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Base Price</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-3 text-gray-500">$</span>
+                    <input
+                      onChange={(e) => {
+                        if (validateDecimal(e.target.value)) {
+                          setBasePrice(e.target.value);
+                        }
+                      }}
+                      onBlur={() => formatPriceOnBlur(basePrice, setBasePrice)}
+                      value={basePrice}
+                      className='w-full pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                      type="text"
+                      inputMode="decimal"
+                      placeholder='9.99'
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    <option value="Main Dishes">Main Dishes</option>
+                    <option value="Soups">Soups & Stews</option>
+                    <option value="Appetizers">Appetizers</option>
+                    <option value="Desserts">Desserts</option>
+                    <option value="Drinks">Beverages</option>
+                    <option value="Specials">Specials</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Status and Availability Section */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">⏰ Availability & Status</h2>
+            
+            <div className="space-y-4">
+              {/* Availability Days */}
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-3 block'>Which days is this available?</label>
+                <div className='flex flex-wrap gap-2'>
+                  <button
+                    type="button"
+                    onClick={() => setAvailableDays(['everyday'])}
+                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-full font-medium transition-all ${
+                      availableDays.includes('everyday') 
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    Everyday
+                  </button>
+                  {days.map(day => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => handleDayChange(day)}
+                      className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-full font-medium transition-all ${
+                        availableDays.includes(day) 
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {day.substring(0, 3)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Checkboxes */}
+              <div className='flex flex-col sm:flex-row gap-4'>
+                <div className='flex gap-3 items-center'>
+                  <input
+                    type="checkbox"
+                    id="inStock"
+                    checked={inStock}
+                    onChange={(e) => setInStock(e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
+                  />
+                  <label htmlFor="inStock" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                    ✅ In Stock
+                  </label>
+                </div>
+
+                <div className='flex gap-3 items-center'>
+                  <input
+                    type="checkbox"
+                    id='bestseller'
+                    checked={bestseller}
+                    onChange={(e) => setBestseller(e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
+                  />
+                  <label htmlFor="bestseller" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                    ⭐ Add to bestseller
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Variations Section */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">🍽️ Meal Variations (Optional)</h2>
+            
+            <div className="space-y-6">
+              {/* Base Options */}
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Base Options<span className="text-gray-500 text-xs">(comma separated)</span></label>
+                <input
+                  value={variations.base.options.join(', ')}
+                  onChange={(e) => handleOptionsChange('base', e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  placeholder="e.g. Jerk Chicken, BBQ Chicken"
+                />
+              </div>
+
+              {/* Side Options */}
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Side Options<span className="text-gray-500 text-xs">(comma separated)</span></label>
+                <input
+                  value={variations.side.options.join(', ')}
+                  onChange={(e) => handleOptionsChange('side', e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  placeholder="e.g. Jollof Rice, Fried Plantain"
+                />
+              </div>
+
+              {/* Sizes */}
+              <div>
+                <label className='text-sm sm:text-base font-medium text-gray-900 mb-3 block'>Sizes</label>
+                <div className="space-y-2">
+                  {variations.sizes.map((size, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        value={size.size}
+                        onChange={(e) => handleSizeChange(index, 'size', e.target.value)}
+                        className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                        placeholder="Size name (e.g., Small)"
+                      />
+                      <div className="relative flex-1 sm:flex-none sm:w-28">
+                        <span className="absolute left-4 top-3 text-gray-500 text-sm">$</span>
+                        <input
+                          value={size.price}
+                          onChange={(e) => {
+                            if (validateDecimal(e.target.value)) {
+                              handleSizeChange(index, 'price', e.target.value);
+                            }
+                          }}
+                          onBlur={() => {
+                            formatPriceOnBlur(
+                              size.price, 
+                              (value) => handleSizeChange(index, 'price', value)
+                            );
+                          }}
+                          className="w-full pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                          placeholder="Price"
+                          type="text"
+                          inputMode="decimal"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeSize(index)}
+                        className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-3 bg-red-100 text-red-700 hover:bg-red-600 hover:text-white rounded-lg font-medium transition-all text-sm sm:text-base"
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={addSize}
+                  className="mt-3 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm sm:text-base"
+                >
+                  + Add Size
+                </button>
+              </div>
+
+              {/* Wrap Option */}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex gap-3 items-center mb-3">
+                  <input
+                    type="checkbox"
+                    id="wrapAvailable"
+                    checked={variations.wrap.available}
+                    onChange={(e) => handleVariationChange('wrap', 'available', e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
+                  />
+                  <label htmlFor="wrapAvailable" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                    🌯 Offer Wrap Option
+                  </label>
+                </div>
+                {variations.wrap.available && (
+                  <div className="relative inline-block">
+                    <span className="absolute left-4 top-3 text-gray-500">$</span>
+                    <input
+                      value={variations.wrap.price}
+                      onChange={(e) => {
+                        if (validateDecimal(e.target.value)) {
+                          handleVariationChange('wrap', 'price', e.target.value);
+                        }
+                      }}
+                      onBlur={() => {
+                        formatPriceOnBlur(
+                          variations.wrap.price, 
+                          (value) => handleVariationChange('wrap', 'price', value)
+                        );
+                      }}
+                      className="w-32 pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                      placeholder="Price"
+                      type="text"
+                      inputMode="decimal"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className='flex-1 sm:flex-none px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-bold text-base sm:text-lg'
+            >
+              ✓ ADD Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

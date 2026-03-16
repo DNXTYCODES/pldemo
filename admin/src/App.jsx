@@ -12,6 +12,7 @@ import EditProduct from "./pages/EditProduct";
 import Users from "./pages/Users";
 import ManageImages from "./pages/ManageImages";
 import ManagePhotographers from "./pages/ManagePhotographers";
+import UserManual from "./pages/UserManual";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -38,7 +39,7 @@ const App = () => {
           <hr />
           <div className="flex w-full">
             <Sidebar />
-            <div className="w-[70%] mx-auto ml-[max(5vw,25px)] my-8 text-gray-600 text-base">
+            <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 my-8 text-gray-600 text-base">
               <Routes>
                 <Route
                   path="/manage-images"
@@ -61,6 +62,7 @@ const App = () => {
                   element={<EditProduct token={token} />}
                 />
                 <Route path="/users" element={<Users token={token} />} />
+                <Route path="/user-manual" element={<UserManual token={token} />} />
               </Routes>
             </div>
           </div>
