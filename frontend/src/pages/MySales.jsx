@@ -17,9 +17,12 @@ const MySales = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const response = await fetch(`${backendUrl}/api/images/user/my-images`, {
-          headers: { Authorization: token },
-        });
+        const response = await fetch(
+          `${backendUrl}/api/images/user/my-images`,
+          {
+            headers: { Authorization: token },
+          },
+        );
         const data = await response.json();
 
         if (data.success) {
@@ -92,14 +95,17 @@ const MySales = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${backendUrl}/api/images/${imageId}/price`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
+      const response = await fetch(
+        `${backendUrl}/api/images/${imageId}/price`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ priceEth: newPrice }),
         },
-        body: JSON.stringify({ priceEth: newPrice }),
-      });
+      );
 
       const data = await response.json();
 
@@ -220,13 +226,14 @@ const MySales = () => {
                           image.status === "active"
                             ? "bg-green-100 text-green-800"
                             : image.approvalStatus === "declined"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-gray-200 text-gray-700"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-200 text-gray-700"
                         }`}
                       >
                         {image.approvalStatus === "declined"
                           ? "Upload Declined"
-                          : image.status.charAt(0).toUpperCase() + image.status.slice(1)}
+                          : image.status.charAt(0).toUpperCase() +
+                            image.status.slice(1)}
                       </span>
                     </div>
 
@@ -235,8 +242,6 @@ const MySales = () => {
                       <h3 className="font-bold text-lg mb-2 truncate text-gray-900">
                         {image.title}
                       </h3>
-
-
 
                       {/* Price */}
                       {editingPrice === image._id ? (
@@ -287,6 +292,14 @@ const MySales = () => {
                               Edit
                             </button>
                           </div>
+                        </div>
+                      )}
+
+                      {/* Purchase Requests */}
+                      {image.purchaseHistory && image.purchaseHistory.length > 0 && (
+                        <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded border border-green-200">
+                          <p className="text-sm text-gray-600 mb-1">Purchase Requests</p>
+                          <p className="font-bold text-green-600 text-lg">{image.purchaseHistory.length} {image.purchaseHistory.length === 1 ? 'request' : 'requests'}</p>
                         </div>
                       )}
 

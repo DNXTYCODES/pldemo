@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const Settings = () => {
-  const { navigate, backendUrl, token } = useContext(ShopContext);
+  const { navigate, backendUrl } = useContext(ShopContext);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -11,6 +11,8 @@ const Settings = () => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("token");
+        
         if (!token) {
           setError("No authentication token found. Please login first.");
           setLoading(false);
@@ -40,13 +42,64 @@ const Settings = () => {
     };
 
     fetchUserProfile();
-  }, [token, backendUrl]);
+  }, [backendUrl]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 px-4">
         <div className="text-center">
           <p className="text-gray-500">Loading settings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is logged in
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16 px-4 mb-12">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-5xl font-bold mb-3">Settings & Account</h1>
+            <p className="text-amber-100 text-lg">Manage your profile, uploads, purchases, and account preferences</p>
+          </div>
+        </div>
+
+        <div className="max-w-2xl mx-auto px-4 pb-20">
+          {/* Not Logged In Section */}
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-2xl p-12 text-center shadow-lg">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Authentication Required</h2>
+            <p className="text-gray-700 text-lg mb-8 max-w-md mx-auto">
+              You need to log in to your Peak Lens Photography account to access your settings and manage your profile, uploads, and purchases.
+            </p>
+
+            <button
+              onClick={() => navigate("/login")}
+              className="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Go to Login →
+            </button>
+
+            <p className="text-gray-600 text-sm mt-6">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/login")}
+                className="text-blue-600 font-semibold hover:text-blue-700 underline"
+              >
+                Sign up here
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     );

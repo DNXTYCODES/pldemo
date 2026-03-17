@@ -62,7 +62,10 @@ const App = () => {
                   element={<EditProduct token={token} />}
                 />
                 <Route path="/users" element={<Users token={token} />} />
-                <Route path="/user-manual" element={<UserManual token={token} />} />
+                <Route
+                  path="/user-manual"
+                  element={<UserManual token={token} />}
+                />
               </Routes>
             </div>
           </div>

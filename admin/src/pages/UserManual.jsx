@@ -190,8 +190,12 @@ const UserManual = () => {
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">📖 Admin User Manual</h1>
-        <p className="text-lg text-gray-600">Complete guide to the photography platform admin panel</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          📖 Admin User Manual
+        </h1>
+        <p className="text-lg text-gray-600">
+          Complete guide to the photography platform admin panel
+        </p>
       </div>
 
       {/* Navigation Overview */}
@@ -220,7 +224,9 @@ const UserManual = () => {
               onClick={() => toggleSection(section.id)}
               className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
-              <h2 className="text-xl font-bold text-gray-900">{section.title}</h2>
+              <h2 className="text-xl font-bold text-gray-900">
+                {section.title}
+              </h2>
               <svg
                 className={`w-6 h-6 transition-transform duration-300 ${
                   expandedSection === section.id ? "transform rotate-180" : ""
@@ -253,12 +259,24 @@ const UserManual = () => {
 
       {/* Quick Links */}
       <div className="mt-12 p-6 bg-blue-50 border-2 border-blue-200 rounded-lg">
-        <h3 className="font-bold text-lg text-blue-900 mb-4">❓ Guide Overview</h3>
+        <h3 className="font-bold text-lg text-blue-900 mb-4">
+          ❓ Guide Overview
+        </h3>
         <ul className="space-y-2 text-sm text-blue-800">
-          <li>📸 <strong>Manage Images</strong> - View and organize photographer uploads</li>
-          <li>👥 <strong>Manage Photographers</strong> - Monitor photographer accounts and stats</li>
-          <li>👤 <strong>Manage Users</strong> - Control all platform users</li>
-          <li>📖 <strong>User Manual</strong> - Access this comprehensive guide</li>
+          <li>
+            📸 <strong>Manage Images</strong> - View and organize photographer
+            uploads
+          </li>
+          <li>
+            👥 <strong>Manage Photographers</strong> - Monitor photographer
+            accounts and stats
+          </li>
+          <li>
+            👤 <strong>Manage Users</strong> - Control all platform users
+          </li>
+          <li>
+            📖 <strong>User Manual</strong> - Access this comprehensive guide
+          </li>
         </ul>
       </div>
 

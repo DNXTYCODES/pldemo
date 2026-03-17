@@ -8,7 +8,7 @@ const PhotoTabs = () => {
   const { backendUrl, currencyPreference, ethPrice, token } =
     useContext(ShopContext);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("explore");
+  const [activeTab, setActiveTab] = useState("for-you");
   const [allImages, setAllImages] = useState([]);
   const [categoriesData, setCategoriesData] = useState([]);
   const [trendingImages, setTrendingImages] = useState([]);
@@ -25,22 +25,6 @@ const PhotoTabs = () => {
     "Abstract",
     "Nature",
   ];
-
-  // Fetch all images for Explore tab
-  const fetchAllImages = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${backendUrl}/api/images/search?limit=100`);
-      const data = await response.json();
-      if (data.success) {
-        setAllImages(data.images);
-      }
-    } catch (error) {
-      console.error("Error fetching all images:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Fetch category images for For You tab
   const fetchCategoryImages = async () => {
@@ -92,7 +76,6 @@ const PhotoTabs = () => {
   };
 
   useEffect(() => {
-    fetchAllImages();
     fetchCategoryImages();
     fetchTrendingImages();
     fetchRecentImages();
@@ -103,17 +86,6 @@ const PhotoTabs = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Tab Navigation */}
         <div className="flex items-center border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab("explore")}
-            className={`px-6 py-4 text-sm font-medium border-b-2 transition-all ${
-              activeTab === "explore"
-                ? "border-gray-900 text-gray-900"
-                : "border-transparent text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Explore
-          </button>
-
           <button
             onClick={() => setActiveTab("for-you")}
             className={`px-6 py-4 text-sm font-medium border-b-2 transition-all ${
@@ -151,96 +123,6 @@ const PhotoTabs = () => {
 
       {/* Tab Content */}
       <div className="bg-white">
-        {/* Explore Tab */}
-        {activeTab === "explore" && (
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase mb-6">
-              Explore
-            </h3>
-
-            {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {[...Array(15)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-gray-200 aspect-square rounded-sm animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {allImages.slice(0, 24).map((image) => (
-                  <div
-                    key={image._id}
-                    className="group relative cursor-pointer overflow-hidden rounded-md bg-gray-200 aspect-square"
-                  >
-                    <img
-                      src={image.thumbnailUrl || image.imageUrl}
-                      alt={image.title}
-                      onClick={() => navigate(`/image/${image._id}`)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    />
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300 flex flex-col items-end justify-between p-2 opacity-0 group-hover:opacity-100">
-                      {/* Uploader Info & Price */}
-                      <div className="flex flex-col gap-2 w-full">
-                        {/* Price */}
-                        {image.priceEth && (
-                          <div className="bg-white/90 rounded-md px-2 py-1 w-full">
-                            <p className="text-xs font-semibold text-gray-900">
-                              {getFormattedPrice(
-                                image.priceEth,
-                                ethPrice,
-                                currencyPreference,
-                              )}
-                            </p>
-                          </div>
-                        )}
-                        {/* Uploader Info */}
-                        <div className="flex items-center gap-2 bg-white/90 rounded-md px-2 py-1.5 w-full">
-                          <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              {image.sellerId?.name?.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                          <span className="text-xs font-medium text-gray-900 truncate">
-                            {image.sellerId?.name || "Unknown"}
-                          </span>
-                        </div>
-                      </div>
-                      {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/image/${image._id}`);
-                          }}
-                          className="p-1.5 rounded bg-white/90 hover:bg-white transition"
-                          title="View Details"
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            className="text-gray-700"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* For You Tab */}
         {activeTab === "for-you" && (
           <div className="max-w-7xl mx-auto px-4 py-8">

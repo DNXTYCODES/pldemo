@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { backendUrl, currency } from '../App';
-import { toast } from 'react-toastify';
-import { assets } from '../assets/assets';
-import { FaCheck, FaTimes, FaSync, FaTrash, FaInfoCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { backendUrl, currency } from "../App";
+import { toast } from "react-toastify";
+import { assets } from "../assets/assets";
+import {
+  FaCheck,
+  FaTimes,
+  FaSync,
+  FaTrash,
+  FaInfoCircle,
+} from "react-icons/fa";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
@@ -13,25 +19,25 @@ const Orders = ({ token }) => {
 
   // Restaurant-specific delivery statuses
   const restaurantStatuses = [
-    'Order Received',
-    'Preparing',
-    'Ready for Pickup',
-    'Out for Delivery',
-    'Delivered',
-    'Cancelled'
+    "Order Received",
+    "Preparing",
+    "Ready for Pickup",
+    "Out for Delivery",
+    "Delivered",
+    "Cancelled",
   ];
 
   const fetchAllOrders = async () => {
     if (!token) return;
     setLoading(true);
-    
+
     try {
       const response = await axios.post(
-        backendUrl + '/api/order/list', 
-        {}, 
-        { headers: { token } }
+        backendUrl + "/api/order/list",
+        {},
+        { headers: { token } },
       );
-      
+
       if (response.data.success) {
         setOrders(response.data.orders.reverse());
       } else {
@@ -48,14 +54,14 @@ const Orders = ({ token }) => {
     setUpdating(orderId);
     try {
       const response = await axios.post(
-        backendUrl + '/api/order/status', 
-        { orderId, status }, 
-        { headers: { token } }
+        backendUrl + "/api/order/status",
+        { orderId, status },
+        { headers: { token } },
       );
-      
+
       if (response.data.success) {
         await fetchAllOrders();
-        toast.success('Order status updated');
+        toast.success("Order status updated");
       } else {
         toast.error(response.data.message);
       }
@@ -71,14 +77,16 @@ const Orders = ({ token }) => {
     setUpdating(orderId);
     try {
       const response = await axios.post(
-        backendUrl + '/api/order/payment-status', 
-        { orderId, payment: paymentStatus }, 
-        { headers: { token } }
+        backendUrl + "/api/order/payment-status",
+        { orderId, payment: paymentStatus },
+        { headers: { token } },
       );
-      
+
       if (response.data.success) {
         await fetchAllOrders();
-        toast.success(`Payment marked as ${paymentStatus ? 'Paid' : 'Pending'}`);
+        toast.success(
+          `Payment marked as ${paymentStatus ? "Paid" : "Pending"}`,
+        );
       } else {
         toast.error(response.data.message);
       }
@@ -91,18 +99,18 @@ const Orders = ({ token }) => {
   };
 
   const deleteOrderHandler = async (orderId) => {
-    if (!window.confirm('Are you sure you want to delete this order?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+
     setUpdating(orderId);
     try {
       const response = await axios.delete(
-        backendUrl + '/api/order/' + orderId, 
-        { headers: { token } }
+        backendUrl + "/api/order/" + orderId,
+        { headers: { token } },
       );
-      
+
       if (response.data.success) {
         await fetchAllOrders();
-        toast.success('Order deleted successfully');
+        toast.success("Order deleted successfully");
       } else {
         toast.error(response.data.message);
       }
@@ -120,20 +128,20 @@ const Orders = ({ token }) => {
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'order received':
-        return 'bg-blue-500';
-      case 'preparing':
-        return 'bg-yellow-500';
-      case 'ready for pickup':
-        return 'bg-purple-500';
-      case 'out for delivery':
-        return 'bg-orange-500';
-      case 'delivered':
-        return 'bg-green-500';
-      case 'cancelled':
-        return 'bg-red-500';
+      case "order received":
+        return "bg-blue-500";
+      case "preparing":
+        return "bg-yellow-500";
+      case "ready for pickup":
+        return "bg-purple-500";
+      case "out for delivery":
+        return "bg-orange-500";
+      case "delivered":
+        return "bg-green-500";
+      case "cancelled":
+        return "bg-red-500";
       default:
-        return 'bg-gray-500';
+        return "bg-gray-500";
     }
   };
 
@@ -163,8 +171,12 @@ const Orders = ({ token }) => {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Order Management</h1>
-              <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage and track all customer orders</p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+                Order Management
+              </h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                Manage and track all customer orders
+              </p>
             </div>
             <button
               onClick={fetchAllOrders}
@@ -179,10 +191,10 @@ const Orders = ({ token }) => {
         {orders.length === 0 ? (
           <div className="text-center py-12 sm:py-16">
             <div className="bg-gray-100 p-6 rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
-              <img 
-                src={assets.order_icon} 
-                className="w-10 sm:w-12 opacity-70" 
-                alt="No orders" 
+              <img
+                src={assets.order_icon}
+                className="w-10 sm:w-12 opacity-70"
+                alt="No orders"
               />
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
@@ -195,8 +207,8 @@ const Orders = ({ token }) => {
         ) : (
           <div className="space-y-5 sm:space-y-6">
             {orders.map((order) => (
-              <div 
-                key={order._id} 
+              <div
+                key={order._id}
                 className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
                 {/* Order Header */}
@@ -208,13 +220,15 @@ const Orders = ({ token }) => {
                         <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                           Order #{order._id.slice(-8).toUpperCase()}
                         </h3>
-                        <span className={`flex-shrink-0 w-3 h-3 rounded-full ${getStatusColor(order.status)}`}></span>
+                        <span
+                          className={`flex-shrink-0 w-3 h-3 rounded-full ${getStatusColor(order.status)}`}
+                        ></span>
                       </div>
                       <p className="text-xs sm:text-sm text-gray-500">
                         {new Date(order.date).toLocaleString()}
                       </p>
                     </div>
-                    
+
                     {/* Action Buttons */}
                     <div className="flex gap-2 w-full sm:w-auto">
                       <button
@@ -222,9 +236,11 @@ const Orders = ({ token }) => {
                         className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm sm:text-base font-medium transition-colors text-gray-700"
                       >
                         <FaInfoCircle />
-                        <span className="hidden xs:inline">{expandedOrder === order._id ? 'Hide' : 'Details'}</span>
+                        <span className="hidden xs:inline">
+                          {expandedOrder === order._id ? "Hide" : "Details"}
+                        </span>
                       </button>
-                      
+
                       <button
                         onClick={() => deleteOrderHandler(order._id)}
                         disabled={updating === order._id}
@@ -235,22 +251,34 @@ const Orders = ({ token }) => {
                       </button>
                     </div>
                   </div>
-                  
+
                   {/* Order Summary Stats */}
                   <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 xs:grid-cols-3 gap-3">
                     <div className="flex items-center gap-2">
-                      <span className={`flex-shrink-0 w-2 h-2 rounded-full ${order.payment ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                      <span
+                        className={`flex-shrink-0 w-2 h-2 rounded-full ${order.payment ? "bg-green-500" : "bg-red-500"}`}
+                      ></span>
                       <span className="text-sm text-gray-600">
-                        Payment: <span className="font-semibold text-gray-900">{order.payment ? 'Paid' : 'Pending'}</span>
+                        Payment:{" "}
+                        <span className="font-semibold text-gray-900">
+                          {order.payment ? "Paid" : "Pending"}
+                        </span>
                       </span>
                     </div>
-                    
+
                     <div className="text-sm text-gray-600">
-                      Method: <span className="font-semibold text-gray-900 capitalize">{order.paymentMethod}</span>
+                      Method:{" "}
+                      <span className="font-semibold text-gray-900 capitalize">
+                        {order.paymentMethod}
+                      </span>
                     </div>
-                    
+
                     <div className="text-sm text-gray-600">
-                      Total: <span className="font-bold text-green-600">{currency}{order.amount.toFixed(2)}</span>
+                      Total:{" "}
+                      <span className="font-bold text-green-600">
+                        {currency}
+                        {order.amount.toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -261,126 +289,178 @@ const Orders = ({ token }) => {
                     {/* Customer & Delivery Info */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">👤 Customer Information</h4>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">
+                          👤 Customer Information
+                        </h4>
                         <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 space-y-2">
-                          <p className="font-semibold text-gray-900">{order.address?.firstName} {order.address?.lastName}</p>
-                          <p className="text-sm text-gray-600">📱 {order.address?.phone}</p>
-                          <p className="text-sm text-gray-600">📧 {order.address?.email}</p>
-                          
+                          <p className="font-semibold text-gray-900">
+                            {order.address?.firstName} {order.address?.lastName}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            📱 {order.address?.phone}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            📧 {order.address?.email}
+                          </p>
+
                           {order.userId && (
                             <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">
-                              ID: <span className="font-mono">{order.userId?._id?.slice(-8) || 'N/A'}</span>
+                              ID:{" "}
+                              <span className="font-mono">
+                                {order.userId?._id?.slice(-8) || "N/A"}
+                              </span>
                             </p>
                           )}
                         </div>
                       </div>
-                      
+
                       <div>
-                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📍 Delivery Address</h4>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">
+                          📍 Delivery Address
+                        </h4>
                         <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 space-y-1 text-sm text-gray-600">
-                          <p className="font-semibold text-gray-900">{order.address?.street}</p>
-                          <p>{order.address?.city}, {order.address?.state}</p>
-                          <p>{order.address?.zipcode}, {order.address?.country}</p>
+                          <p className="font-semibold text-gray-900">
+                            {order.address?.street}
+                          </p>
+                          <p>
+                            {order.address?.city}, {order.address?.state}
+                          </p>
+                          <p>
+                            {order.address?.zipcode}, {order.address?.country}
+                          </p>
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Order Items */}
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📦 Order Items</h4>
+                      <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">
+                        📦 Order Items
+                      </h4>
                       <div className="space-y-3">
                         {order.items.map((item, index) => {
                           let variationDesc = "";
-                          if (item.variations?.base) variationDesc += `Base: ${item.variations.base}, `;
-                          if (item.variations?.side) variationDesc += `Side: ${item.variations.side}, `;
-                          if (item.variations?.size) variationDesc += `Size: ${item.variations.size}, `;
-                          if (item.variations?.wrap) variationDesc += `Wrap: Yes, `;
+                          if (item.variations?.base)
+                            variationDesc += `Base: ${item.variations.base}, `;
+                          if (item.variations?.side)
+                            variationDesc += `Side: ${item.variations.side}, `;
+                          if (item.variations?.size)
+                            variationDesc += `Size: ${item.variations.size}, `;
+                          if (item.variations?.wrap)
+                            variationDesc += `Wrap: Yes, `;
                           variationDesc = variationDesc.replace(/,\s*$/, "");
-                          
+
                           return (
-                            <div key={index} className="flex gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                            <div
+                              key={index}
+                              className="flex gap-3 p-3 bg-white rounded-lg border border-gray-200"
+                            >
                               <div className="flex-shrink-0">
-                                <img 
-                                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded" 
-                                  src={item.image?.[0] || assets.parcel_icon} 
-                                  alt={item.name} 
+                                <img
+                                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded"
+                                  src={item.image?.[0] || assets.parcel_icon}
+                                  alt={item.name}
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.name}</p>
+                                <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                                  {item.name}
+                                </p>
                                 {variationDesc && (
-                                  <p className="text-xs sm:text-sm text-gray-500 mt-1">{variationDesc}</p>
+                                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                                    {variationDesc}
+                                  </p>
                                 )}
                               </div>
                               <div className="flex flex-col items-end text-sm sm:text-base">
-                                <p className="font-semibold text-gray-900">{currency}{item.price.toFixed(2)}</p>
-                                <p className="text-xs sm:text-sm text-gray-500">x {item.quantity}</p>
+                                <p className="font-semibold text-gray-900">
+                                  {currency}
+                                  {item.price.toFixed(2)}
+                                </p>
+                                <p className="text-xs sm:text-sm text-gray-500">
+                                  x {item.quantity}
+                                </p>
                               </div>
                             </div>
                           );
                         })}
                       </div>
                     </div>
-                    
+
                     {/* Status Controls */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Delivery Status */}
                       <div>
-                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">📦 Delivery Status</h4>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">
+                          📦 Delivery Status
+                        </h4>
                         <div className="flex flex-col gap-3">
                           <select
                             value={order.status}
-                            onChange={(e) => statusHandler(e.target.value, order._id)}
+                            onChange={(e) =>
+                              statusHandler(e.target.value, order._id)
+                            }
                             disabled={updating === order._id}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                           >
-                            {restaurantStatuses.map(status => (
-                              <option key={status} value={status}>{status}</option>
+                            {restaurantStatuses.map((status) => (
+                              <option key={status} value={status}>
+                                {status}
+                              </option>
                             ))}
                           </select>
-                          
+
                           <div className="grid grid-cols-2 gap-2">
-                            {restaurantStatuses.map(status => (
+                            {restaurantStatuses.map((status) => (
                               <button
                                 key={status}
                                 onClick={() => statusHandler(status, order._id)}
-                                disabled={updating === order._id || order.status === status}
+                                disabled={
+                                  updating === order._id ||
+                                  order.status === status
+                                }
                                 className={`py-2 px-3 text-xs font-medium rounded-lg transition-all ${
-                                  order.status === status 
-                                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
-                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                  order.status === status
+                                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                 } disabled:opacity-50 disabled:cursor-not-allowed`}
                               >
-                                {status.split(' ')[0]}
+                                {status.split(" ")[0]}
                               </button>
                             ))}
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Payment Status */}
                       <div>
-                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">💳 Payment Status</h4>
+                        <h4 className="font-bold text-gray-900 mb-3 text-sm sm:text-base">
+                          💳 Payment Status
+                        </h4>
                         <div className="grid grid-cols-2 gap-3">
                           <button
-                            onClick={() => paymentStatusHandler(order._id, true)}
+                            onClick={() =>
+                              paymentStatusHandler(order._id, true)
+                            }
                             disabled={order.payment || updating === order._id}
                             className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-medium transition-all ${
-                              order.payment 
-                                ? 'bg-green-100 text-green-700' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-600 hover:text-white'
+                              order.payment
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-600 hover:text-white"
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                           >
                             <FaCheck /> Paid
                           </button>
-                          
+
                           <button
-                            onClick={() => paymentStatusHandler(order._id, false)}
+                            onClick={() =>
+                              paymentStatusHandler(order._id, false)
+                            }
                             disabled={!order.payment || updating === order._id}
                             className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-medium transition-all ${
-                              !order.payment 
-                                ? 'bg-red-100 text-red-700' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white'
+                              !order.payment
+                                ? "bg-red-100 text-red-700"
+                                : "bg-gray-200 text-gray-700 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                           >
                             <FaTimes /> Unpaid
@@ -400,23 +480,6 @@ const Orders = ({ token }) => {
 };
 
 export default Orders;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useEffect, useState } from 'react'
 // import axios from 'axios'
@@ -442,14 +505,14 @@ export default Orders;
 //   const fetchAllOrders = async () => {
 //     if (!token) return
 //     setLoading(true)
-    
+
 //     try {
 //       const response = await axios.post(
-//         backendUrl + '/api/order/list', 
-//         {}, 
+//         backendUrl + '/api/order/list',
+//         {},
 //         { headers: { token } }
 //       )
-      
+
 //       if (response.data.success) {
 //         setOrders(response.data.orders.reverse())
 //       } else {
@@ -466,11 +529,11 @@ export default Orders;
 //     setUpdating(orderId)
 //     try {
 //       const response = await axios.post(
-//         backendUrl + '/api/order/status', 
-//         { orderId, status: event.target.value }, 
+//         backendUrl + '/api/order/status',
+//         { orderId, status: event.target.value },
 //         { headers: { token } }
 //       )
-      
+
 //       if (response.data.success) {
 //         await fetchAllOrders()
 //         toast.success('Order status updated')
@@ -489,11 +552,11 @@ export default Orders;
 //     setUpdating(orderId)
 //     try {
 //       const response = await axios.post(
-//         backendUrl + '/api/order/payment-status', 
-//         { orderId, payment: paymentStatus }, 
+//         backendUrl + '/api/order/payment-status',
+//         { orderId, payment: paymentStatus },
 //         { headers: { token } }
 //       )
-      
+
 //       if (response.data.success) {
 //         await fetchAllOrders()
 //         toast.success(`Payment marked as ${paymentStatus ? 'Paid' : 'Pending'}`)
@@ -557,10 +620,10 @@ export default Orders;
 //       {orders.length === 0 ? (
 //         <div className="text-center py-12">
 //           <div className="bg-gray-100 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-//             <img 
-//               src={assets.order_icon} 
-//               className="w-12 opacity-70" 
-//               alt="No orders" 
+//             <img
+//               src={assets.order_icon}
+//               className="w-12 opacity-70"
+//               alt="No orders"
 //             />
 //           </div>
 //           <h3 className="text-2xl text-gray-700 mb-2">
@@ -573,8 +636,8 @@ export default Orders;
 //       ) : (
 //         <div className="space-y-4">
 //           {orders.map((order) => (
-//             <div 
-//               key={order._id} 
+//             <div
+//               key={order._id}
 //               className="border rounded-lg p-4 bg-white shadow-sm"
 //             >
 //               <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 pb-3 border-b">
@@ -586,13 +649,13 @@ export default Orders;
 //                     Date: <span className="text-gray-500">{new Date(order.date).toLocaleString()}</span>
 //                   </p>
 //                 </div>
-                
+
 //                 <div className="flex flex-wrap gap-4">
 //                   <div className="flex items-center gap-2">
 //                     <span className={`min-w-2 h-2 rounded-full ${getStatusColor(order.status)}`}></span>
 //                     <p className='text-sm md:text-base font-medium capitalize'>{order.status.toLowerCase()}</p>
 //                   </div>
-                  
+
 //                   <div className="flex items-center gap-2">
 //                     <span className={`min-w-2 h-2 rounded-full ${order.payment ? 'bg-green-500' : 'bg-red-500'}`}></span>
 //                     <p className='text-sm md:text-base font-medium'>
@@ -601,7 +664,7 @@ export default Orders;
 //                   </div>
 //                 </div>
 //               </div>
-              
+
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 //                 <div>
 //                   <h3 className="font-medium mb-2">Delivery Address:</h3>
@@ -614,7 +677,7 @@ export default Orders;
 //                     <p>📧 {order.address?.email}</p>
 //                   </div>
 //                 </div>
-                
+
 //                 <div>
 //                   <h3 className="font-medium mb-2">Order Details:</h3>
 //                   <div className="text-sm bg-gray-50 p-3 rounded">
@@ -623,7 +686,7 @@ export default Orders;
 //                     <p className="font-bold mt-2">Total: {currency}{order.amount.toFixed(2)}</p>
 //                   </div>
 //                 </div>
-                
+
 //                 <div>
 //                   <h3 className="font-medium mb-2">Manage Order:</h3>
 //                   <div className="grid grid-cols-2 gap-3">
@@ -640,7 +703,7 @@ export default Orders;
 //                         ))}
 //                       </select>
 //                     </div>
-                    
+
 //                     <div>
 //                       <label className="block text-sm font-medium mb-1">Payment Status:</label>
 //                       <div className="flex gap-2">
@@ -648,20 +711,20 @@ export default Orders;
 //                           onClick={() => paymentStatusHandler(order._id, true)}
 //                           disabled={order.payment || updating === order._id}
 //                           className={`flex-1 py-2 px-3 rounded flex items-center justify-center gap-1 ${
-//                             order.payment 
-//                               ? 'bg-green-100 text-green-800' 
+//                             order.payment
+//                               ? 'bg-green-100 text-green-800'
 //                               : 'bg-gray-200 text-gray-800 hover:bg-green-500 hover:text-white'
 //                           } disabled:opacity-50`}
 //                         >
 //                           <FaCheck /> Paid
 //                         </button>
-                        
+
 //                         <button
 //                           onClick={() => paymentStatusHandler(order._id, false)}
 //                           disabled={!order.payment || updating === order._id}
 //                           className={`flex-1 py-2 px-3 rounded flex items-center justify-center gap-1 ${
-//                             !order.payment 
-//                               ? 'bg-red-100 text-red-800' 
+//                             !order.payment
+//                               ? 'bg-red-100 text-red-800'
 //                               : 'bg-gray-200 text-gray-800 hover:bg-red-500 hover:text-white'
 //                           } disabled:opacity-50`}
 //                         >
@@ -672,7 +735,7 @@ export default Orders;
 //                   </div>
 //                 </div>
 //               </div>
-              
+
 //               <div className="border-t pt-3">
 //                 <h3 className="font-medium mb-2">Order Items:</h3>
 //                 <div className="space-y-3">
@@ -684,14 +747,14 @@ export default Orders;
 //                     if (item.variations?.size) variationDesc += `Size: ${item.variations.size}, `;
 //                     if (item.variations?.wrap) variationDesc += `Wrap: Yes, `;
 //                     variationDesc = variationDesc.replace(/,\s*$/, "");
-                    
+
 //                     return (
 //                       <div key={index} className="flex items-start gap-3 p-2 border rounded">
 //                         <div className="bg-gray-100 p-1 rounded">
-//                           <img 
-//                             className="w-12 h-12 object-cover rounded" 
-//                             src={assets.parcel_icon} 
-//                             alt="Item" 
+//                           <img
+//                             className="w-12 h-12 object-cover rounded"
+//                             src={assets.parcel_icon}
+//                             alt="Item"
 //                           />
 //                         </div>
 //                         <div className="flex-1">
@@ -718,29 +781,6 @@ export default Orders;
 // }
 
 // export default Orders
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React from 'react'
 // import { useEffect } from 'react'
@@ -772,7 +812,6 @@ export default Orders;
 //     } catch (error) {
 //       toast.error(error.message)
 //     }
-
 
 //   }
 
@@ -810,7 +849,7 @@ export default Orders;
 //                     if (item.variations?.size) variationDesc += `Size: ${item.variations.size}, `;
 //                     if (item.variations?.wrap) variationDesc += `Wrap: Yes, `;
 //                     variationDesc = variationDesc.replace(/,\s*$/, "");
-                    
+
 //                     return (
 //                       <div className='py-0.5' key={index}>
 //                         <p>{item.name} x {item.quantity}</p>
@@ -850,22 +889,6 @@ export default Orders;
 
 // export default Orders;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React from 'react'
 // import { useEffect } from 'react'
 // import { useState } from 'react'
@@ -896,7 +919,6 @@ export default Orders;
 //     } catch (error) {
 //       toast.error(error.message)
 //     }
-
 
 //   }
 

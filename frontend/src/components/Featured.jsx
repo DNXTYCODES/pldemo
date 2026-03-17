@@ -1,30 +1,30 @@
-import React from 'react';
-import { assets } from '../assets/assets';
+import React from "react";
+import { assets } from "../assets/assets";
 
 const FeaturedSection = () => {
   const featuredWatches = [
     {
       id: 1,
-      name: 'ROLEX',
+      name: "ROLEX",
       video: assets.rolex, // Replace with your video path
       logo: assets.rolex_img, // Add the corresponding logo path
     },
     {
       id: 2,
-      name: 'PANERAI',
+      name: "PANERAI",
       video: assets.panerai,
       logo: assets.panerai_img,
     },
   ];
 
   const otherBrands = [
-    { id: 1, name: 'OMEGA', logo: assets.omega },
-    { id: 2, name: 'HUBLOT', logo: assets.hublot },
-    { id: 3, name: 'CARTIER', logo: assets.cartier_img },
-    { id: 4, name: 'BREITLING', logo: assets.breitling },
-    { id: 5, name: 'TAG HEUER', logo: assets.tagheuer_img },
-    { id: 6, name: 'PATEK PHILIPPE', logo: assets.patek1 },
-    { id: 7, name: 'AUDEMARS PIGUET', logo: assets.ap1 },
+    { id: 1, name: "OMEGA", logo: assets.omega },
+    { id: 2, name: "HUBLOT", logo: assets.hublot },
+    { id: 3, name: "CARTIER", logo: assets.cartier_img },
+    { id: 4, name: "BREITLING", logo: assets.breitling },
+    { id: 5, name: "TAG HEUER", logo: assets.tagheuer_img },
+    { id: 6, name: "PATEK PHILIPPE", logo: assets.patek1 },
+    { id: 7, name: "AUDEMARS PIGUET", logo: assets.ap1 },
   ];
 
   return (
@@ -55,14 +55,16 @@ const FeaturedSection = () => {
             {/* Brand Logo and Name Overlay */}
             <div
               className="absolute bottom-2 left-2 flex items-center bg-black bg-opacity-50 px-3 py-1 rounded-lg"
-              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
               <img
                 src={watch.logo}
                 alt={`${watch.name}-luxury-wristwatch`}
-                style={{ width: '30px', height: '30px', objectFit: 'contain' }}
+                style={{ width: "30px", height: "30px", objectFit: "contain" }}
               />
-              <span className="text-lg font-semibold text-white">{watch.name}</span>
+              <span className="text-lg font-semibold text-white">
+                {watch.name}
+              </span>
             </div>
           </div>
         ))}
@@ -71,35 +73,51 @@ const FeaturedSection = () => {
       <h2 className="prata-regular text-2xl font-bold text-center mt-16 mb-10 bg-golden-brown bg-clip-text text-transparent bg-to-b">
         Other Watch Brands
       </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "16px",
+        }}
+      >
         {otherBrands.map((brand) => (
           <div
             key={brand.id}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              border: '1px solid #333',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid #333",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+              justifyContent: "space-between",
             }}
           >
             <img
               src={brand.logo}
               alt={brand.name}
-              style={{ width: '50px', height: '50px', objectFit: 'contain', marginRight: '12px' }}
+              style={{
+                width: "50px",
+                height: "50px",
+                objectFit: "contain",
+                marginRight: "12px",
+              }}
             />
             <span
               className="bg-golden-brown bg-clip-text text-transparent bg-to-b"
-              style={{ fontSize: '16px', fontWeight: 'bold' }}
+              style={{ fontSize: "16px", fontWeight: "bold" }}
             >
               {brand.name}
             </span>
           </div>
         ))}
       </div>
-      <a href='/explore' className='underline decoration-gray-700 bg-golden-brown bg-clip-text text-transparent bg-to-b'>view more</a>
+      <a
+        href="/explore"
+        className="underline decoration-gray-700 bg-golden-brown bg-clip-text text-transparent bg-to-b"
+      >
+        view more
+      </a>
     </div>
   );
 };

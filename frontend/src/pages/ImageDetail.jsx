@@ -304,31 +304,7 @@ const ImageDetail = () => {
               </div>
             </div>
 
-            {/* Stats Section - Compact 500px Style */}
-            <div className="border-b border-gray-200 py-4">
-              <div className="grid grid-cols-1 gap-4">
-                {/* Views Stat */}
-                <div className="flex flex-col items-center text-center">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-gray-700 mb-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  <p className="text-sm font-bold text-gray-900">
-                    {imageData.views || 0}
-                  </p>
-                  <p className="text-xs text-gray-600">Views</p>
-                </div>
-              </div>
-            </div>
+
 
             {/* Price Section - Compact 500px Style */}
             <div className="border-b border-gray-200 py-4">

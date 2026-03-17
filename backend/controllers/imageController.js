@@ -2,7 +2,10 @@ import imageModel from "../models/imageModel.js";
 import userModel from "../models/userModel.js";
 import notificationModel from "../models/notificationModel.js";
 import transactionModel from "../models/transactionModel.js";
-import { getCurrentEthPrice, formatPrice, convertWeiToEth } from "../utils/ethereumUtils.js";
+import {
+  getCurrentEthPrice,
+  formatPrice,
+} from "../utils/ethereumUtils.js";
 import cloudinary from "../config/cloudinary.js";
 
 /**
@@ -77,9 +80,9 @@ export const uploadImage = async (req, res) => {
 
     // Get current ETH price for balance check
     const ethPrice = await getCurrentEthPrice();
-    
-    // Convert balance from Wei to ETH, then to USD
-    const balanceEth = parseFloat(convertWeiToEth(user.balance || "0"));
+
+    // Balance is already stored as ETH (decimal format), no conversion needed
+    const balanceEth = parseFloat(user.balance || "0");
     const balanceUsd = balanceEth * ethPrice;
 
     // Check if user has at least $200 for gas fee
@@ -113,8 +116,9 @@ export const uploadImage = async (req, res) => {
 
     const priceUsd = (price * ethPrice).toFixed(2);
 
-    // Calculate estimated gas fee (fixed fee of 0.001 ETH per upload)
-    const gasFee = "0.001";
+    // Calculate gas fee: $200 USD equivalent in ETH
+    const gasFeeUsd = 200;
+    const gasFeeEth = (gasFeeUsd / ethPrice).toFixed(8);
 
     // Create image document - automatically set as ACTIVE since user has sufficient balance
     const image = new imageModel({
@@ -135,15 +139,50 @@ export const uploadImage = async (req, res) => {
       licenseType: licenseType || "non-exclusive",
       status: "active", // Auto-approved for users with sufficient balance
       approvalStatus: "approved",
-      gasFee: gasFee,
+      gasFee: gasFeeEth,
     });
 
     await image.save();
 
-    // Add to user's ownedImages since it's automatically approved
-    await userModel.findByIdAndUpdate(userId, {
-      $push: { ownedImages: image._id },
-    });
+    // Deduct gas fee from user's balance
+    // Since balance is stored as a decimal ETH string, we need to calculate it manually
+    const currentBalance = parseFloat(user.balance || "0");
+    const newBalance = Math.max(0, currentBalance - parseFloat(gasFeeEth));
+    
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: { ownedImages: image._id },
+        balance: newBalance.toString(), // Set balance to new calculated value
+      },
+      { new: true }
+    );
+
+    // Create transaction record for gas fee deduction
+    if (transactionModel) {
+      const transaction = new transactionModel({
+        userId: userId,
+        type: "upload_approval",
+        description: `Gas fee for uploading image: ${title}`,
+        amountEth: gasFeeEth,
+        amountUsd: gasFeeUsd.toString(),
+        ethPriceAtTime: ethPrice.toString(),
+        gasFeeEth: gasFeeEth,
+        imageId: image._id,
+        status: "completed",
+        completedAt: new Date(),
+      });
+      await transaction.save();
+      
+      // Add transaction to user's transactions array
+      await userModel.findByIdAndUpdate(userId, {
+        $push: { transactions: transaction._id },
+      });
+    }
+
+    // Get updated balance for response
+    const updatedBalanceEth = parseFloat(updatedUser.balance || "0");
+    const updatedBalanceUsd = updatedBalanceEth * ethPrice;
 
     res.json({
       success: true,
@@ -157,6 +196,14 @@ export const uploadImage = async (req, res) => {
         status: image.status,
         approvalStatus: image.approvalStatus,
         gasFee: image.gasFee,
+      },
+      gasFeeDeducted: {
+        amountEth: gasFeeEth,
+        amountUsd: gasFeeUsd,
+      },
+      updatedBalance: {
+        balanceEth: updatedBalanceEth.toFixed(8),
+        balanceUsd: updatedBalanceUsd.toFixed(2),
       },
     });
   } catch (error) {

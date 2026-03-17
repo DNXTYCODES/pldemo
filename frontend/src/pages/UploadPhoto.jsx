@@ -19,11 +19,11 @@ const UploadPhoto = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [usdValue, setUsdValue] = useState("0");
-  
+
   // Insufficient balance modal state
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [insufficientBalance, setInsufficientBalance] = useState(null);
-  
+
   // User balance state
   const [userBalance, setUserBalance] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(true);
@@ -44,9 +44,17 @@ const UploadPhoto = () => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log("Profile data:", data); // Debug log
           if (data.user) {
-            setUserBalance(parseFloat(data.user.balance) || 0);
+            // Balance is already stored as ETH (decimal format), just parse it
+            const balanceStr = String(data.user.balance || "0");
+            console.log("Balance string:", balanceStr); // Debug log
+            const balanceEth = parseFloat(balanceStr) || 0;
+            console.log("Converted balance:", balanceEth, "ETH"); // Debug log
+            setUserBalance(balanceEth);
           }
+        } else {
+          console.error("Failed to fetch profile:", response.status);
         }
       } catch (err) {
         console.error("Error fetching user balance:", err);
@@ -171,7 +179,7 @@ const UploadPhoto = () => {
       uploadFormData.append("licenseType", formData.licenseType);
 
       const token = localStorage.getItem("token");
-      
+
       const response = await fetch(backendUrl + "/api/images/upload", {
         method: "POST",
         headers: {
@@ -183,7 +191,29 @@ const UploadPhoto = () => {
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Image uploaded successfully!");
+        setSuccess(
+          `Image uploaded successfully! Gas fee of $${data.gasFeeDeducted?.amountUsd || 200} deducted from your balance.`
+        );
+        
+        // Fetch updated balance
+        const token = localStorage.getItem("token");
+        try {
+          const profileRes = await fetch(backendUrl + "/api/users/profile", {
+            headers: { Authorization: token },
+          });
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            if (profileData.user) {
+              // Balance is already stored as ETH (decimal format), just parse it
+              const balanceStr = String(profileData.user.balance || "0");
+              const balanceEth = parseFloat(balanceStr) || 0;
+              setUserBalance(balanceEth);
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching updated balance:", err);
+        }
+
         // Reset form
         setFormData({
           title: "",
@@ -229,43 +259,79 @@ const UploadPhoto = () => {
               <div className="text-center">
                 {/* Icon */}
                 <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-amber-200">
-                  <svg className="w-10 h-10 text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 13V7m0 10H7m5 0h5M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9-9-4.03-9-9Z" />
+                  <svg
+                    className="w-10 h-10 text-amber-600"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 13V7m0 10H7m5 0h5M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9-9-4.03-9-9Z"
+                    />
                   </svg>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Insufficient Balance</h3>
-                <p className="text-sm text-gray-600 mb-6">You need more funds to upload images</p>
-                
+                <h3 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+                  Insufficient Balance
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  You need more funds to upload images
+                </p>
+
                 {/* Balance Info */}
                 <div className="bg-gradient-to-br from-amber-50 via-white to-gray-50 border-2 border-amber-200 rounded-xl p-6 mb-6 text-left">
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <span className="text-sm font-semibold text-gray-700">Required Balance:</span>
-                      <span className="text-lg font-bold text-amber-600">${insufficientBalance.requiredBalance.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Required Balance:
+                      </span>
+                      <span className="text-lg font-bold text-amber-600">
+                        ${insufficientBalance.requiredBalance.toFixed(2)}
+                      </span>
                     </div>
                     <div className="h-px bg-gradient-to-r from-amber-200 to-transparent"></div>
                     <div className="flex justify-between items-start">
-                      <span className="text-sm font-semibold text-gray-700">Your Balance:</span>
-                      <span className="text-lg font-bold text-gray-900">${insufficientBalance.currentBalance.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Your Balance:
+                      </span>
+                      <span className="text-lg font-bold text-gray-900">
+                        ${insufficientBalance.currentBalance.toFixed(2)}
+                      </span>
                     </div>
                     {insufficientBalance.currentBalanceETH !== undefined && (
                       <p className="text-xs text-gray-500 text-right mt-2">
-                        {insufficientBalance.currentBalanceETH.toFixed(6)} ETH @ ${insufficientBalance.ethPrice?.toFixed(2) || "N/A"}/ETH
+                        {insufficientBalance.currentBalanceETH.toFixed(6)} ETH @
+                        ${insufficientBalance.ethPrice?.toFixed(2) || "N/A"}/ETH
                       </p>
                     )}
                     <div className="h-px bg-gradient-to-r from-transparent via-amber-200 to-transparent"></div>
                     <div className="flex justify-between items-start pt-2">
-                      <span className="text-sm font-bold text-amber-600">Shortfall:</span>
-                      <span className="text-lg font-bold text-amber-600">${(insufficientBalance.requiredBalance - insufficientBalance.currentBalance).toFixed(2)}</span>
+                      <span className="text-sm font-bold text-amber-600">
+                        Shortfall:
+                      </span>
+                      <span className="text-lg font-bold text-amber-600">
+                        $
+                        {(
+                          insufficientBalance.requiredBalance -
+                          insufficientBalance.currentBalance
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Message */}
                 <p className="text-gray-700 text-sm mb-8 leading-relaxed">
-                  To upload and sell photos on Peak Lens Photography, you must maintain a minimum balance of <strong>$200 USD</strong> equivalent in Ethereum. This ensures platform security and transaction integrity.
+                  To upload and sell photos on Peak Lens Photography, you must
+                  maintain a minimum balance of <strong>$200 USD</strong>{" "}
+                  equivalent in Ethereum. This ensures platform security and
+                  transaction integrity.
                 </p>
 
                 {/* Buttons */}
@@ -283,8 +349,18 @@ const UploadPhoto = () => {
                     }}
                     className="flex-1 px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     Add Funds
                   </button>

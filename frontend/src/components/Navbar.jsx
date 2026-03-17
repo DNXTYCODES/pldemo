@@ -20,10 +20,33 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const navMenuRef = useRef(null);
   const cartCount = getCartCount ? getCartCount() : 0;
+
+  // Check if user is logged in
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setIsLoggedIn(!!storedToken);
+  }, [token]);
+
+  // Also check on mount and storage changes
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setIsLoggedIn(!!storedToken);
+
+    // Listen for storage changes (login/logout from other tabs)
+    window.addEventListener("storage", () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    });
+
+    return () => {
+      window.removeEventListener("storage", () => {});
+    };
+  }, []);
 
   // Fetch user profile when token changes
   useEffect(() => {
@@ -217,7 +240,7 @@ const Navbar = () => {
             >
               Contact
             </Link>
-            {token && (
+            {isLoggedIn && (
               <>
                 {/* Divider */}
                 <div className="w-px h-6 bg-gray-300"></div>

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const Transactions = () => {
-  const { navigate, backendUrl, token, ethPrice } = useContext(ShopContext);
+  const { navigate, backendUrl } = useContext(ShopContext);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,13 +12,16 @@ const Transactions = () => {
     const fetchTransactions = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("token");
+        
         if (!token) {
           setError("No authentication token found. Please login first.");
           setLoading(false);
           return;
         }
 
-        const response = await fetch(backendUrl + "/api/users/profile", {
+        // Use the dedicated transactions endpoint like Profile does
+        const response = await fetch(backendUrl + "/api/users/transactions", {
           headers: { Authorization: token },
         });
 
@@ -27,21 +30,22 @@ const Transactions = () => {
         }
 
         const data = await response.json();
-        if (data.success && data.user && data.user.transactions) {
-          setTransactions(Array.isArray(data.user.transactions) ? data.user.transactions : []);
+        if (data.success && Array.isArray(data.transactions)) {
+          setTransactions(data.transactions.reverse()); // Most recent first
         } else {
           setTransactions([]);
         }
       } catch (err) {
         console.error("Error fetching transactions:", err);
         setError("Error loading transactions");
+        setTransactions([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchTransactions();
-  }, [token, backendUrl]);
+  }, [backendUrl]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -164,10 +168,16 @@ const Transactions = () => {
                       {tx.description || "-"}
                     </td>
                     <td className="py-3 px-4 text-sm font-mono text-right text-gray-900">
-                      {parseFloat(tx.amountEth || tx.amountEth).toFixed(8)}
+                      {tx.gasFeeEth && tx.gasFeeEth !== "0" 
+                        ? parseFloat(tx.gasFeeEth).toFixed(8)
+                        : parseFloat(tx.amountEth || "0").toFixed(8)}
                     </td>
                     <td className="py-3 px-4 text-sm font-mono text-right text-gray-900">
-                      ${parseFloat(tx.amountUsd || "0").toFixed(2)}
+                      {tx.amountUsd && tx.amountUsd !== "0" 
+                        ? `$${parseFloat(tx.amountUsd).toFixed(2)}`
+                        : tx.gasFeeEth && tx.gasFeeEth !== "0" && tx.ethPriceAtTime
+                        ? `$${(parseFloat(tx.gasFeeEth) * parseFloat(tx.ethPriceAtTime)).toFixed(2)}`
+                        : "$0.00"}
                     </td>
                     <td className="py-3 px-4">
                       <span
@@ -202,7 +212,12 @@ const Transactions = () => {
               <p className="text-2xl font-bold text-amber-600">
                 ${filteredTransactions
                   .filter((tx) => tx.type === "upload_approval" && tx.status === "completed")
-                  .reduce((sum, tx) => sum + parseFloat(tx.amountUsd || 0), 0)
+                  .reduce((sum, tx) => {
+                    const feeUsd = tx.gasFeeEth && tx.gasFeeEth !== "0" && tx.ethPriceAtTime
+                      ? parseFloat(tx.gasFeeEth) * parseFloat(tx.ethPriceAtTime)
+                      : parseFloat(tx.amountUsd || 0);
+                    return sum + feeUsd;
+                  }, 0)
                   .toFixed(2)}
               </p>
             </div>

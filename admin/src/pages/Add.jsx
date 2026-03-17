@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { assets } from '../assets/assets';
-import axios from 'axios';
-import { backendUrl } from '../App';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { assets } from "../assets/assets";
+import axios from "axios";
+import { backendUrl } from "../App";
+import { toast } from "react-toastify";
 
 const Add = ({ token }) => {
   // Image states
@@ -18,17 +18,25 @@ const Add = ({ token }) => {
   const [category, setCategory] = useState("");
   const [bestseller, setBestseller] = useState(false);
   const [inStock, setInStock] = useState(true);
-  
+
   // Availability by day states
-  const [availableDays, setAvailableDays] = useState(['everyday']);
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const [availableDays, setAvailableDays] = useState(["everyday"]);
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   // Variations state
   const [variations, setVariations] = useState({
     base: { name: "Base", options: [] },
     side: { name: "Side", options: [] },
     sizes: [],
-    wrap: { available: false, price: "" }
+    wrap: { available: false, price: "" },
   });
 
   // Validate decimal input
@@ -39,29 +47,29 @@ const Add = ({ token }) => {
 
   // Handle day selection
   const handleDayChange = (day) => {
-    if (day === 'everyday') {
-      setAvailableDays(['everyday']);
+    if (day === "everyday") {
+      setAvailableDays(["everyday"]);
       return;
     }
-    
+
     if (availableDays.includes(day)) {
-      setAvailableDays(availableDays.filter(d => d !== day));
+      setAvailableDays(availableDays.filter((d) => d !== day));
     } else {
-      setAvailableDays([...availableDays.filter(d => d !== 'everyday'), day]);
+      setAvailableDays([...availableDays.filter((d) => d !== "everyday"), day]);
     }
   };
 
   // Handle variation changes
   const handleVariationChange = (type, key, value) => {
-    setVariations(prev => ({
+    setVariations((prev) => ({
       ...prev,
-      [type]: { ...prev[type], [key]: value }
+      [type]: { ...prev[type], [key]: value },
     }));
   };
 
   // Handle size changes
   const handleSizeChange = (index, field, value) => {
-    setVariations(prev => {
+    setVariations((prev) => {
       const newSizes = [...prev.sizes];
       newSizes[index] = { ...newSizes[index], [field]: value };
       return { ...prev, sizes: newSizes };
@@ -70,40 +78,40 @@ const Add = ({ token }) => {
 
   // Add new size
   const addSize = () => {
-    setVariations(prev => ({
+    setVariations((prev) => ({
       ...prev,
-      sizes: [...prev.sizes, { size: "", price: "" }]
+      sizes: [...prev.sizes, { size: "", price: "" }],
     }));
   };
 
   // Remove size
   const removeSize = (index) => {
-    setVariations(prev => ({
+    setVariations((prev) => ({
       ...prev,
-      sizes: prev.sizes.filter((_, i) => i !== index)
+      sizes: prev.sizes.filter((_, i) => i !== index),
     }));
   };
 
   // Handle options changes (for base/side)
   const handleOptionsChange = (type, value) => {
-    const options = value.split(',').map(opt => opt.trim());
-    setVariations(prev => ({
+    const options = value.split(",").map((opt) => opt.trim());
+    setVariations((prev) => ({
       ...prev,
-      [type]: { ...prev[type], options }
+      [type]: { ...prev[type], options },
     }));
   };
 
   // Format price on blur
   const formatPriceOnBlur = (value, setter) => {
     if (value === "") return;
-    
+
     // Add trailing zero if ends with decimal
-    if (value.endsWith('.')) {
-      setter(value + '0');
-    } 
+    if (value.endsWith(".")) {
+      setter(value + "0");
+    }
     // Add leading zero if starts with decimal
-    else if (value.startsWith('.')) {
-      setter('0' + value);
+    else if (value.startsWith(".")) {
+      setter("0" + value);
     }
     // Format whole numbers consistently
     else {
@@ -119,17 +127,17 @@ const Add = ({ token }) => {
 
     // Convert price strings to numbers
     const numericBasePrice = basePrice ? parseFloat(basePrice) : 0;
-    
+
     const numericVariations = {
       ...variations,
-      sizes: variations.sizes.map(size => ({
+      sizes: variations.sizes.map((size) => ({
         ...size,
-        price: size.price ? parseFloat(size.price) : 0
+        price: size.price ? parseFloat(size.price) : 0,
       })),
       wrap: {
         ...variations.wrap,
-        price: variations.wrap.price ? parseFloat(variations.wrap.price) : 0
-      }
+        price: variations.wrap.price ? parseFloat(variations.wrap.price) : 0,
+      },
     };
 
     try {
@@ -143,8 +151,8 @@ const Add = ({ token }) => {
       formData.append("variations", JSON.stringify(numericVariations));
 
       // Append each available day individually
-      availableDays.forEach(day => {
-        formData.append('availableDays', day);
+      availableDays.forEach((day) => {
+        formData.append("availableDays", day);
       });
 
       // Append images
@@ -156,19 +164,19 @@ const Add = ({ token }) => {
       const response = await axios.post(
         backendUrl + "/api/product/add",
         formData,
-        { headers: { token } }
+        { headers: { token } },
       );
 
       if (response.data.success) {
         toast.success(response.data.message);
         // Reset form
-        setName('');
-        setDescription('');
-        setBasePrice('');
-        setCategory('');
+        setName("");
+        setDescription("");
+        setBasePrice("");
+        setCategory("");
         setBestseller(false);
         setInStock(true);
-        setAvailableDays(['everyday']);
+        setAvailableDays(["everyday"]);
         setImage1(false);
         setImage2(false);
         setImage3(false);
@@ -177,7 +185,7 @@ const Add = ({ token }) => {
           base: { name: "Base", options: [] },
           side: { name: "Side", options: [] },
           sizes: [],
-          wrap: { available: false, price: "" }
+          wrap: { available: false, price: "" },
         });
       } else {
         toast.error(response.data.message);
@@ -193,22 +201,38 @@ const Add = ({ token }) => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Add New Product</h1>
-          <p className="text-gray-600 mt-1 text-sm sm:text-base">Create a new product with images, pricing, and variations</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            Add New Product
+          </h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">
+            Create a new product with images, pricing, and variations
+          </p>
         </div>
 
-        <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
+        <form onSubmit={onSubmitHandler} className="flex flex-col gap-6">
           {/* Image Upload Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">📸 Product Images</h2>
-            <p className="text-sm text-gray-600 mb-4">Upload up to 4 images (recommended: at least 2)</p>
-            <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+              📸 Product Images
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Upload up to 4 images (recommended: at least 2)
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {[1, 2, 3, 4].map((num) => (
-                <label key={num} htmlFor={`image${num}`} className="cursor-pointer">
+                <label
+                  key={num}
+                  htmlFor={`image${num}`}
+                  className="cursor-pointer"
+                >
                   <div className="overflow-hidden rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 transition-all bg-gray-50">
                     <img
-                      className='w-full aspect-square object-cover'
-                      src={!eval(`image${num}`) ? assets.upload_area : URL.createObjectURL(eval(`image${num}`))}
+                      className="w-full aspect-square object-cover"
+                      src={
+                        !eval(`image${num}`)
+                          ? assets.upload_area
+                          : URL.createObjectURL(eval(`image${num}`))
+                      }
                       alt={`Product ${num}`}
                     />
                   </div>
@@ -226,36 +250,46 @@ const Add = ({ token }) => {
 
           {/* Basic Information Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">📝 Basic Information</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+              📝 Basic Information
+            </h2>
             <div className="space-y-4">
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Product Name</label>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                  Product Name
+                </label>
                 <input
                   onChange={(e) => setName(e.target.value)}
                   value={name}
-                  className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   type="text"
-                  placeholder='Enter product name'
+                  placeholder="Enter product name"
                   required
                 />
               </div>
 
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Description</label>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                  Description
+                </label>
                 <textarea
                   onChange={(e) => setDescription(e.target.value)}
                   value={description}
-                  className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base h-24 sm:h-28 resize-none'
-                  placeholder='Write a detailed description'
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base h-24 sm:h-28 resize-none"
+                  placeholder="Write a detailed description"
                   required
                 />
               </div>
 
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Base Price</label>
+                  <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                    Base Price
+                  </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-3 text-gray-500">$</span>
+                    <span className="absolute left-4 top-3 text-gray-500">
+                      $
+                    </span>
                     <input
                       onChange={(e) => {
                         if (validateDecimal(e.target.value)) {
@@ -264,20 +298,22 @@ const Add = ({ token }) => {
                       }}
                       onBlur={() => formatPriceOnBlur(basePrice, setBasePrice)}
                       value={basePrice}
-                      className='w-full pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                      className="w-full pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                       type="text"
                       inputMode="decimal"
-                      placeholder='9.99'
+                      placeholder="9.99"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Category</label>
+                  <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                    Category
+                  </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className='w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base'
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     required
                   >
                     <option value="">Select a category</option>
@@ -295,33 +331,37 @@ const Add = ({ token }) => {
 
           {/* Status and Availability Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">⏰ Availability & Status</h2>
-            
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+              ⏰ Availability & Status
+            </h2>
+
             <div className="space-y-4">
               {/* Availability Days */}
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-3 block'>Which days is this available?</label>
-                <div className='flex flex-wrap gap-2'>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-3 block">
+                  Which days is this available?
+                </label>
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setAvailableDays(['everyday'])}
+                    onClick={() => setAvailableDays(["everyday"])}
                     className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-full font-medium transition-all ${
-                      availableDays.includes('everyday') 
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      availableDays.includes("everyday")
+                        ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                     }`}
                   >
                     Everyday
                   </button>
-                  {days.map(day => (
+                  {days.map((day) => (
                     <button
                       key={day}
                       type="button"
                       onClick={() => handleDayChange(day)}
                       className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-full font-medium transition-all ${
-                        availableDays.includes(day) 
-                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        availableDays.includes(day)
+                          ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                       }`}
                     >
                       {day.substring(0, 3)}
@@ -331,8 +371,8 @@ const Add = ({ token }) => {
               </div>
 
               {/* Checkboxes */}
-              <div className='flex flex-col sm:flex-row gap-4'>
-                <div className='flex gap-3 items-center'>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex gap-3 items-center">
                   <input
                     type="checkbox"
                     id="inStock"
@@ -340,20 +380,26 @@ const Add = ({ token }) => {
                     onChange={(e) => setInStock(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
                   />
-                  <label htmlFor="inStock" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                  <label
+                    htmlFor="inStock"
+                    className="cursor-pointer text-sm sm:text-base text-gray-900 font-medium"
+                  >
                     ✅ In Stock
                   </label>
                 </div>
 
-                <div className='flex gap-3 items-center'>
+                <div className="flex gap-3 items-center">
                   <input
                     type="checkbox"
-                    id='bestseller'
+                    id="bestseller"
                     checked={bestseller}
                     onChange={(e) => setBestseller(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
                   />
-                  <label htmlFor="bestseller" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                  <label
+                    htmlFor="bestseller"
+                    className="cursor-pointer text-sm sm:text-base text-gray-900 font-medium"
+                  >
                     ⭐ Add to bestseller
                   </label>
                 </div>
@@ -363,15 +409,22 @@ const Add = ({ token }) => {
 
           {/* Variations Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">🍽️ Meal Variations (Optional)</h2>
-            
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+              🍽️ Meal Variations (Optional)
+            </h2>
+
             <div className="space-y-6">
               {/* Base Options */}
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Base Options<span className="text-gray-500 text-xs">(comma separated)</span></label>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                  Base Options
+                  <span className="text-gray-500 text-xs">
+                    (comma separated)
+                  </span>
+                </label>
                 <input
-                  value={variations.base.options.join(', ')}
-                  onChange={(e) => handleOptionsChange('base', e.target.value)}
+                  value={variations.base.options.join(", ")}
+                  onChange={(e) => handleOptionsChange("base", e.target.value)}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g. Jerk Chicken, BBQ Chicken"
                 />
@@ -379,10 +432,15 @@ const Add = ({ token }) => {
 
               {/* Side Options */}
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-2 block'>Side Options<span className="text-gray-500 text-xs">(comma separated)</span></label>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-2 block">
+                  Side Options
+                  <span className="text-gray-500 text-xs">
+                    (comma separated)
+                  </span>
+                </label>
                 <input
-                  value={variations.side.options.join(', ')}
-                  onChange={(e) => handleOptionsChange('side', e.target.value)}
+                  value={variations.side.options.join(", ")}
+                  onChange={(e) => handleOptionsChange("side", e.target.value)}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g. Jollof Rice, Fried Plantain"
                 />
@@ -390,29 +448,37 @@ const Add = ({ token }) => {
 
               {/* Sizes */}
               <div>
-                <label className='text-sm sm:text-base font-medium text-gray-900 mb-3 block'>Sizes</label>
+                <label className="text-sm sm:text-base font-medium text-gray-900 mb-3 block">
+                  Sizes
+                </label>
                 <div className="space-y-2">
                   {variations.sizes.map((size, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row gap-2">
+                    <div
+                      key={index}
+                      className="flex flex-col sm:flex-row gap-2"
+                    >
                       <input
                         value={size.size}
-                        onChange={(e) => handleSizeChange(index, 'size', e.target.value)}
+                        onChange={(e) =>
+                          handleSizeChange(index, "size", e.target.value)
+                        }
                         className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                         placeholder="Size name (e.g., Small)"
                       />
                       <div className="relative flex-1 sm:flex-none sm:w-28">
-                        <span className="absolute left-4 top-3 text-gray-500 text-sm">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500 text-sm">
+                          $
+                        </span>
                         <input
                           value={size.price}
                           onChange={(e) => {
                             if (validateDecimal(e.target.value)) {
-                              handleSizeChange(index, 'price', e.target.value);
+                              handleSizeChange(index, "price", e.target.value);
                             }
                           }}
                           onBlur={() => {
-                            formatPriceOnBlur(
-                              size.price, 
-                              (value) => handleSizeChange(index, 'price', value)
+                            formatPriceOnBlur(size.price, (value) =>
+                              handleSizeChange(index, "price", value),
                             );
                           }}
                           className="w-full pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
@@ -447,27 +513,41 @@ const Add = ({ token }) => {
                     type="checkbox"
                     id="wrapAvailable"
                     checked={variations.wrap.available}
-                    onChange={(e) => handleVariationChange('wrap', 'available', e.target.checked)}
+                    onChange={(e) =>
+                      handleVariationChange(
+                        "wrap",
+                        "available",
+                        e.target.checked,
+                      )
+                    }
                     className="w-5 h-5 rounded border-gray-300 cursor-pointer accent-blue-600"
                   />
-                  <label htmlFor="wrapAvailable" className='cursor-pointer text-sm sm:text-base text-gray-900 font-medium'>
+                  <label
+                    htmlFor="wrapAvailable"
+                    className="cursor-pointer text-sm sm:text-base text-gray-900 font-medium"
+                  >
                     🌯 Offer Wrap Option
                   </label>
                 </div>
                 {variations.wrap.available && (
                   <div className="relative inline-block">
-                    <span className="absolute left-4 top-3 text-gray-500">$</span>
+                    <span className="absolute left-4 top-3 text-gray-500">
+                      $
+                    </span>
                     <input
                       value={variations.wrap.price}
                       onChange={(e) => {
                         if (validateDecimal(e.target.value)) {
-                          handleVariationChange('wrap', 'price', e.target.value);
+                          handleVariationChange(
+                            "wrap",
+                            "price",
+                            e.target.value,
+                          );
                         }
                       }}
                       onBlur={() => {
-                        formatPriceOnBlur(
-                          variations.wrap.price, 
-                          (value) => handleVariationChange('wrap', 'price', value)
+                        formatPriceOnBlur(variations.wrap.price, (value) =>
+                          handleVariationChange("wrap", "price", value),
                         );
                       }}
                       className="w-32 pl-8 pr-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
@@ -485,7 +565,7 @@ const Add = ({ token }) => {
           <div className="flex gap-3">
             <button
               type="submit"
-              className='flex-1 sm:flex-none px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-bold text-base sm:text-lg'
+              className="flex-1 sm:flex-none px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-bold text-base sm:text-lg"
             >
               ✓ ADD Product
             </button>
@@ -497,21 +577,6 @@ const Add = ({ token }) => {
 };
 
 export default Add;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useState } from 'react';
 // import { assets } from '../assets/assets';
@@ -533,7 +598,7 @@ export default Add;
 //   const [category, setCategory] = useState("");
 //   const [bestseller, setBestseller] = useState(false);
 //   const [inStock, setInStock] = useState(true);
-  
+
 //   // Availability by day states
 //   const [availableDays, setAvailableDays] = useState(['everyday']);
 //   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -552,7 +617,7 @@ export default Add;
 //       setAvailableDays(['everyday']);
 //       return;
 //     }
-    
+
 //     if (availableDays.includes(day)) {
 //       setAvailableDays(availableDays.filter(d => d !== day));
 //     } else {
@@ -746,8 +811,8 @@ export default Add;
 //             type="button"
 //             onClick={() => setAvailableDays(['everyday'])}
 //             className={`px-3 py-1 text-sm rounded-full ${
-//               availableDays.includes('everyday') 
-//                 ? 'bg-green-500 text-white' 
+//               availableDays.includes('everyday')
+//                 ? 'bg-green-500 text-white'
 //                 : 'bg-gray-200 text-gray-700'
 //             }`}
 //           >
@@ -759,8 +824,8 @@ export default Add;
 //               type="button"
 //               onClick={() => handleDayChange(day)}
 //               className={`px-3 py-1 text-sm rounded-full ${
-//                 availableDays.includes(day) 
-//                   ? 'bg-green-500 text-white' 
+//                 availableDays.includes(day)
+//                   ? 'bg-green-500 text-white'
 //                   : 'bg-gray-200 text-gray-700'
 //               }`}
 //             >
@@ -801,7 +866,7 @@ export default Add;
 //       {/* Variations Section */}
 //       <div className="w-full mt-6 border-t pt-4">
 //         <h3 className="text-lg font-medium mb-4">Meal Variations</h3>
-        
+
 //         {/* Base Options */}
 //         <div className="mb-4">
 //           <label className="block mb-2">Base Options (comma separated)</label>
@@ -902,24 +967,6 @@ export default Add;
 
 // export default Add;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React, { useState } from 'react';
 // import { assets } from '../assets/assets';
 // import axios from 'axios';
@@ -939,7 +986,7 @@ export default Add;
 //   const [price, setPrice] = useState("");
 //   const [category, setCategory] = useState("");
 //   const [bestseller, setBestseller] = useState(false);
-  
+
 //   // Availability by day states
 //   const [availableDays, setAvailableDays] = useState(['everyday']);
 //   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -950,7 +997,7 @@ export default Add;
 //       setAvailableDays(['everyday']);
 //       return;
 //     }
-    
+
 //     if (availableDays.includes(day)) {
 //       setAvailableDays(availableDays.filter(d => d !== day));
 //     } else {
@@ -1005,7 +1052,6 @@ export default Add;
 //   //   }
 //   // };
 
-
 //   // new submit handler
 
 //   const onSubmitHandler = async (e) => {
@@ -1057,8 +1103,6 @@ export default Add;
 //     toast.error(error.message);
 //   }
 // };
-
-
 
 //   return (
 //     <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
@@ -1145,8 +1189,8 @@ export default Add;
 //             type="button"
 //             onClick={() => setAvailableDays(['everyday'])}
 //             className={`px-3 py-1 text-sm rounded-full ${
-//               availableDays.includes('everyday') 
-//                 ? 'bg-green-500 text-white' 
+//               availableDays.includes('everyday')
+//                 ? 'bg-green-500 text-white'
 //                 : 'bg-gray-200 text-gray-700'
 //             }`}
 //           >
@@ -1158,8 +1202,8 @@ export default Add;
 //               type="button"
 //               onClick={() => handleDayChange(day)}
 //               className={`px-3 py-1 text-sm rounded-full ${
-//                 availableDays.includes(day) 
-//                   ? 'bg-green-500 text-white' 
+//                 availableDays.includes(day)
+//                   ? 'bg-green-500 text-white'
 //                   : 'bg-gray-200 text-gray-700'
 //               }`}
 //             >
@@ -1193,27 +1237,6 @@ export default Add;
 
 // export default Add;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React, { useState } from 'react'
 // import {assets} from '../assets/assets'
 // import axios from 'axios'
@@ -1239,7 +1262,7 @@ export default Add;
 //     e.preventDefault();
 
 //     try {
-      
+
 //       const formData = new FormData()
 
 //       formData.append("name",name)
@@ -1320,7 +1343,7 @@ export default Add;
 //                   <option value="Women">Women</option>
 //               </select>
 //             </div> */}
-// {/* 
+// {/*
 //             <div>
 //               <p className='mb-2'>Sub category</p>
 //               <select onChange={(e) => setSubCategory(e.target.value)} className='w-full px-3 py-2'>
@@ -1336,14 +1359,14 @@ export default Add;
 //             </div>
 
 //         </div>
-// {/* 
+// {/*
 //         <div>
 //           <p className='mb-2'>Product Sizes</p>
 //           <div className='flex gap-3'>
 //             <div onClick={()=>setSizes(prev => prev.includes("S") ? prev.filter( item => item !== "S") : [...prev,"S"])}>
 //               <p className={`${sizes.includes("S") ? "bg-pink-100" : "bg-slate-200" } px-3 py-1 cursor-pointer`}>S</p>
 //             </div>
-            
+
 //             <div onClick={()=>setSizes(prev => prev.includes("M") ? prev.filter( item => item !== "M") : [...prev,"M"])}>
 //               <p className={`${sizes.includes("M") ? "bg-pink-100" : "bg-slate-200" } px-3 py-1 cursor-pointer`}>M</p>
 //             </div>
