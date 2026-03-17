@@ -296,12 +296,20 @@ const MySales = () => {
                       )}
 
                       {/* Purchase Requests */}
-                      {image.purchaseHistory && image.purchaseHistory.length > 0 && (
-                        <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded border border-green-200">
-                          <p className="text-sm text-gray-600 mb-1">Purchase Requests</p>
-                          <p className="font-bold text-green-600 text-lg">{image.purchaseHistory.length} {image.purchaseHistory.length === 1 ? 'request' : 'requests'}</p>
-                        </div>
-                      )}
+                      {image.purchaseHistory &&
+                        image.purchaseHistory.length > 0 && (
+                          <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded border border-green-200">
+                            <p className="text-sm text-gray-600 mb-1">
+                              Purchase Requests
+                            </p>
+                            <p className="font-bold text-green-600 text-lg">
+                              {image.purchaseHistory.length}{" "}
+                              {image.purchaseHistory.length === 1
+                                ? "request"
+                                : "requests"}
+                            </p>
+                          </div>
+                        )}
 
                       {/* Action Buttons */}
                       <div className="flex gap-2">

@@ -13,7 +13,7 @@ const Transactions = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        
+
         if (!token) {
           setError("No authentication token found. Please login first.");
           setLoading(false);
@@ -150,7 +150,10 @@ const Transactions = () => {
               </thead>
               <tbody>
                 {filteredTransactions.map((tx) => (
-                  <tr key={tx._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={tx._id}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
                     <td className="py-3 px-4 text-sm text-gray-600">
                       {new Date(tx.createdAt).toLocaleDateString("en-US", {
                         month: "short",
@@ -160,7 +163,9 @@ const Transactions = () => {
                         minute: "2-digit",
                       })}
                     </td>
-                    <td className={`py-3 px-4 text-sm font-semibold ${getTypeColor(tx.type)}`}>
+                    <td
+                      className={`py-3 px-4 text-sm font-semibold ${getTypeColor(tx.type)}`}
+                    >
                       {tx.type.charAt(0).toUpperCase() +
                         tx.type.slice(1).replace(/_/g, " ")}
                     </td>
@@ -168,21 +173,23 @@ const Transactions = () => {
                       {tx.description || "-"}
                     </td>
                     <td className="py-3 px-4 text-sm font-mono text-right text-gray-900">
-                      {tx.gasFeeEth && tx.gasFeeEth !== "0" 
+                      {tx.gasFeeEth && tx.gasFeeEth !== "0"
                         ? parseFloat(tx.gasFeeEth).toFixed(8)
                         : parseFloat(tx.amountEth || "0").toFixed(8)}
                     </td>
                     <td className="py-3 px-4 text-sm font-mono text-right text-gray-900">
-                      {tx.amountUsd && tx.amountUsd !== "0" 
+                      {tx.amountUsd && tx.amountUsd !== "0"
                         ? `$${parseFloat(tx.amountUsd).toFixed(2)}`
-                        : tx.gasFeeEth && tx.gasFeeEth !== "0" && tx.ethPriceAtTime
-                        ? `$${(parseFloat(tx.gasFeeEth) * parseFloat(tx.ethPriceAtTime)).toFixed(2)}`
-                        : "$0.00"}
+                        : tx.gasFeeEth &&
+                            tx.gasFeeEth !== "0" &&
+                            tx.ethPriceAtTime
+                          ? `$${(parseFloat(tx.gasFeeEth) * parseFloat(tx.ethPriceAtTime)).toFixed(2)}`
+                          : "$0.00"}
                     </td>
                     <td className="py-3 px-4">
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                          tx.status
+                          tx.status,
                         )}`}
                       >
                         {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
@@ -201,8 +208,11 @@ const Transactions = () => {
             <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6">
               <p className="text-sm text-gray-600 mb-1">Total Deposits</p>
               <p className="text-2xl font-bold text-green-600">
-                ${filteredTransactions
-                  .filter((tx) => tx.type === "deposit" && tx.status === "completed")
+                $
+                {filteredTransactions
+                  .filter(
+                    (tx) => tx.type === "deposit" && tx.status === "completed",
+                  )
                   .reduce((sum, tx) => sum + parseFloat(tx.amountUsd || 0), 0)
                   .toFixed(2)}
               </p>
@@ -210,12 +220,19 @@ const Transactions = () => {
             <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-lg p-6">
               <p className="text-sm text-gray-600 mb-1">Total Fees</p>
               <p className="text-2xl font-bold text-amber-600">
-                ${filteredTransactions
-                  .filter((tx) => tx.type === "upload_approval" && tx.status === "completed")
+                $
+                {filteredTransactions
+                  .filter(
+                    (tx) =>
+                      tx.type === "upload_approval" &&
+                      tx.status === "completed",
+                  )
                   .reduce((sum, tx) => {
-                    const feeUsd = tx.gasFeeEth && tx.gasFeeEth !== "0" && tx.ethPriceAtTime
-                      ? parseFloat(tx.gasFeeEth) * parseFloat(tx.ethPriceAtTime)
-                      : parseFloat(tx.amountUsd || 0);
+                    const feeUsd =
+                      tx.gasFeeEth && tx.gasFeeEth !== "0" && tx.ethPriceAtTime
+                        ? parseFloat(tx.gasFeeEth) *
+                          parseFloat(tx.ethPriceAtTime)
+                        : parseFloat(tx.amountUsd || 0);
                     return sum + feeUsd;
                   }, 0)
                   .toFixed(2)}
@@ -224,8 +241,11 @@ const Transactions = () => {
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
               <p className="text-sm text-gray-600 mb-1">Total Spending</p>
               <p className="text-2xl font-bold text-blue-600">
-                ${filteredTransactions
-                  .filter((tx) => tx.type === "purchase" && tx.status === "completed")
+                $
+                {filteredTransactions
+                  .filter(
+                    (tx) => tx.type === "purchase" && tx.status === "completed",
+                  )
                   .reduce((sum, tx) => sum + parseFloat(tx.amountUsd || 0), 0)
                   .toFixed(2)}
               </p>

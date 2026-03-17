@@ -2,10 +2,7 @@ import imageModel from "../models/imageModel.js";
 import userModel from "../models/userModel.js";
 import notificationModel from "../models/notificationModel.js";
 import transactionModel from "../models/transactionModel.js";
-import {
-  getCurrentEthPrice,
-  formatPrice,
-} from "../utils/ethereumUtils.js";
+import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
 import cloudinary from "../config/cloudinary.js";
 
 /**
@@ -148,14 +145,14 @@ export const uploadImage = async (req, res) => {
     // Since balance is stored as a decimal ETH string, we need to calculate it manually
     const currentBalance = parseFloat(user.balance || "0");
     const newBalance = Math.max(0, currentBalance - parseFloat(gasFeeEth));
-    
+
     const updatedUser = await userModel.findByIdAndUpdate(
       userId,
       {
         $push: { ownedImages: image._id },
         balance: newBalance.toString(), // Set balance to new calculated value
       },
-      { new: true }
+      { new: true },
     );
 
     // Create transaction record for gas fee deduction
@@ -173,7 +170,7 @@ export const uploadImage = async (req, res) => {
         completedAt: new Date(),
       });
       await transaction.save();
-      
+
       // Add transaction to user's transactions array
       await userModel.findByIdAndUpdate(userId, {
         $push: { transactions: transaction._id },

@@ -192,9 +192,9 @@ const UploadPhoto = () => {
 
       if (data.success) {
         setSuccess(
-          `Image uploaded successfully! Gas fee of $${data.gasFeeDeducted?.amountUsd || 200} deducted from your balance.`
+          `Image uploaded successfully! Gas fee of $${data.gasFeeDeducted?.amountUsd || 200} deducted from your balance.`,
         );
-        
+
         // Fetch updated balance
         const token = localStorage.getItem("token");
         try {

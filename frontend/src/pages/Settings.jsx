@@ -12,7 +12,7 @@ const Settings = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        
+
         if (!token) {
           setError("No authentication token found. Please login first.");
           setLoading(false);
@@ -63,7 +63,9 @@ const Settings = () => {
         <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16 px-4 mb-12">
           <div className="max-w-6xl mx-auto">
             <h1 className="text-5xl font-bold mb-3">Settings & Account</h1>
-            <p className="text-amber-100 text-lg">Manage your profile, uploads, purchases, and account preferences</p>
+            <p className="text-amber-100 text-lg">
+              Manage your profile, uploads, purchases, and account preferences
+            </p>
           </div>
         </div>
 
@@ -72,15 +74,28 @@ const Settings = () => {
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-2xl p-12 text-center shadow-lg">
             <div className="mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
             </div>
-            
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Authentication Required</h2>
+
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Authentication Required
+            </h2>
             <p className="text-gray-700 text-lg mb-8 max-w-md mx-auto">
-              You need to log in to your Peak Lens Photography account to access your settings and manage your profile, uploads, and purchases.
+              You need to log in to your Peak Lens Photography account to access
+              your settings and manage your profile, uploads, and purchases.
             </p>
 
             <button
@@ -187,7 +202,9 @@ const Settings = () => {
       <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16 px-4 mb-12">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-5xl font-bold mb-3">Settings & Account</h1>
-          <p className="text-amber-100 text-lg">Manage your profile, uploads, purchases, and account preferences</p>
+          <p className="text-amber-100 text-lg">
+            Manage your profile, uploads, purchases, and account preferences
+          </p>
         </div>
       </div>
 
@@ -196,7 +213,12 @@ const Settings = () => {
         {userProfile && (
           <div className="mb-12 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-8 shadow-sm">
             <p className="text-gray-700 text-lg">
-              Welcome back, <span className="font-bold text-amber-600">{userProfile.name}</span>! Here's where you can manage everything related to your Peak Lens Photography account.
+              Welcome back,{" "}
+              <span className="font-bold text-amber-600">
+                {userProfile.name}
+              </span>
+              ! Here's where you can manage everything related to your Peak Lens
+              Photography account.
             </p>
           </div>
         )}
@@ -249,7 +271,9 @@ const Settings = () => {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-300 rounded-2xl p-8 text-center shadow-md">
             <div className="text-4xl font-bold text-amber-600 mb-2">
-              {userProfile?.balance ? parseFloat(userProfile.balance).toFixed(4) : "0.00"}
+              {userProfile?.balance
+                ? parseFloat(userProfile.balance).toFixed(4)
+                : "0.00"}
             </div>
             <p className="text-gray-700 font-medium">Account Balance (ETH)</p>
           </div>
