@@ -117,7 +117,7 @@ export const uploadImage = async (req, res) => {
     const gasFeeUsd = 200;
     const gasFeeEth = (gasFeeUsd / ethPrice).toFixed(8);
 
-    // Create image document - automatically set as ACTIVE since user has sufficient balance
+    // Create image document in pending state (awaiting admin approval)
     const image = new imageModel({
       title,
       description: description || "",
@@ -134,8 +134,8 @@ export const uploadImage = async (req, res) => {
       tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
       usageRights: usageRights || "personal_use",
       licenseType: licenseType || "non-exclusive",
-      status: "active", // Auto-approved for users with sufficient balance
-      approvalStatus: "approved",
+      status: "pending_approval",
+      approvalStatus: "pending",
       gasFee: gasFeeEth,
     });
 
@@ -155,19 +155,18 @@ export const uploadImage = async (req, res) => {
       { new: true },
     );
 
-    // Create transaction record for gas fee deduction
+    // Create transaction record for pending upload fee
     if (transactionModel) {
       const transaction = new transactionModel({
         userId: userId,
-        type: "upload_approval",
-        description: `Gas fee for uploading image: ${title}`,
+        type: "upload_pending",
+        description: `Image upload pending admin approval: ${title}`,
         amountEth: gasFeeEth,
         amountUsd: gasFeeUsd.toString(),
         ethPriceAtTime: ethPrice.toString(),
         gasFeeEth: gasFeeEth,
         imageId: image._id,
-        status: "completed",
-        completedAt: new Date(),
+        status: "pending",
       });
       await transaction.save();
 
@@ -183,7 +182,7 @@ export const uploadImage = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Image uploaded and published successfully!",
+      message: "Image uploaded successfully and is pending admin approval.",
       image: {
         _id: image._id,
         title: image.title,
@@ -848,34 +847,52 @@ export const approveImageUpload = async (req, res) => {
       { new: true },
     );
 
-    // Deduct gas fee from user's balance
+    // No additional balance deduction here (fee already deducted at upload time)
     const user = await userModel.findById(sellerId);
-    const currentBalance = parseFloat(user.balance);
-    const newBalance = Math.max(0, currentBalance - gasFee);
-    user.balance = newBalance.toString();
-    await user.save();
 
-    // Create transaction record for approval
-    const transaction = new transactionModel({
-      userId: sellerId,
-      type: "upload_approval",
-      amountEth: "0", // No amount transferred, just fee deducted
-      amountUsd: "0",
-      ethPriceAtTime: ethPrice.toString(),
-      gasFeeEth: gasFee.toString(),
-      imageId: image._id,
-      status: "completed",
-      description: `Image upload approved: ${image.title}`,
-      completedAt: new Date(),
-    });
-    await transaction.save();
+    // Update pending transaction to approval
+    let transaction = null;
+    if (transactionModel) {
+      transaction = await transactionModel.findOneAndUpdate(
+        {
+          userId: sellerId,
+          imageId: image._id,
+          type: "upload_pending",
+          status: "pending",
+        },
+        {
+          type: "upload_approval",
+          status: "completed",
+          description: `Image upload approved: ${image.title}`,
+          completedAt: new Date(),
+          amountEth: gasFee.toString(),
+          amountUsd: gasFeeUsd.toString(),
+          ethPriceAtTime: ethPrice.toString(),
+          gasFeeEth: gasFee.toString(),
+        },
+        { new: true },
+      );
 
-    // Add transaction to user
-    await userModel.findByIdAndUpdate(
-      sellerId,
-      { $push: { transactions: transaction._id } },
-      { new: true },
-    );
+      if (!transaction) {
+        transaction = new transactionModel({
+          userId: sellerId,
+          type: "upload_approval",
+          amountEth: gasFee.toString(),
+          amountUsd: gasFeeUsd.toString(),
+          ethPriceAtTime: ethPrice.toString(),
+          gasFeeEth: gasFee.toString(),
+          imageId: image._id,
+          status: "completed",
+          description: `Image upload approved: ${image.title}`,
+          completedAt: new Date(),
+        });
+        await transaction.save();
+        await userModel.findByIdAndUpdate(sellerId, {
+          $push: { transactions: transaction._id },
+        });
+      }
+    }
+
 
     res.json({
       success: true,
@@ -930,7 +947,7 @@ export const declineImageUpload = async (req, res) => {
     const sellerId = image.sellerId;
     const ethPrice = await getCurrentEthPrice();
 
-    // Update image status
+    // Update image to declined
     image.status = "deleted";
     image.approvalStatus = "declined";
     image.declinedAt = new Date();
@@ -938,28 +955,54 @@ export const declineImageUpload = async (req, res) => {
     image.declineReason = reason || "No reason provided";
     await image.save();
 
-    // Create transaction record for decline
-    const transaction = new transactionModel({
-      userId: sellerId,
-      type: "upload_decline",
-      amountEth: "0",
-      amountUsd: "0",
-      ethPriceAtTime: ethPrice.toString(),
-      gasFeeEth: "0",
-      imageId: image._id,
-      status: "completed",
-      description: `Image upload declined: ${image.title}. Reason: ${image.declineReason}`,
-      adminNotes: image.declineReason,
-      completedAt: new Date(),
-    });
-    await transaction.save();
+    // Refund pending listing fee to user
+    const user = await userModel.findById(sellerId);
+    const currentBalance = parseFloat(user.balance || "0");
+    const refundEth = parseFloat(image.gasFee || "0");
+    user.balance = (currentBalance + refundEth).toString();
+    await user.save();
 
-    // Add transaction to user
-    await userModel.findByIdAndUpdate(
-      sellerId,
-      { $push: { transactions: transaction._id } },
+    // Update pending transaction to declined
+    let transaction = await transactionModel.findOneAndUpdate(
+      {
+        userId: sellerId,
+        imageId: image._id,
+        type: "upload_pending",
+        status: "pending",
+      },
+      {
+        type: "upload_decline",
+        status: "failed",
+        description: `Image upload declined: ${image.title}. Reason: ${image.declineReason}`,
+        adminNotes: image.declineReason,
+        completedAt: new Date(),
+        amountEth: image.gasFee,
+        amountUsd: (refundEth * ethPrice).toFixed(2),
+        ethPriceAtTime: ethPrice.toString(),
+        gasFeeEth: image.gasFee,
+      },
       { new: true },
     );
+
+    if (!transaction) {
+      transaction = new transactionModel({
+        userId: sellerId,
+        type: "upload_decline",
+        amountEth: image.gasFee,
+        amountUsd: (refundEth * ethPrice).toFixed(2),
+        ethPriceAtTime: ethPrice.toString(),
+        gasFeeEth: image.gasFee,
+        imageId: image._id,
+        status: "failed",
+        description: `Image upload declined: ${image.title}. Reason: ${image.declineReason}`,
+        adminNotes: image.declineReason,
+        completedAt: new Date(),
+      });
+      await transaction.save();
+      await userModel.findByIdAndUpdate(sellerId, {
+        $push: { transactions: transaction._id },
+      });
+    }
 
     res.json({
       success: true,
