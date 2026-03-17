@@ -893,7 +893,6 @@ export const approveImageUpload = async (req, res) => {
       }
     }
 
-
     res.json({
       success: true,
       message: "Image approved successfully",

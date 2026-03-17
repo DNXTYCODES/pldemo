@@ -661,18 +661,18 @@ const Profile = () => {
                           </div>
 
                           {tx.description && (
-                            <p className="text-sm text-gray-700 ml-11 mb-2">
+                            <p className="text-sm text-gray-700 mb-2 pl-0 sm:pl-11">
                               {tx.description}
                             </p>
                           )}
 
                           {tx.adminNotes && (
-                            <p className="text-sm text-gray-600 ml-11 italic border-l-2 border-gray-400 pl-3">
+                            <p className="text-sm text-gray-600 italic border-l-0 sm:border-l-2 border-gray-400 pl-0 sm:pl-3">
                               Note: {tx.adminNotes}
                             </p>
                           )}
 
-                          <div className="grid grid-cols-3 gap-4 mt-3 ml-11 text-sm">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 text-sm sm:ml-11">
                             {tx.amountEth !== "0" && (
                               <div>
                                 <span className="text-gray-600 block">
@@ -713,7 +713,7 @@ const Profile = () => {
                           </div>
                         </div>
 
-                        <div className="text-right ml-4">
+                        <div className="text-right mt-4 sm:mt-0 sm:ml-4">
                           <p className="text-sm text-gray-600 mb-1">
                             {tx.ethPriceAtTime
                               ? `ETH Price: $${parseFloat(tx.ethPriceAtTime).toLocaleString()}`

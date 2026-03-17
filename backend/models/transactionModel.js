@@ -18,6 +18,7 @@ const transactionSchema = new mongoose.Schema(
         "sale",
         "withdrawal",
         "fee",
+        "upload_pending",
         "upload_approval",
         "upload_decline",
       ],
