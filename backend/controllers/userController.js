@@ -103,7 +103,11 @@ const registerUser = async (req, res) => {
     const user = await newUser.save();
 
     // Send verification email
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const clientUrl =
+      process.env.CLIENT_URL ||
+      req.headers.origin ||
+      `${req.protocol}://${req.get("host")}`;
+    const verificationUrl = `${clientUrl}/verify-email/${verificationToken}`;
 
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -295,7 +299,11 @@ const forgotPassword = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const clientUrl =
+      process.env.CLIENT_URL ||
+      req.headers.origin ||
+      `${req.protocol}://${req.get("host")}`;
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
 
     // Send email
     const transporter = nodemailer.createTransport({

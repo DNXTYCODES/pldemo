@@ -506,6 +506,29 @@ const Navbar = () => {
                         Fund Account
                       </button>
 
+                      <button
+                        onClick={() => {
+                          navigate("/withdraw");
+                          setShowProfileDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-amber-400 transition-colors flex items-center gap-3"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                        Withdraw Funds
+                      </button>
+
                       <div className="border-t border-gray-700 my-2"></div>
 
                       <button
@@ -633,7 +656,7 @@ const Navbar = () => {
                           strokeLinejoin="round"
                           strokeWidth={2}
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
+                        /> 
                       </svg>
                       Photographers
                     </button> */}
@@ -659,29 +682,6 @@ const Navbar = () => {
                         />
                       </svg>
                       About
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        navigate("/contact");
-                        setShowNavMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors flex items-center gap-3"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Contact
                     </button>
 
                     {isLoggedIn && (
@@ -835,12 +835,6 @@ const Navbar = () => {
                 className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
               >
                 About
-              </Link>
-              <Link
-                to="/contact"
-                className="block text-sm text-gray-700 hover:text-amber-500 transition-colors font-medium"
-              >
-                Contact
               </Link>
 
               {/* Mobile Auth Menu */}

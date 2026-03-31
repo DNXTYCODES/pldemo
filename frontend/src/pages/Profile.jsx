@@ -181,82 +181,187 @@ const Profile = () => {
         )}
 
         {/* Profile Header */}
-        <div className="mt-12 bg-gray-50 rounded-lg border border-gray-200 p-8 flex flex-col sm:flex-row items-center gap-6">
-          {/* Profile Picture */}
-          <div className="flex-shrink-0">
-            {user.profilePicture ? (
-              <img
-                src={user.profilePicture}
-                alt={user.name}
-                className="w-32 h-32 rounded-full object-cover border-4 border-amber-500"
-              />
-            ) : (
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center border-4 border-amber-500">
-                <span className="text-4xl font-bold text-gray-900">
-                  {user.name.charAt(0)}
-                </span>
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          <div className="overflow-hidden rounded-[2rem] bg-slate-950 shadow-2xl text-white">
+            <div className="p-6 sm:p-8">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-5">
+                  <div className="flex-shrink-0">
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt={user.name}
+                        className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-amber-500"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center border-4 border-amber-500">
+                        <span className="text-4xl font-bold text-slate-950">
+                          {user.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.32em] text-slate-400">
+                      Account Holder
+                    </p>
+                    <h1 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
+                      {user.name}
+                    </h1>
+                    <p className="mt-2 text-sm text-slate-300">{user.email}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 sm:w-fit">
+                  <button
+                    onClick={() => navigate("/edit-profile")}
+                    className="rounded-2xl bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={() => navigate("/fund-account")}
+                    className="rounded-2xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-800"
+                  >
+                    Top Up
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
 
-          {/* Profile Info */}
-          <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-3xl font-bold mb-2">{user.name}</h1>
-            <p className="text-gray-400 mb-4">{user.email}</p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => navigate("/edit-profile")}
-                className="px-6 py-2 bg-amber-500 hover:bg-amber-600 rounded font-medium"
-              >
-                Edit Profile
-              </button>
-              <button
-                onClick={() => navigate("/fund-account")}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 rounded font-medium"
-              >
-                Add Funds
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Account Balance Card */}
-        <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-6 border border-amber-200">
-          <p className="text-gray-600 text-sm mb-2">Account Balance</p>
-          <div className="flex items-baseline gap-4">
-            <div>
-              {currencyPreference === "eth" ? (
-                <>
-                  <p className="text-4xl font-bold text-amber-600">
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-[1.75rem] border border-slate-800 bg-slate-900/90 p-6 shadow-xl">
+                  <p className="text-xs uppercase tracking-[0.32em] text-slate-500">
+                    Current Balance
+                  </p>
+                  <p className="mt-4 text-5xl font-semibold text-amber-300 leading-tight">
                     {getFormattedPrice(user.balance || 0, ethPrice, "eth")}
                   </p>
-                  <p className="text-gray-600 text-sm">ETH</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-4xl font-bold text-green-600">
+                  <p className="mt-2 text-sm text-slate-400">ETH</p>
+                </div>
+                <div className="rounded-[1.75rem] border border-slate-800 bg-slate-900/90 p-6 shadow-xl">
+                  <p className="text-xs uppercase tracking-[0.32em] text-slate-500">
+                    USD Equivalent
+                  </p>
+                  <p className="mt-4 text-4xl font-semibold text-emerald-300 leading-tight">
                     {getFormattedPrice(user.balance || 0, ethPrice, "usd")}
                   </p>
-                  <p className="text-gray-600 text-sm">USD</p>
-                </>
-              )}
+                  <p className="mt-2 text-sm text-slate-400">
+                    Using current ETH rate
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              {currencyPreference === "eth" ? (
-                <>
-                  <p className="text-2xl font-bold text-green-600">
-                    {getFormattedPrice(user.balance || 0, ethPrice, "usd")}
+
+            <div className="border-t border-slate-800/80 bg-slate-950/95 px-6 py-4 sm:px-8">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-200">
+                    Wallet Summary
                   </p>
-                  <p className="text-gray-600 text-sm">USD Equivalent</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-2xl font-bold text-amber-600">
-                    {getFormattedPrice(user.balance || 0, ethPrice, "eth")}
+                  <p className="mt-1 text-sm text-slate-400">
+                    Your available balance is shown in ETH and USD. Withdrawals
+                    and pending fees are tracked in transaction history.
                   </p>
-                  <p className="text-gray-600 text-sm">ETH Equivalent</p>
-                </>
-              )}
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-slate-400">ETH Price</p>
+                  <p className="text-lg font-semibold text-white">
+                    ${ethPrice.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.32em] text-slate-500">
+                Quick Overview
+              </p>
+              <div className="mt-5 grid gap-4">
+                <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <span className="text-sm text-slate-600">
+                    Images Uploaded
+                  </span>
+                  <span className="text-lg font-semibold text-slate-900">
+                    {stats?.totalImages ?? "0"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <span className="text-sm text-slate-600">Net Earnings</span>
+                  <span className="text-lg font-semibold text-slate-900">
+                    {parseFloat(
+                      (
+                        (stats?.earnings?.totalEarned || 0) -
+                        (stats?.earnings?.totalSpent || 0)
+                      ).toFixed(8),
+                    )}{" "}
+                    ETH
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <span className="text-sm text-slate-600">
+                    Total Transactions
+                  </span>
+                  <span className="text-lg font-semibold text-slate-900">
+                    {stats?.transactions?.total ?? "0"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.32em] text-slate-500">
+                Profile Details
+              </p>
+              <div className="mt-5 space-y-4 text-sm text-slate-700">
+                {user.location && (
+                  <div className="grid grid-cols-[1fr_auto] gap-4">
+                    <span className="text-slate-500">Location</span>
+                    <span className="font-semibold text-slate-900">
+                      {user.location}
+                    </span>
+                  </div>
+                )}
+                {user.expertise_level && (
+                  <div className="grid grid-cols-[1fr_auto] gap-4">
+                    <span className="text-slate-500">Expertise Level</span>
+                    <span className="font-semibold text-slate-900 capitalize">
+                      {user.expertise_level.replace("-", " ")}
+                    </span>
+                  </div>
+                )}
+                {user.photography_specialty?.length > 0 && (
+                  <div>
+                    <span className="text-slate-500">Specialties</span>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {user.photography_specialty.map((specialty) => (
+                        <span
+                          key={specialty}
+                          className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800"
+                        >
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {user.languages?.length > 0 && (
+                  <div>
+                    <span className="text-slate-500">Languages</span>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {user.languages.map((language) => (
+                        <span
+                          key={language}
+                          className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800"
+                        >
+                          {language}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -284,10 +389,7 @@ const Profile = () => {
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">
                   Location
                 </h3>
-                <p className="text-gray-800 flex items-center gap-2">
-                  <span className="text-lg">📍</span>
-                  {user.location}
-                </p>
+                <p className="text-gray-800">{user.location}</p>
               </div>
             )}
 

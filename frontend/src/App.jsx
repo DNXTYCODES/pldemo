@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -23,15 +23,27 @@ import MySales from "./pages/MySales";
 import MyPurchases from "./pages/MyPurchases";
 import FundAccount from "./pages/FundAccount";
 import Settings from "./pages/Settings";
+import Withdraw from "./pages/Withdraw";
 import Transactions from "./pages/Transactions";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
 import Photographers from "./pages/Photographers";
 import Explore from "./pages/Explore";
 
+const ScrollToTop = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  return null;
+};
+
 const App = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
+      <ScrollToTop />
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
         <ToastContainer
           position="top-right"
@@ -74,6 +86,7 @@ const App = () => {
           <Route path="/my-purchases" element={<MyPurchases />} />
           <Route path="/fund-account" element={<FundAccount />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/withdraw" element={<Withdraw />} />
           <Route path="/transactions" element={<Transactions />} />
 
           {/* Image Routes */}

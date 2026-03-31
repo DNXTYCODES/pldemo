@@ -132,7 +132,6 @@ const Settings = () => {
 
   const settingsSections = [
     {
-      icon: "👤",
       title: "Profile Settings",
       description: "View and manage your account information",
       action: "View Profile",
@@ -141,7 +140,6 @@ const Settings = () => {
       bgGradient: "from-blue-50 to-blue-100",
     },
     {
-      icon: "✏️",
       title: "Edit Profile",
       description: "Update your personal details and preferences",
       action: "Edit Now",
@@ -150,7 +148,6 @@ const Settings = () => {
       bgGradient: "from-purple-50 to-purple-100",
     },
     {
-      icon: "📸",
       title: "Upload Photos",
       description: "Share your photography with the community",
       action: "Upload",
@@ -159,7 +156,6 @@ const Settings = () => {
       bgGradient: "from-amber-50 to-amber-100",
     },
     {
-      icon: "💰",
       title: "My Sales",
       description: "Track and manage your uploaded photos and earnings",
       action: "View Sales",
@@ -168,7 +164,6 @@ const Settings = () => {
       bgGradient: "from-green-50 to-green-100",
     },
     {
-      icon: "🛍️",
       title: "My Purchases",
       description: "View and manage your photo purchases",
       action: "View Purchases",
@@ -177,7 +172,6 @@ const Settings = () => {
       bgGradient: "from-cyan-50 to-cyan-100",
     },
     {
-      icon: "💳",
       title: "Fund Account",
       description: "Add funds to your account and manage payments",
       action: "Add Funds",
@@ -186,7 +180,14 @@ const Settings = () => {
       bgGradient: "from-indigo-50 to-indigo-100",
     },
     {
-      icon: "📊",
+      title: "Withdraw Funds",
+      description: "Request a withdrawal to your Ethereum wallet",
+      action: "Request Withdrawal",
+      onClick: () => navigate("/withdraw"),
+      gradient: "from-amber-400 to-amber-600",
+      bgGradient: "from-amber-50 to-amber-100",
+    },
+    {
       title: "Transactions",
       description: "View your complete transaction history and analytics",
       action: "View History",
@@ -237,9 +238,6 @@ const Settings = () => {
 
               {/* Content */}
               <div className="relative p-8 flex flex-col h-full">
-                {/* Icon */}
-                <div className="text-5xl mb-4">{section.icon}</div>
-
                 {/* Title and Description */}
                 <div className="flex-1 mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
@@ -286,7 +284,9 @@ const Settings = () => {
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-cyan-100 border-2 border-blue-300 rounded-2xl p-8 text-center shadow-md">
-            <div className="text-4xl font-bold text-blue-600 mb-2">✓</div>
+            <div className="text-4xl font-bold text-blue-600 mb-2">
+              Verified
+            </div>
             <p className="text-gray-700 font-medium">Account Verified</p>
           </div>
         </div>
