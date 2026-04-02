@@ -48,9 +48,12 @@ const MassUpload = ({ token }) => {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/users/admin/all-users`, {
-          headers: { token },
-        });
+        const response = await axios.get(
+          `${backendUrl}/api/users/admin/all-users`,
+          {
+            headers: { token },
+          },
+        );
 
         if (response.data.success) {
           setUsers(response.data.users);
@@ -122,7 +125,9 @@ const MassUpload = ({ token }) => {
     for (let i = 0; i < uploads.length; i += 1) {
       const item = uploads[i];
       if (!item.title || !item.priceEth || !item.category || !item.userId) {
-        return toast.error(`Please complete title, price, category, and uploader for item #${i + 1}`);
+        return toast.error(
+          `Please complete title, price, category, and uploader for item #${i + 1}`,
+        );
       }
     }
 
@@ -165,7 +170,9 @@ const MassUpload = ({ token }) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || error.message || "Upload failed");
+      toast.error(
+        error.response?.data?.message || error.message || "Upload failed",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -180,7 +187,8 @@ const MassUpload = ({ token }) => {
           </h1>
           <p className="text-gray-600 mt-1 text-sm sm:text-base">
             Upload up to 10 images at once and enter metadata for each image.
-            Select the uploader for each image and see their current image count and specialty.
+            Select the uploader for each image and see their current image count
+            and specialty.
           </p>
         </div>
 
@@ -217,7 +225,8 @@ const MassUpload = ({ token }) => {
                       />
                     </div>
                     <p className="mt-3 text-sm text-gray-500">
-                      {item.file.name} · {(item.file.size / 1024 / 1024).toFixed(2)} MB
+                      {item.file.name} ·{" "}
+                      {(item.file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
 
@@ -242,7 +251,9 @@ const MassUpload = ({ token }) => {
                         </span>
                         <input
                           value={item.title}
-                          onChange={(e) => updateItem(index, "title", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "title", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                           placeholder="Enter image title"
                         />
@@ -257,7 +268,9 @@ const MassUpload = ({ token }) => {
                           step="0.0001"
                           min="0"
                           value={item.priceEth}
-                          onChange={(e) => updateItem(index, "priceEth", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "priceEth", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                           placeholder="0.05"
                         />
@@ -271,11 +284,16 @@ const MassUpload = ({ token }) => {
                         </span>
                         <select
                           value={item.category}
-                          onChange={(e) => updateItem(index, "category", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "category", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                           <option value="">Select category</option>
-                          {(categories.length ? categories : defaultCategories).map((categoryOption) => (
+                          {(categories.length
+                            ? categories
+                            : defaultCategories
+                          ).map((categoryOption) => (
                             <option key={categoryOption} value={categoryOption}>
                               {categoryOption}
                             </option>
@@ -289,7 +307,9 @@ const MassUpload = ({ token }) => {
                         </span>
                         <input
                           value={item.tags}
-                          onChange={(e) => updateItem(index, "tags", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "tags", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                           placeholder="landscape, sunset"
                         />
@@ -303,7 +323,9 @@ const MassUpload = ({ token }) => {
                         </span>
                         <select
                           value={item.usageRights}
-                          onChange={(e) => updateItem(index, "usageRights", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "usageRights", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                           {usageRightsOptions.map((option) => (
@@ -320,7 +342,9 @@ const MassUpload = ({ token }) => {
                         </span>
                         <select
                           value={item.licenseType}
-                          onChange={(e) => updateItem(index, "licenseType", e.target.value)}
+                          onChange={(e) =>
+                            updateItem(index, "licenseType", e.target.value)
+                          }
                           className="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                           {licenseTypes.map((option) => (
@@ -338,7 +362,9 @@ const MassUpload = ({ token }) => {
                       </span>
                       <textarea
                         value={item.description}
-                        onChange={(e) => updateItem(index, "description", e.target.value)}
+                        onChange={(e) =>
+                          updateItem(index, "description", e.target.value)
+                        }
                         rows={3}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Optional description"
@@ -351,13 +377,17 @@ const MassUpload = ({ token }) => {
                       </span>
                       <select
                         value={item.userId}
-                        onChange={(e) => updateItem(index, "userId", e.target.value)}
+                        onChange={(e) =>
+                          updateItem(index, "userId", e.target.value)
+                        }
                         className="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       >
                         <option value="">Select uploader</option>
                         {users.map((user) => (
                           <option key={user._id} value={user._id}>
-                            {user.name} · {user.ownedImagesCount} images · {user.photography_specialty?.join(", ") || "No specialty"}
+                            {user.name} · {user.ownedImagesCount} images ·{" "}
+                            {user.photography_specialty?.join(", ") ||
+                              "No specialty"}
                           </option>
                         ))}
                       </select>
@@ -369,7 +399,8 @@ const MassUpload = ({ token }) => {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-gray-600">
-                Total images: <span className="font-semibold">{uploads.length}</span>
+                Total images:{" "}
+                <span className="font-semibold">{uploads.length}</span>
               </div>
               <button
                 type="submit"

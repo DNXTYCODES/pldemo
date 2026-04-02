@@ -341,7 +341,7 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         {/* Profile Picture Section */}
         <div className="mt-12 bg-white rounded-lg border border-gray-300 p-8">
           <h3 className="text-xl font-bold mb-6 text-gray-900">

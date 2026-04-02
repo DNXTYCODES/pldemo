@@ -18,7 +18,11 @@ export async function fetchImageCategories(backendUrl) {
       throw new Error(`Failed to fetch categories: ${response.statusText}`);
     }
     const data = await response.json();
-    if (data.success && Array.isArray(data.categories) && data.categories.length > 0) {
+    if (
+      data.success &&
+      Array.isArray(data.categories) &&
+      data.categories.length > 0
+    ) {
       return data.categories;
     }
   } catch (error) {

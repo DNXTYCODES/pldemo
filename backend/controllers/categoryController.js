@@ -15,7 +15,9 @@ const DEFAULT_IMAGE_CATEGORIES = [
 
 export const getImageCategories = async (req, res) => {
   try {
-    const categories = await categoryModel.find({ type: "image" }).sort({ name: 1 });
+    const categories = await categoryModel
+      .find({ type: "image" })
+      .sort({ name: 1 });
     if (categories.length === 0) {
       return res.json({ success: true, categories: DEFAULT_IMAGE_CATEGORIES });
     }

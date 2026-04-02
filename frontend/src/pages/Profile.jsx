@@ -173,7 +173,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {error && (
           <div className="mt-6 p-4 bg-red-100 border border-red-400 rounded text-red-800">
             {error}
@@ -181,7 +181,7 @@ const Profile = () => {
         )}
 
         {/* Profile Header */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div className="mt-12 grid gap-6 lg:grid-cols-[2fr_1fr] xl:grid-cols-[2.2fr_1fr]">
           <div className="overflow-hidden rounded-[2rem] bg-slate-950 shadow-2xl text-white">
             <div className="p-6 sm:p-8">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

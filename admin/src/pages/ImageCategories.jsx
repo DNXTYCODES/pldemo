@@ -63,12 +63,18 @@ const ImageCategories = ({ token }) => {
   return (
     <div className="space-y-6">
       <div className="rounded-xl bg-white p-6 shadow-lg border border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-3">Image Categories</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+          Image Categories
+        </h2>
         <p className="text-gray-500 mb-6">
-          Add or review the available image categories that admins can assign when uploading images.
+          Add or review the available image categories that admins can assign
+          when uploading images.
         </p>
 
-        <form onSubmit={handleAddCategory} className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <form
+          onSubmit={handleAddCategory}
+          className="flex flex-col gap-4 sm:flex-row sm:items-center"
+        >
           <label className="sr-only" htmlFor="new-category">
             New category
           </label>
@@ -92,8 +98,12 @@ const ImageCategories = ({ token }) => {
 
       <div className="rounded-xl bg-white p-6 shadow-lg border border-gray-200">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold text-gray-900">Available Categories</h3>
-          <span className="text-sm text-gray-500">{categories.length} total</span>
+          <h3 className="text-xl font-semibold text-gray-900">
+            Available Categories
+          </h3>
+          <span className="text-sm text-gray-500">
+            {categories.length} total
+          </span>
         </div>
 
         {loading ? (

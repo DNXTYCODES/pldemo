@@ -20,7 +20,9 @@ const DEFAULT_IMAGE_CATEGORIES = [
 ];
 
 const getAllowedImageCategories = async () => {
-  const categories = await categoryModel.find({ type: "image" }).sort({ name: 1 });
+  const categories = await categoryModel
+    .find({ type: "image" })
+    .sort({ name: 1 });
   if (categories.length > 0) {
     return categories.map((item) => item.name);
   }

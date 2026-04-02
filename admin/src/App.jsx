@@ -55,8 +55,14 @@ const App = () => {
                 <Route path="/list" element={<List token={token} />} />
                 <Route path="/orders" element={<Orders token={token} />} />
                 <Route path="/popup" element={<Popup token={token} />} />
-                <Route path="/mass-upload" element={<MassUpload token={token} />} />
-                <Route path="/image-categories" element={<ImageCategories token={token} />} />
+                <Route
+                  path="/mass-upload"
+                  element={<MassUpload token={token} />}
+                />
+                <Route
+                  path="/image-categories"
+                  element={<ImageCategories token={token} />}
+                />
                 <Route
                   path="/edit-products"
                   element={<EditProducts token={token} />}
