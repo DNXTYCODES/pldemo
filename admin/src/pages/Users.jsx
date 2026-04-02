@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { backendUrl } from "../App";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const EXPERTISE_LEVELS = ["amateur", "semi-professional", "professional"];
 const PHOTOGRAPHY_SPECIALTIES = [
@@ -769,18 +770,21 @@ const Users = ({ token }) => {
                 <label className="block text-sm font-medium mb-3">
                   Photography Specialties
                 </label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
                   {photographySpecialties.map((specialty) => (
-                    <label key={specialty} className="flex items-center">
+                    <label
+                      key={specialty}
+                      className="flex items-start gap-2 rounded-md px-2 py-2 bg-gray-50"
+                    >
                       <input
                         type="checkbox"
                         checked={formData.photography_specialty.includes(
                           specialty,
                         )}
                         onChange={() => handleSpecialtyToggle(specialty)}
-                        className="mr-2"
+                        className="mt-1 h-4 w-4"
                       />
-                      {specialty}
+                      <span className="text-sm leading-tight">{specialty}</span>
                     </label>
                   ))}
                 </div>
@@ -791,16 +795,19 @@ const Users = ({ token }) => {
                 <label className="block text-sm font-medium mb-3">
                   Languages
                 </label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
                   {LANGUAGES.map((language) => (
-                    <label key={language} className="flex items-center">
+                    <label
+                      key={language}
+                      className="flex items-start gap-2 rounded-md px-2 py-2 bg-gray-50"
+                    >
                       <input
                         type="checkbox"
                         checked={formData.languages.includes(language)}
                         onChange={() => handleLanguageToggle(language)}
-                        className="mr-2"
+                        className="mt-1 h-4 w-4"
                       />
-                      {language}
+                      <span className="text-sm leading-tight">{language}</span>
                     </label>
                   ))}
                 </div>
@@ -1014,11 +1021,41 @@ const Users = ({ token }) => {
               </div>
             )}
           </div>
-        </div>
-      )}
 
-      {!showPendingTab && !showDepositsTab && (
-        <div>
+          <AdminPageGuide
+            title="User management overview"
+            overview='Use the list below to view and manage users. Click "Edit" to update user details, upload profile pictures, or upload images on behalf of that user. You can also delete accounts, change status, and update balance and specialties.'
+            modalTitle="Admin Users Page Guide"
+            sections={[
+              {
+                heading: "Users list",
+                content:
+                  "The users table shows all registered accounts. Use the search box to find a user by name or email. Click Edit to open the user profile form and update all available fields.",
+                bullets: [
+                  "Update name, email, bio, location, balance, and account status.",
+                  "Change expertise level, photography specialties, and languages.",
+                  "Upload or replace the user's profile picture.",
+                  "Upload images on behalf of the user once you are editing their profile.",
+                ],
+              },
+              {
+                heading: "Create / Edit User",
+                content:
+                  "Use the top form to create a new user or edit an existing one. When editing, additional options appear for uploading profile pictures and images for that user.",
+              },
+              {
+                heading: "Pending Uploads",
+                content:
+                  "Switch to the Pending Uploads tab to review images waiting for approval. You can approve or decline uploads directly from this tab.",
+              },
+              {
+                heading: "Pending Deposits",
+                content:
+                  "Use the Pending Deposits tab to confirm or reject submitted deposit requests and keep the platform's balances accurate.",
+              },
+            ]}
+          />
+
           <div className="mb-6">
             <input
               type="text"
@@ -1028,6 +1065,8 @@ const Users = ({ token }) => {
               className="w-full px-4 py-2 border rounded-lg"
             />
           </div>
+
+          {/* Users Table */}
 
           {/* Users Table */}
           <div className="overflow-x-auto border rounded-lg">
@@ -1295,6 +1334,7 @@ const Users = ({ token }) => {
           )}
         </div>
       )}
+
     </div>
   );
 };
