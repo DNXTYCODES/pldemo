@@ -112,17 +112,11 @@ export const formatPrice = (ethAmount, ethPrice) => {
 };
 
 /**
- * Get current ETH price with fallback
- * @param {number} fallbackPrice - Fallback price if API fails
+ * Get current ETH price
  * @returns {Promise<number>} ETH/USD price
  */
-export const getCurrentEthPrice = async (fallbackPrice = 3000) => {
-  try {
-    return await fetchEthereumPrice();
-  } catch (error) {
-    console.warn("Using fallback ETH price:", fallbackPrice);
-    return fallbackPrice;
-  }
+export const getCurrentEthPrice = async () => {
+  return await fetchEthereumPrice();
 };
 
 export default {
