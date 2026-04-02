@@ -1,9 +1,31 @@
 import imageModel from "../models/imageModel.js";
 import userModel from "../models/userModel.js";
+import categoryModel from "../models/categoryModel.js";
 import notificationModel from "../models/notificationModel.js";
 import transactionModel from "../models/transactionModel.js";
 import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
 import cloudinary from "../config/cloudinary.js";
+
+const DEFAULT_IMAGE_CATEGORIES = [
+  "Landscape",
+  "Portrait",
+  "Wildlife",
+  "Architecture",
+  "Street",
+  "Macro",
+  "Abstract",
+  "Nature",
+  "People",
+  "Product",
+];
+
+const getAllowedImageCategories = async () => {
+  const categories = await categoryModel.find({ type: "image" }).sort({ name: 1 });
+  if (categories.length > 0) {
+    return categories.map((item) => item.name);
+  }
+  return DEFAULT_IMAGE_CATEGORIES;
+};
 
 /**
  * Upload a new image for sale (auto-approved if user has >= $200 balance)
@@ -21,19 +43,7 @@ export const uploadImage = async (req, res) => {
     } = req.body;
     const userId = req.body.userId || req.userId;
 
-    // List of allowed photography specialties
-    const ALLOWED_CATEGORIES = [
-      "Landscape",
-      "Portrait",
-      "Wildlife",
-      "Architecture",
-      "Street",
-      "Macro",
-      "Abstract",
-      "Nature",
-      "People",
-      "Product",
-    ];
+    const ALLOWED_CATEGORIES = await getAllowedImageCategories();
 
     if (!req.file) {
       return res.status(400).json({
@@ -632,19 +642,7 @@ export const adminUploadImage = async (req, res) => {
       userId,
     } = req.body;
 
-    // List of allowed photography specialties
-    const ALLOWED_CATEGORIES = [
-      "Landscape",
-      "Portrait",
-      "Wildlife",
-      "Architecture",
-      "Street",
-      "Macro",
-      "Abstract",
-      "Nature",
-      "People",
-      "Product",
-    ];
+    const ALLOWED_CATEGORIES = await getAllowedImageCategories();
 
     if (!req.file) {
       return res.status(400).json({
@@ -750,6 +748,151 @@ export const adminUploadImage = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Mass upload images for users
+ */
+export const adminMassUploadImages = async (req, res) => {
+  try {
+    const files = req.files || [];
+    const rawMetadata = req.body.metadata;
+    const metadata = rawMetadata ? JSON.parse(rawMetadata) : [];
+
+    if (!files.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload at least one image",
+      });
+    }
+
+    if (files.length > 10) {
+      return res.status(400).json({
+        success: false,
+        message: "You can upload at most 10 images at once",
+      });
+    }
+
+    if (!Array.isArray(metadata) || metadata.length !== files.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Metadata must be provided for every uploaded image",
+      });
+    }
+
+    const ALLOWED_CATEGORIES = await getAllowedImageCategories();
+
+    const uploadedImages = [];
+
+    for (let index = 0; index < files.length; index += 1) {
+      const file = files[index];
+      const item = metadata[index] || {};
+      const {
+        title,
+        description,
+        priceEth,
+        category,
+        tags,
+        usageRights,
+        licenseType,
+        userId,
+      } = item;
+
+      if (!title || !priceEth || !category || !userId) {
+        return res.status(400).json({
+          success: false,
+          message: `Title, price, category, and userId are required for image ${index + 1}`,
+        });
+      }
+
+      if (!ALLOWED_CATEGORIES.includes(category)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid category for image ${index + 1}. Allowed categories: ${ALLOWED_CATEGORIES.join(", ")}`,
+        });
+      }
+
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: `User not found for image ${index + 1}`,
+        });
+      }
+
+      const price = parseFloat(priceEth);
+      if (Number.isNaN(price) || price <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid price for image ${index + 1}`,
+        });
+      }
+
+      let imageResult;
+      if (process.env.NODE_ENV === "development" && !file.path) {
+        imageResult = {
+          secure_url: `https://via.placeholder.com/400?text=${encodeURIComponent(title)}`,
+          public_id: "placeholder",
+        };
+      } else {
+        imageResult = await cloudinary.uploader.upload(file.path, {
+          folder: "photography_trading/images",
+          resource_type: "auto",
+        });
+      }
+
+      const ethPrice = await getCurrentEthPrice();
+      const priceUsd = (price * ethPrice).toFixed(2);
+
+      const image = new imageModel({
+        title,
+        description: description || "",
+        imageUrl: imageResult.secure_url,
+        thumbnailUrl: imageResult.secure_url.replace(
+          "/upload/",
+          "/upload/w_300,h_300,c_fill/",
+        ),
+        sellerId: userId,
+        priceEth: price.toString(),
+        priceUsd: priceUsd,
+        ethPriceAtListing: ethPrice.toString(),
+        category,
+        tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
+        usageRights: usageRights || "personal_use",
+        licenseType: licenseType || "non-exclusive",
+        status: "active",
+      });
+
+      await image.save();
+      await userModel.findByIdAndUpdate(
+        userId,
+        { $push: { ownedImages: image._id } },
+        { new: true },
+      );
+
+      uploadedImages.push({
+        _id: image._id,
+        title: image.title,
+        imageUrl: image.imageUrl,
+        priceEth: image.priceEth,
+        priceUsd: image.priceUsd,
+        sellerId: userId,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `${uploadedImages.length} images uploaded successfully`,
+      images: uploadedImages,
+    });
+  } catch (error) {
+    console.error("Error bulk uploading images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error uploading images",
       error: error.message,
     });
   }

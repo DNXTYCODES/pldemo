@@ -1,5 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
+import {
+  fetchImageCategories,
+  DEFAULT_IMAGE_CATEGORIES,
+} from "../utils/categoryService";
 
 const UploadPhoto = () => {
   const { navigate, ethPrice, backendUrl } = useContext(ShopContext);
@@ -27,6 +31,17 @@ const UploadPhoto = () => {
   // User balance state
   const [userBalance, setUserBalance] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(true);
+  const [categories, setCategories] = useState(DEFAULT_IMAGE_CATEGORIES);
+
+  // Fetch available categories on component mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchImageCategories(backendUrl);
+      setCategories(fetchedCategories);
+    };
+
+    loadCategories();
+  }, [backendUrl]);
 
   // Fetch user balance on component mount
   useEffect(() => {
@@ -65,19 +80,6 @@ const UploadPhoto = () => {
 
     fetchUserBalance();
   }, [backendUrl]);
-
-  const categories = [
-    "Landscape",
-    "Portrait",
-    "Wildlife",
-    "Architecture",
-    "Street",
-    "Macro",
-    "Abstract",
-    "Nature",
-    "People",
-    "Product",
-  ];
 
   useEffect(() => {
     if (formData.priceEth && ethPrice) {

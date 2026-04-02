@@ -2,19 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-const PHOTOGRAPHY_SPECIALTIES = [
-  "Landscape",
-  "Portrait",
-  "Wildlife",
-  "Architecture",
-  "Street",
-  "Macro",
-  "Abstract",
-  "Nature",
-  "People",
-  "Product",
-];
+import {
+  fetchImageCategories,
+  DEFAULT_IMAGE_CATEGORIES,
+} from "../utils/categoryService";
 
 const LANGUAGES = [
   "English",
@@ -45,6 +36,9 @@ const Login = () => {
   const [location, setLocation] = useState("");
   const [expertise_level, setExpertiseLevel] = useState("amateur");
   const [photography_specialty, setPhotographySpecialty] = useState([]);
+  const [photographySpecialties, setPhotographySpecialties] = useState(
+    DEFAULT_IMAGE_CATEGORIES,
+  );
   const [languages, setLanguages] = useState([]);
   const [customSpecialty, setCustomSpecialty] = useState("");
   const [loading, setLoading] = useState(false);
@@ -150,6 +144,15 @@ const Login = () => {
   }, [token]);
 
   // Google Sign-In Handler
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchImageCategories(backendUrl);
+      setPhotographySpecialties(fetchedCategories);
+    };
+
+    loadCategories();
+  }, [backendUrl]);
+
   const handleGoogleSignIn = () => {
     toast.info(
       "Google Sign-In is being set up. For now, please use email and password registration.",
@@ -437,7 +440,7 @@ const Login = () => {
                   Photography Specialties
                 </label>
                 <div className="grid grid-cols-2 gap-2 mb-3">
-                  {PHOTOGRAPHY_SPECIALTIES.map((specialty) => (
+                  {photographySpecialties.map((specialty) => (
                     <label
                       key={specialty}
                       className="flex items-center cursor-pointer"

@@ -1,18 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
-
-const PHOTOGRAPHY_SPECIALTIES = [
-  "Landscape",
-  "Portrait",
-  "Wildlife",
-  "Architecture",
-  "Street",
-  "Macro",
-  "Abstract",
-  "Nature",
-  "People",
-  "Product",
-];
+import {
+  fetchImageCategories,
+  DEFAULT_IMAGE_CATEGORIES,
+} from "../utils/categoryService";
 
 const LANGUAGES = [
   "English",
@@ -39,6 +30,9 @@ const EditProfile = () => {
     photography_specialty: [],
     languages: [],
   });
+  const [photographySpecialties, setPhotographySpecialties] = useState(
+    DEFAULT_IMAGE_CATEGORIES,
+  );
   const [profilePicture, setProfilePicture] = useState(null);
   const [picturePreview, setPicturePreview] = useState(null);
   const [passwordData, setPasswordData] = useState({
@@ -159,6 +153,16 @@ const EditProfile = () => {
   };
 
   const [customSpecialty, setCustomSpecialty] = useState("");
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchImageCategories(backendUrl);
+      setPhotographySpecialties(fetchedCategories);
+    };
+
+    loadCategories();
+  }, [backendUrl]);
+
   const handleAddCustomSpecialty = () => {
     if (
       customSpecialty.trim() &&
@@ -483,7 +487,7 @@ const EditProfile = () => {
                 Photography Specialties
               </label>
               <div className="grid grid-cols-2 gap-2 mb-3 p-3 bg-gray-50 border border-gray-300 rounded">
-                {PHOTOGRAPHY_SPECIALTIES.map((specialty) => (
+                {photographySpecialties.map((specialty) => (
                   <label key={specialty} className="flex items-center">
                     <input
                       type="checkbox"

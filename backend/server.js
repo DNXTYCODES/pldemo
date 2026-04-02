@@ -12,6 +12,7 @@ import reviewRouter from "./routes/reviewRoute.js";
 // import restaurantReviewRoute from "./routes/restaurantReviewRoute.js"; // COMMENTED OUT - legacy restaurant review module
 import newsletterRouter from "./routes/newsletterRoute.js"; // Import newsletter route
 import imageRouter from "./routes/imageRoute.js"; // Import image route
+import categoryRouter from "./routes/categoryRoute.js";
 import depositRouter from "./routes/depositRoute.js"; // Import deposit route
 import purchaseRouter from "./routes/purchaseRoute.js"; // Import purchase route
 
@@ -35,6 +36,7 @@ app.use("/api/popup", popupRoute);
 app.use("/api/review", reviewRouter);
 // app.use("/api/restaurant-review", restaurantReviewRoute); // COMMENTED OUT - legacy restaurant review endpoints
 app.use("/api/images", imageRouter); // Add image route
+app.use("/api/categories", categoryRouter);
 app.use("/api/deposit", depositRouter); // Add deposit route
 app.use("/api/purchase", purchaseRouter); // Add purchase route
 

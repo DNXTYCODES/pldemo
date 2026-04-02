@@ -12,6 +12,8 @@ import EditProduct from "./pages/EditProduct";
 import Users from "./pages/Users";
 import ManageImages from "./pages/ManageImages";
 import ManagePhotographers from "./pages/ManagePhotographers";
+import MassUpload from "./pages/MassUpload";
+import ImageCategories from "./pages/ImageCategories";
 import UserManual from "./pages/UserManual";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -53,6 +55,8 @@ const App = () => {
                 <Route path="/list" element={<List token={token} />} />
                 <Route path="/orders" element={<Orders token={token} />} />
                 <Route path="/popup" element={<Popup token={token} />} />
+                <Route path="/mass-upload" element={<MassUpload token={token} />} />
+                <Route path="/image-categories" element={<ImageCategories token={token} />} />
                 <Route
                   path="/edit-products"
                   element={<EditProducts token={token} />}

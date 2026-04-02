@@ -712,6 +712,7 @@ const getAllUsers = async (req, res) => {
         location: user.location,
         expertise_level: user.expertise_level,
         photography_specialty: user.photography_specialty,
+        ownedImagesCount: user.ownedImages.length,
         languages: user.languages,
         accountStatus: user.accountStatus,
         accountType: user.accountType,

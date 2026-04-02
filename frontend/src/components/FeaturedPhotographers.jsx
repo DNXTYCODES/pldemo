@@ -67,7 +67,7 @@ const FeaturedPhotographers = () => {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {photographers.map((photographer) => {
+          {photographers.map((photographer, photographerIndex) => {
             // Get first 4 images for the grid
             const images =
               photographer.ownedImages && photographer.ownedImages.length > 0
@@ -75,14 +75,17 @@ const FeaturedPhotographers = () => {
                 : [];
 
             return (
-              <div key={photographer._id} className="group flex flex-col">
+              <div
+                key={`${photographer._id || "photographer"}-${photographerIndex}`}
+                className="group flex flex-col"
+              >
                 {/* 2x2 Image Grid Container */}
                 <div className="relative mb-8">
                   <div className="grid grid-cols-2 gap-1 bg-gray-100 rounded-sm overflow-hidden">
                     {images.length >= 4 ? (
                       images.map((image, idx) => (
                         <div
-                          key={image._id}
+                          key={`${photographer._id || "photographer"}-${image._id || idx}-${idx}`}
                           className="aspect-square cursor-pointer overflow-hidden bg-gray-200"
                         >
                           <img
@@ -97,7 +100,7 @@ const FeaturedPhotographers = () => {
                       <>
                         {images.map((image, idx) => (
                           <div
-                            key={image._id}
+                            key={`${photographer._id || "photographer"}-${image._id || idx}-${idx}`}
                             className="aspect-square cursor-pointer overflow-hidden bg-gray-200"
                           >
                             <img
@@ -111,7 +114,7 @@ const FeaturedPhotographers = () => {
                         {/* Placeholder for missing images */}
                         {[...Array(4 - images.length)].map((_, idx) => (
                           <div
-                            key={`placeholder-${idx}`}
+                            key={`placeholder-${photographer._id || "photographer"}-${idx}`}
                             className="aspect-square bg-gray-200 flex items-center justify-center"
                           >
                             <span className="text-gray-400 text-xs">

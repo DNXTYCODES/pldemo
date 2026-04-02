@@ -1,5 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
+import {
+  fetchImageCategories,
+  DEFAULT_IMAGE_CATEGORIES,
+} from "../utils/categoryService";
 
 const PhotoTabs = () => {
   const { backendUrl } = useContext(ShopContext);
@@ -9,17 +13,9 @@ const PhotoTabs = () => {
   const [trendingImages, setTrendingImages] = useState([]);
   const [recentImages, setRecentImages] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const PHOTOGRAPHY_CATEGORIES = [
-    "Landscape",
-    "Portrait",
-    "Wildlife",
-    "Architecture",
-    "Street",
-    "Macro",
-    "Abstract",
-    "Nature",
-  ];
+  const [photoCategories, setPhotoCategories] = useState(
+    DEFAULT_IMAGE_CATEGORIES,
+  );
 
   // Fetch all images for Explore tab
   const fetchAllImages = async () => {
@@ -40,8 +36,11 @@ const PhotoTabs = () => {
   // Fetch category images for For You tab
   const fetchCategoryImages = async () => {
     try {
+      const categories = await fetchImageCategories(backendUrl);
+      setPhotoCategories(categories);
+
       const categoryData = [];
-      for (const category of PHOTOGRAPHY_CATEGORIES) {
+      for (const category of categories) {
         const response = await fetch(
           `${backendUrl}/api/images/search?category=${category}&limit=4`,
         );

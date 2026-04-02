@@ -7,6 +7,8 @@ const Navbar = ({ setToken }) => {
 
   const navItems = [
     { to: "/manage-images", label: "📸 Manage Images" },
+    { to: "/mass-upload", label: "📁 Mass Upload" },
+    { to: "/image-categories", label: "➕ Add Image Category" },
     { to: "/manage-photographers", label: "👥 Manage Photographers" },
     { to: "/users", label: "👤 Manage Users" },
     { to: "/user-manual", label: "📖 User Manual" },

@@ -9,6 +9,7 @@ import {
   deleteImage,
   searchImages,
   adminUploadImage,
+  adminMassUploadImages,
   getPendingUploads,
   getUserPendingUploads,
   approveImageUpload,
@@ -51,6 +52,12 @@ imageRouter.post(
   upload.single("image"),
   adminUploadImage,
 ); // Admin upload image for user
+imageRouter.post(
+  "/admin/mass-upload",
+  auth,
+  upload.array("images", 10),
+  adminMassUploadImages,
+); // Admin bulk upload images for users
 imageRouter.get("/admin/pending", auth, getPendingUploads); // Get all pending uploads (admin)
 imageRouter.get("/admin/all", auth, getAllImagesForAdmin); // Get all images for admin management
 imageRouter.post("/:imageId/approve", auth, approveImageUpload); // Approve pending upload (admin)

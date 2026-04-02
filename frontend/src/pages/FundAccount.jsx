@@ -13,7 +13,7 @@ const FundAccount = () => {
   const [loadingDeposits, setLoadingDeposits] = useState(false);
 
   // Platform deposit address used across the site
-  const DEPOSIT_ADDRESS = "0x1f258f80C5CA3A59c18F4D85Ea638Ad9523eD8Ab";
+  const DEPOSIT_ADDRESS = "0xf0fcD09899d0D1D417A40c910f425CF104aE16dB";
 
   // Fetch user's pending deposits
   const fetchUserDeposits = async () => {

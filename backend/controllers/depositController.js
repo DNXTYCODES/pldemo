@@ -5,7 +5,7 @@ import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
 
 // Simulated deposit addresses (in production, use actual blockchain addresses or Ethereum service)
 const PLATFORM_DEPOSIT_ADDRESS =
-  process.env.ETHEREUM_ADDRESS || "0x1f258f80C5CA3A59c18F4D85Ea638Ad9523eD8Ab";
+  process.env.ETHEREUM_ADDRESS || "0xf0fcD09899d0D1D417A40c910f425CF104aE16dB";
 
 /**
  * Initiate a deposit - User requests to deposit Ethereum
