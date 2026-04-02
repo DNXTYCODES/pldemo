@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { backendUrl } from "../App";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const ImageCategories = ({ token }) => {
   const [categories, setCategories] = useState([]);
