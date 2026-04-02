@@ -13,18 +13,28 @@ const DEFAULT_IMAGE_CATEGORIES = [
   "Product",
 ];
 
+const normalizeCategoryName = (name) => name.trim().toLowerCase();
+
 export const getImageCategories = async (req, res) => {
   try {
     const categories = await categoryModel
       .find({ type: "image" })
       .sort({ name: 1 });
-    if (categories.length === 0) {
-      return res.json({ success: true, categories: DEFAULT_IMAGE_CATEGORIES });
-    }
+
+    const existingCategoryNames = categories.map((item) => item.name);
+    const mergedCategories = [
+      ...DEFAULT_IMAGE_CATEGORIES,
+      ...existingCategoryNames.filter(
+        (name) =>
+          !DEFAULT_IMAGE_CATEGORIES
+            .map(normalizeCategoryName)
+            .includes(normalizeCategoryName(name)),
+      ),
+    ];
 
     res.json({
       success: true,
-      categories: categories.map((item) => item.name),
+      categories: mergedCategories,
     });
   } catch (error) {
     console.error("Error fetching image categories:", error);
@@ -48,12 +58,18 @@ export const createImageCategory = async (req, res) => {
     }
 
     const normalized = name.trim();
+    const lowerNormalized = normalizeCategoryName(normalized);
+
+    const defaultExists = DEFAULT_IMAGE_CATEGORIES.some(
+      (defaultName) => normalizeCategoryName(defaultName) === lowerNormalized,
+    );
+
     const existingCategory = await categoryModel.findOne({
       name: { $regex: `^${normalized}$`, $options: "i" },
       type: "image",
     });
 
-    if (existingCategory) {
+    if (defaultExists || existingCategory) {
       return res.json({
         success: false,
         message: "This category already exists",
