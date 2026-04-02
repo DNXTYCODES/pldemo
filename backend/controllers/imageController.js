@@ -19,14 +19,25 @@ const DEFAULT_IMAGE_CATEGORIES = [
   "Product",
 ];
 
+const normalizeCategoryName = (name) => name.trim().toLowerCase();
+
 const getAllowedImageCategories = async () => {
   const categories = await categoryModel
     .find({ type: "image" })
     .sort({ name: 1 });
-  if (categories.length > 0) {
-    return categories.map((item) => item.name);
-  }
-  return DEFAULT_IMAGE_CATEGORIES;
+  
+  const existingCategoryNames = categories.map((item) => item.name);
+  const mergedCategories = [
+    ...DEFAULT_IMAGE_CATEGORIES,
+    ...existingCategoryNames.filter(
+      (name) =>
+        !DEFAULT_IMAGE_CATEGORIES.map(normalizeCategoryName).includes(
+          normalizeCategoryName(name),
+        ),
+    ),
+  ];
+  
+  return mergedCategories.length > 0 ? mergedCategories : DEFAULT_IMAGE_CATEGORIES;
 };
 
 /**

@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import DishLoader from "../components/DishLoader";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getFormattedPrice } from "../utils/ethPrice";
+import { fetchImageCategories } from "../utils/categoryService";
+
+const PAGE_SIZE = 20;
 
 const Explore = () => {
   const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [images, setImages] = useState([]);
-  const [filteredImages, setFilteredImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -18,110 +18,104 @@ const Explore = () => {
     { value: "all", label: "All Categories" },
   ]);
   const [sortBy, setSortBy] = useState("latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch all images using the search endpoint
+  useEffect(() => {
+    const loadCategories = async () => {
+      const categories = await fetchImageCategories(backendUrl);
+      const categoryOptions = [
+        { value: "all", label: "All Categories" },
+        ...categories.sort().map((cat) => ({
+          value: cat,
+          label: cat.charAt(0).toUpperCase() + cat.slice(1),
+        })),
+      ];
+      setDynamicCategories(categoryOptions);
+    };
+
+    loadCategories();
+  }, [backendUrl]);
+
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);
       try {
-        const url = `${backendUrl}/api/images/search?limit=1000`;
+        let url = `${backendUrl}/api/images/search?limit=${PAGE_SIZE}&skip=${
+          (currentPage - 1) * PAGE_SIZE
+        }`;
+
+        if (searchQuery.trim()) {
+          url += `&query=${encodeURIComponent(searchQuery.trim())}`;
+        }
+        if (selectedCategory !== "all") {
+          url += `&category=${encodeURIComponent(selectedCategory)}`;
+        }
+
         const response = await fetch(url);
         const data = await response.json();
 
         if (!response.ok) {
           console.error(`HTTP error! status: ${response.status}`);
           setImages([]);
+          setTotalPages(1);
           return;
         }
 
         if (data.success && data.images) {
-          setImages(data.images);
+          let pageImages = data.images;
 
-          // Extract unique categories
-          const uniqueCategoriesSet = new Set();
-          data.images.forEach((image) => {
-            if (image.category) {
-              uniqueCategoriesSet.add(image.category);
-            }
-          });
+          switch (sortBy) {
+            case "latest":
+              pageImages.sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+              );
+              break;
+            case "trending":
+              pageImages.sort(
+                (a, b) => (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0),
+              );
+              break;
+            case "popular":
+              pageImages.sort((a, b) => (b.views || 0) - (a.views || 0));
+              break;
+            case "price-low":
+              pageImages.sort(
+                (a, b) =>
+                  parseFloat(a.priceUsd || 0) - parseFloat(b.priceUsd || 0),
+              );
+              break;
+            case "price-high":
+              pageImages.sort(
+                (a, b) =>
+                  parseFloat(b.priceUsd || 0) - parseFloat(a.priceUsd || 0),
+              );
+              break;
+            default:
+              break;
+          }
 
-          const categoryOptions = [
-            { value: "all", label: "All Categories" },
-            ...Array.from(uniqueCategoriesSet)
-              .sort()
-              .map((cat) => ({
-                value: cat,
-                label: cat.charAt(0).toUpperCase() + cat.slice(1),
-              })),
-          ];
-          setDynamicCategories(categoryOptions);
+          setImages(pageImages);
+          setTotalPages(data.pagination?.pages || 1);
         } else {
           setImages([]);
+          setTotalPages(1);
         }
       } catch (error) {
         console.error("Error fetching images:", error);
         setImages([]);
+        setTotalPages(1);
       } finally {
         setLoading(false);
       }
     };
+
     fetchImages();
-  }, [backendUrl]);
+  }, [backendUrl, searchQuery, selectedCategory, currentPage, sortBy]);
 
-  // Apply filters and search
   useEffect(() => {
-    let filtered = [...images];
-
-    // Search filter
-    if (searchQuery.trim()) {
-      filtered = filtered.filter(
-        (image) =>
-          image.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          image.description
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          image.tags?.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase()),
-          ),
-      );
-    }
-
-    // Category filter
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(
-        (image) => image.category === selectedCategory,
-      );
-    }
-
-    // Sorting
-    switch (sortBy) {
-      case "latest":
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-      case "trending":
-        filtered.sort(
-          (a, b) => (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0),
-        );
-        break;
-      case "popular":
-        filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
-        break;
-      case "price-low":
-        filtered.sort(
-          (a, b) => parseFloat(a.priceUsd || 0) - parseFloat(b.priceUsd || 0),
-        );
-        break;
-      case "price-high":
-        filtered.sort(
-          (a, b) => parseFloat(b.priceUsd || 0) - parseFloat(a.priceUsd || 0),
-        );
-        break;
-      default:
-        break;
-    }
-
-    setFilteredImages(filtered);
-  }, [images, searchQuery, selectedCategory, sortBy]);
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
   return (
     <div className="bg-white min-h-screen">
@@ -175,13 +169,41 @@ const Explore = () => {
       {/* Content */}
       <div className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Results Counter */}
+          {/* Pagination Controls */}
           {!loading && (
-            <p className="text-sm text-gray-600 mb-6">
-              Showing{" "}
-              <span className="font-semibold">{filteredImages.length}</span> of{" "}
-              <span className="font-semibold">{images.length}</span> images
-            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
+              <div className="text-sm text-gray-600">
+                Page <span className="font-semibold">{currentPage}</span>
+                {totalPages > 1 && (
+                  <span>
+                    {" "}
+                    of <span className="font-semibold">{totalPages}</span>
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={currentPage <= 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  disabled={currentPage >= totalPages}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Loading State */}
@@ -194,9 +216,9 @@ const Explore = () => {
                 />
               ))}
             </div>
-          ) : filteredImages.length > 0 ? (
+          ) : images.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {filteredImages.map((image) => (
+              {images.map((image) => (
                 <div
                   key={image._id}
                   className="group relative cursor-pointer bg-gray-100 aspect-square rounded-sm overflow-hidden"

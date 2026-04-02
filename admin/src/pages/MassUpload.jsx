@@ -73,6 +73,18 @@ const MassUpload = ({ token }) => {
     fetchUsers();
   }, [token]);
 
+  // Update default category in existing uploads when categories load
+  useEffect(() => {
+    if (categories.length > 0 && uploads.length > 0) {
+      setUploads((prev) =>
+        prev.map((item) => ({
+          ...item,
+          category: item.category || categories[0],
+        })),
+      );
+    }
+  }, [categories]);
+
   const handleFilesChange = (event) => {
     const selectedFiles = Array.from(event.target.files).slice(0, 10);
     const mapped = selectedFiles.map((file) => ({
@@ -153,7 +165,7 @@ const MassUpload = ({ token }) => {
     try {
       setSubmitting(true);
       const response = await axios.post(
-        `${backendUrl}/api/image/admin/mass-upload`,
+        `${backendUrl}/api/images/admin/mass-upload`,
         formData,
         {
           headers: {
