@@ -32,7 +32,9 @@ const AdminPageGuide = ({
           <div className="w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl">
             <div className="flex items-start justify-between border-b px-6 py-5">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">{modalTitle}</h2>
+                <h2 className="text-2xl font-bold text-slate-900">
+                  {modalTitle}
+                </h2>
               </div>
               <button
                 onClick={() => setShowModal(false)}

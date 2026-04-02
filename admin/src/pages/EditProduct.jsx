@@ -4,6 +4,7 @@ import { backendUrl } from "../App";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const EditProduct = ({ token }) => {
   const { id } = useParams();
@@ -280,6 +281,29 @@ const EditProduct = ({ token }) => {
             Update product details, pricing, and availability
           </p>
         </div>
+
+        <AdminPageGuide
+          title="Edit Product overview"
+          overview="Edit the selected product's basic information, pricing, category, availability, and variations. Save changes to update the live catalog."
+          modalTitle="Edit Product Guide"
+          sections={[
+            {
+              heading: "Basic information",
+              content:
+                "Update the product name, description, category, price, and bestseller status.",
+            },
+            {
+              heading: "Availability settings",
+              content:
+                "Control whether the product is in stock and which days it should appear as available.",
+            },
+            {
+              heading: "Variations",
+              content:
+                "Add or edit meal sizes, sides, and wrap options for more flexible pricing.",
+            },
+          ]}
+        />
 
         <form onSubmit={onSubmitHandler} className="flex flex-col gap-6">
           {/* Basic Information Section */}

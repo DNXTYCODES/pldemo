@@ -10,6 +10,7 @@ import {
   FaTrash,
   FaInfoCircle,
 } from "react-icons/fa";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
@@ -186,6 +187,29 @@ const Orders = ({ token }) => {
             </button>
           </div>
         </div>
+
+        <AdminPageGuide
+          title="Order Management overview"
+          overview="Review every order in one place, update order and payment status, view details, and delete orders when needed."
+          modalTitle="Order Management Guide"
+          sections={[
+            {
+              heading: "Order review",
+              content:
+                "Browse active orders, expand any order to see customer details and purchased items.",
+            },
+            {
+              heading: "Status updates",
+              content:
+                "Change order progress through stages like Preparing, Ready for Pickup, Out for Delivery, Delivered, or Cancelled.",
+            },
+            {
+              heading: "Payment tracking",
+              content:
+                "Mark payments as Paid or Pending to keep your order financial status accurate.",
+            },
+          ]}
+        />
 
         {/* Empty State */}
         {orders.length === 0 ? (

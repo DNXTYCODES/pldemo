@@ -62,6 +62,29 @@ const ImageCategories = ({ token }) => {
 
   return (
     <div className="space-y-6">
+      <AdminPageGuide
+        title="Image Categories overview"
+        overview="Manage the image categories available to admins when they upload or edit images. Add new categories and review the current category list used across the site."
+        modalTitle="Image Categories Guide"
+        sections={[
+          {
+            heading: "Add categories",
+            content:
+              "Use the form to add new image categories that will appear when adding or editing images.",
+          },
+          {
+            heading: "Review current categories",
+            content:
+              "Check the existing category list to make sure your upload options are complete and accurate.",
+          },
+          {
+            heading: "Keep taxonomy consistent",
+            content:
+              "Only add categories you intend to use, so photographers and image uploads remain organized.",
+          },
+        ]}
+      />
+
       <div className="rounded-xl bg-white p-6 shadow-lg border border-gray-200">
         <h2 className="text-2xl font-semibold text-gray-900 mb-3">
           Image Categories

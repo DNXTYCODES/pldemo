@@ -3,6 +3,7 @@ import axios from "axios";
 import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const List = ({ token }) => {
   const [list, setList] = useState([]);
@@ -58,6 +59,29 @@ const List = ({ token }) => {
         </h1>
         <p className="text-gray-600">Total Products: {list.length}</p>
       </div>
+
+      <AdminPageGuide
+        title="Products List overview"
+        overview="Browse your full product catalog, search by name, edit product details, or remove products that are no longer needed."
+        modalTitle="Products List Guide"
+        sections={[
+          {
+            heading: "Browse products",
+            content:
+              "View every product in the catalog with quick access to edit and delete actions.",
+          },
+          {
+            heading: "Search and filter",
+            content:
+              "Use the search field to find products by name and focus on the ones you need to update.",
+          },
+          {
+            heading: "Manage availability",
+            content:
+              "Click Edit to adjust pricing, inventory, categories, and availability for a product.",
+          },
+        ]}
+      />
 
       {list.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">

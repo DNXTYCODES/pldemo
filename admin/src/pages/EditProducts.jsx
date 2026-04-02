@@ -3,6 +3,7 @@ import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const EditProducts = ({ token }) => {
   const [products, setProducts] = useState([]);

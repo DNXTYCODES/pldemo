@@ -579,6 +579,50 @@ const Users = ({ token }) => {
         </button>
       </div>
 
+      <AdminPageGuide
+        title="User management overview"
+        overview='Use the list below to view and manage users. Click "Edit" to update user details, upload profile pictures, or upload images on behalf of that user. You can also delete accounts, change status, and update balance and specialties.'
+        modalTitle="Admin Users Page Guide"
+        sections={[
+          {
+            heading: "Users list",
+            content:
+              "The users table shows all registered accounts. Use the search box to find a user by name or email. Click Edit to open the user profile form and update all available fields.",
+            bullets: [
+              "Update name, email, bio, location, balance, and account status.",
+              "Change expertise level, photography specialties, and languages.",
+              "Upload or replace the user's profile picture.",
+              "Upload images on behalf of the user once you are editing their profile.",
+            ],
+          },
+          {
+            heading: "Create / Edit User",
+            content:
+              "Use the top section to add a completely new user or to edit any existing user. When editing, the form pre-fills the user's data and exposes extra image upload controls so you can manage both the profile and the user's uploads from one place.",
+            bullets: [
+              "Create a user with name, email, password, bio, location, and initial balance.",
+              "Edit an existing user to change their profile information without losing their uploads or history.",
+              "Set the user's expertise level and choose photography specialties to accurately reflect their skill set.",
+              "Select spoken languages to help match the user with the right customers or content.",
+              "Update the account status to Active, Disabled, or any available state so you can block or restore access.",
+              "Upload or replace the user's profile picture for their public profile.",
+              "While editing, upload images on behalf of that user and add titles, descriptions, price, category, tags, licensing, and usage rights.",
+              "Use the same form to manage both basic profile updates and advanced upload actions in one workflow.",
+            ],
+          },
+          {
+            heading: "Pending Uploads",
+            content:
+              "Switch to the Pending Uploads tab to review images waiting for approval. You can approve or decline uploads directly from this tab.",
+          },
+          {
+            heading: "Pending Deposits",
+            content:
+              "Use the Pending Deposits tab to confirm or reject submitted deposit requests and keep the platform's balances accurate.",
+          },
+        ]}
+      />
+
       {/* Tabs */}
       <div className="flex gap-4 mb-6 border-b">
         <button
@@ -1022,40 +1066,6 @@ const Users = ({ token }) => {
             )}
           </div>
 
-          <AdminPageGuide
-            title="User management overview"
-            overview='Use the list below to view and manage users. Click "Edit" to update user details, upload profile pictures, or upload images on behalf of that user. You can also delete accounts, change status, and update balance and specialties.'
-            modalTitle="Admin Users Page Guide"
-            sections={[
-              {
-                heading: "Users list",
-                content:
-                  "The users table shows all registered accounts. Use the search box to find a user by name or email. Click Edit to open the user profile form and update all available fields.",
-                bullets: [
-                  "Update name, email, bio, location, balance, and account status.",
-                  "Change expertise level, photography specialties, and languages.",
-                  "Upload or replace the user's profile picture.",
-                  "Upload images on behalf of the user once you are editing their profile.",
-                ],
-              },
-              {
-                heading: "Create / Edit User",
-                content:
-                  "Use the top form to create a new user or edit an existing one. When editing, additional options appear for uploading profile pictures and images for that user.",
-              },
-              {
-                heading: "Pending Uploads",
-                content:
-                  "Switch to the Pending Uploads tab to review images waiting for approval. You can approve or decline uploads directly from this tab.",
-              },
-              {
-                heading: "Pending Deposits",
-                content:
-                  "Use the Pending Deposits tab to confirm or reject submitted deposit requests and keep the platform's balances accurate.",
-              },
-            ]}
-          />
-
           <div className="mb-6">
             <input
               type="text"
@@ -1334,7 +1344,6 @@ const Users = ({ token }) => {
           )}
         </div>
       )}
-
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { backendUrl } from "../App";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const ManageImages = ({ token }) => {
   const [images, setImages] = useState([]);
@@ -183,6 +184,29 @@ const ManageImages = ({ token }) => {
             Popular, Editor's Pick)
           </p>
         </div>
+
+        <AdminPageGuide
+          title="Manage Images overview"
+          overview="Review and maintain all uploaded images. Update metadata, delete undesirable images, and assign images to featured homepage sections like Trending, Popular, Editor's Pick, and Ambassador's Pick."
+          modalTitle="Manage Images Guide"
+          sections={[
+            {
+              heading: "Image management",
+              content:
+                "Use this page to review every uploaded image, edit titles and descriptions, and remove images that should not remain on the platform.",
+            },
+            {
+              heading: "Homepage section assignment",
+              content:
+                "Toggle assignments for each image to place it in promoted sections such as Trending, Popular, Editor's Pick, and Ambassador's Pick.",
+            },
+            {
+              heading: "Search and review",
+              content:
+                "Search by image title or photographer name to quickly find the image you need to update.",
+            },
+          ]}
+        />
 
         {/* Search Bar */}
         <div className="mb-6">

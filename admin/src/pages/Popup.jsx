@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { backendUrl } from "../App";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const Popup = ({ token }) => {
   const [message, setMessage] = useState("");
@@ -48,6 +49,29 @@ const Popup = ({ token }) => {
           Manage popup notifications shown to all visitors
         </p>
       </div>
+
+      <AdminPageGuide
+        title="Popup Message overview"
+        overview="Create and update the global popup message that visitors see across the site. This page lets you write a timely announcement, save it, or clear it entirely."
+        modalTitle="Popup Message Guide"
+        sections={[
+          {
+            heading: "Set the popup message",
+            content:
+              "Use the textarea to type the announcement you want every visitor to see.",
+          },
+          {
+            heading: "Save or clear",
+            content:
+              "Save changes to publish the popup immediately, or clear it to disable the announcement.",
+          },
+          {
+            heading: "Use cases",
+            content:
+              "Use this for promotions, site updates, temporary alerts, or important notices.",
+          },
+        ]}
+      />
 
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
         <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-6">

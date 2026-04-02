@@ -192,6 +192,29 @@ const MassUpload = ({ token }) => {
           </p>
         </div>
 
+        <AdminPageGuide
+          title="Mass Upload overview"
+          overview="Upload multiple images in one batch, assign each file its own metadata and uploader, and submit them all at once for faster catalog creation."
+          modalTitle="Mass Upload Guide"
+          sections={[
+            {
+              heading: "Select images",
+              content:
+                "Choose up to 10 image files at once and preview them before entering metadata.",
+            },
+            {
+              heading: "Fill metadata",
+              content:
+                "For each image, set title, description, price, category, tags, usage rights, license type, and uploader.",
+            },
+            {
+              heading: "Submit batch",
+              content:
+                "Once all uploads are complete and required fields are filled, submit the batch to upload all images together.",
+            },
+          ]}
+        />
+
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
           <label className="block text-sm font-medium text-gray-900 mb-2">
             Select images (max 10)

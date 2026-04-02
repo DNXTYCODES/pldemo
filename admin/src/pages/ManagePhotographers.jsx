@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { backendUrl } from "../App";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const ManagePhotographers = ({ token }) => {
   const [photographers, setPhotographers] = useState([]);
@@ -100,6 +101,29 @@ const ManagePhotographers = ({ token }) => {
             Select photographers to feature on the home page
           </p>
         </div>
+
+        <AdminPageGuide
+          title="Manage Photographers overview"
+          overview="Browse all photographer profiles and flag the ones you want to feature on the homepage. Use the search to find photographers by name or location and promote the top talent instantly."
+          modalTitle="Manage Photographers Guide"
+          sections={[
+            {
+              heading: "Photographer review",
+              content:
+                "See all registered photographers, review their location and image count, and decide who should be featured.",
+            },
+            {
+              heading: "Feature toggles",
+              content:
+                "Use the featured toggle to add or remove photographers from the homepage spotlight list.",
+            },
+            {
+              heading: "Search assistance",
+              content:
+                "Search by name or location to quickly find specific photographers and update their featured status.",
+            },
+          ]}
+        />
 
         {/* Search Bar */}
         <div className="mb-6">

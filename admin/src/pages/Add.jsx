@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import AdminPageGuide from "../components/AdminPageGuide";
 
 const Add = ({ token }) => {
   // Image states
@@ -208,6 +209,29 @@ const Add = ({ token }) => {
             Create a new product with images, pricing, and variations
           </p>
         </div>
+
+        <AdminPageGuide
+          title="Add Product overview"
+          overview="Use this page to create a new product listing. Upload product images, choose category and availability, set pricing, and define optional meal variations before submitting."
+          modalTitle="Add Product Guide"
+          sections={[
+            {
+              heading: "Product details",
+              content:
+                "Enter the product name, description, base price, category, and stock status.",
+            },
+            {
+              heading: "Images and availability",
+              content:
+                "Upload up to four product images and choose the days the product should be available.",
+            },
+            {
+              heading: "Optional variations",
+              content:
+                "Add meal variation options, side choices, and size pricing when needed.",
+            },
+          ]}
+        />
 
         <form onSubmit={onSubmitHandler} className="flex flex-col gap-6">
           {/* Image Upload Section */}
