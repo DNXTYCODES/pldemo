@@ -26,9 +26,9 @@ export const getImageCategories = async (req, res) => {
       ...DEFAULT_IMAGE_CATEGORIES,
       ...existingCategoryNames.filter(
         (name) =>
-          !DEFAULT_IMAGE_CATEGORIES
-            .map(normalizeCategoryName)
-            .includes(normalizeCategoryName(name)),
+          !DEFAULT_IMAGE_CATEGORIES.map(normalizeCategoryName).includes(
+            normalizeCategoryName(name),
+          ),
       ),
     ];
 
