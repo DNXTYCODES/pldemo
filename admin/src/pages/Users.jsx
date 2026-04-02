@@ -62,6 +62,9 @@ const Users = ({ token }) => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [photographySpecialties, setPhotographySpecialties] = useState(
+    PHOTOGRAPHY_SPECIALTIES,
+  );
 
   // Pending Uploads Management
   const [pendingUploads, setPendingUploads] = useState([]);
@@ -82,6 +85,7 @@ const Users = ({ token }) => {
     fetchUsers();
     fetchPendingUploads();
     fetchPendingDeposits();
+    fetchImageCategories();
   }, []);
 
   const fetchUsers = async () => {
@@ -200,6 +204,21 @@ const Users = ({ token }) => {
       console.error("Error fetching pending deposits:", error);
     } finally {
       setLoadingDeposits(false);
+    }
+  };
+
+  const fetchImageCategories = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/categories/image`);
+      if (
+        response.data.success &&
+        Array.isArray(response.data.categories) &&
+        response.data.categories.length > 0
+      ) {
+        setPhotographySpecialties(response.data.categories);
+      }
+    } catch (error) {
+      console.error("Error fetching image categories:", error);
     }
   };
 
@@ -751,7 +770,7 @@ const Users = ({ token }) => {
                   Photography Specialties
                 </label>
                 <div className="grid grid-cols-5 gap-2">
-                  {PHOTOGRAPHY_SPECIALTIES.map((specialty) => (
+                  {photographySpecialties.map((specialty) => (
                     <label key={specialty} className="flex items-center">
                       <input
                         type="checkbox"
@@ -913,7 +932,7 @@ const Users = ({ token }) => {
                         required
                       >
                         <option value="">Select category</option>
-                        {PHOTOGRAPHY_SPECIALTIES.map((cat) => (
+                        {photographySpecialties.map((cat) => (
                           <option key={cat} value={cat}>
                             {cat}
                           </option>
