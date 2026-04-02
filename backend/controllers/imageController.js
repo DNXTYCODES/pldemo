@@ -25,7 +25,7 @@ const getAllowedImageCategories = async () => {
   const categories = await categoryModel
     .find({ type: "image" })
     .sort({ name: 1 });
-  
+
   const existingCategoryNames = categories.map((item) => item.name);
   const mergedCategories = [
     ...DEFAULT_IMAGE_CATEGORIES,
@@ -36,8 +36,10 @@ const getAllowedImageCategories = async () => {
         ),
     ),
   ];
-  
-  return mergedCategories.length > 0 ? mergedCategories : DEFAULT_IMAGE_CATEGORIES;
+
+  return mergedCategories.length > 0
+    ? mergedCategories
+    : DEFAULT_IMAGE_CATEGORIES;
 };
 
 /**
