@@ -1557,7 +1557,7 @@ export const getAllImagesForAdmin = async (req, res) => {
     const images = await imageModel
       .find({ status: "active" })
       .select(
-        "title imageUrl isPopular isEditorsChoice isAmbassadorsPick isTrending priceEth priceUsd sellerId",
+        "title imageUrl isPopular isEditorsChoice isAmbassadorsPick isTrending priceEth priceUsd sellerId category description tags usageRights licenseType",
       )
       .populate("sellerId", "name email")
       .sort({ createdAt: -1 });

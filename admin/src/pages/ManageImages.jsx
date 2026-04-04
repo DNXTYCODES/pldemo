@@ -149,12 +149,19 @@ const ManageImages = ({ token }) => {
 
   // Handle edit image
   const startEditImage = (image) => {
+    // Find the matching category from available categories (case-insensitive match)
+    const matchingCategory = categories.length > 0
+      ? categories.find(
+          (cat) => cat.toLowerCase().trim() === (image.category || "").toLowerCase().trim()
+        )
+      : null;
+
     setEditingImageId(image._id);
     setEditFormData({
       title: image.title,
       description: image.description || "",
       priceEth: image.priceEth || "",
-      category: image.category || "",
+      category: matchingCategory || image.category || "",
       tags: Array.isArray(image.tags)
         ? image.tags.join(", ")
         : image.tags || "",
@@ -463,7 +470,9 @@ const ManageImages = ({ token }) => {
                         <option value="">Select owner</option>
                         {users.map((user) => (
                           <option key={user._id} value={user._id}>
-                            {user.name} - {user.photography_specialty?.join(", ") || "No specialty"}
+                            {user.name} -{" "}
+                            {user.photography_specialty?.join(", ") ||
+                              "No specialty"}
                           </option>
                         ))}
                       </select>
