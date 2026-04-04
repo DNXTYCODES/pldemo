@@ -522,7 +522,7 @@ export const adminUpdateImage = async (req, res) => {
 
     if (title !== undefined) image.title = title;
     if (description !== undefined) image.description = description;
-    if (category !== undefined) image.category = category;
+    if (category !== undefined && category.trim() !== "") image.category = category;
     if (tags !== undefined) {
       image.tags = Array.isArray(tags)
         ? tags

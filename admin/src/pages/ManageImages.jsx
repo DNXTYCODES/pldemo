@@ -150,11 +150,14 @@ const ManageImages = ({ token }) => {
   // Handle edit image
   const startEditImage = (image) => {
     // Find the matching category from available categories (case-insensitive match)
-    const matchingCategory = categories.length > 0
-      ? categories.find(
-          (cat) => cat.toLowerCase().trim() === (image.category || "").toLowerCase().trim()
-        )
-      : null;
+    const matchingCategory =
+      categories.length > 0
+        ? categories.find(
+            (cat) =>
+              cat.toLowerCase().trim() ===
+              (image.category || "").toLowerCase().trim(),
+          )
+        : null;
 
     setEditingImageId(image._id);
     setEditFormData({
