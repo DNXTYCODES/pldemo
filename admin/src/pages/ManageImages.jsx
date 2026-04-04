@@ -155,7 +155,9 @@ const ManageImages = ({ token }) => {
       description: image.description || "",
       priceEth: image.priceEth || "",
       category: image.category || "",
-      tags: Array.isArray(image.tags) ? image.tags.join(", ") : image.tags || "",
+      tags: Array.isArray(image.tags)
+        ? image.tags.join(", ")
+        : image.tags || "",
       usageRights: image.usageRights || "personal_use",
       licenseType: image.licenseType || "non-exclusive",
       sellerId: image.sellerId?._id || image.sellerId || "",
@@ -183,7 +185,9 @@ const ManageImages = ({ token }) => {
       );
 
       if (response.data.success) {
-        const newOwner = users.find((user) => user._id === editFormData.sellerId);
+        const newOwner = users.find(
+          (user) => user._id === editFormData.sellerId,
+        );
         setImages((prevImages) =>
           prevImages.map((img) =>
             img._id === imageId
