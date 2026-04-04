@@ -165,6 +165,24 @@ const ManageImages = ({ token }) => {
   };
 
   const handleSaveEdit = async (imageId) => {
+    // Validate required fields
+    if (!editFormData.title?.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+    if (!editFormData.priceEth?.trim()) {
+      toast.error("Price is required");
+      return;
+    }
+    if (!editFormData.category?.trim()) {
+      toast.error("Category is required");
+      return;
+    }
+    if (!editFormData.sellerId?.trim()) {
+      toast.error("Owner is required");
+      return;
+    }
+
     try {
       setSavingImageId(imageId);
       const response = await axios.put(
@@ -209,10 +227,12 @@ const ManageImages = ({ token }) => {
         );
         setEditingImageId(null);
         setError("");
+        toast.success("Image updated successfully");
       }
     } catch (err) {
       console.error("Error updating image:", err);
       setError("Failed to update image");
+      toast.error("Failed to update image");
     } finally {
       setSavingImageId(null);
     }
@@ -443,7 +463,7 @@ const ManageImages = ({ token }) => {
                         <option value="">Select owner</option>
                         {users.map((user) => (
                           <option key={user._id} value={user._id}>
-                            {user.name} ({user.email})
+                            {user.name} - {user.photography_specialty?.join(", ") || "No specialty"}
                           </option>
                         ))}
                       </select>
