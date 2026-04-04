@@ -11,9 +11,17 @@ const ManageImages = ({ token }) => {
   const [savingImageId, setSavingImageId] = useState(null);
   const [deletingImageId, setDeletingImageId] = useState(null);
   const [editingImageId, setEditingImageId] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [editFormData, setEditFormData] = useState({
     title: "",
     description: "",
+    priceEth: "",
+    category: "",
+    tags: "",
+    usageRights: "personal_use",
+    licenseType: "non-exclusive",
+    sellerId: "",
   });
 
   // Fetch all images for admin
@@ -36,6 +44,36 @@ const ManageImages = ({ token }) => {
 
   useEffect(() => {
     fetchImagesForAdmin();
+
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${backendUrl}/api/users/admin/all-users`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        if (response.data.success) {
+          setUsers(response.data.users || []);
+        }
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/api/categories/image`);
+        if (response.data.success) {
+          setCategories(response.data.categories || []);
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+
+    fetchUsers();
+    fetchCategories();
   }, [token]);
 
   // Handle section toggle
@@ -89,7 +127,7 @@ const ManageImages = ({ token }) => {
     try {
       setDeletingImageId(imageId);
       const response = await axios.delete(
-        `${backendUrl}/api/images/${imageId}`,
+        `${backendUrl}/api/images/admin/${imageId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -115,6 +153,12 @@ const ManageImages = ({ token }) => {
     setEditFormData({
       title: image.title,
       description: image.description || "",
+      priceEth: image.priceEth || "",
+      category: image.category || "",
+      tags: Array.isArray(image.tags) ? image.tags.join(", ") : image.tags || "",
+      usageRights: image.usageRights || "personal_use",
+      licenseType: image.licenseType || "non-exclusive",
+      sellerId: image.sellerId?._id || image.sellerId || "",
     });
   };
 
@@ -122,10 +166,16 @@ const ManageImages = ({ token }) => {
     try {
       setSavingImageId(imageId);
       const response = await axios.put(
-        `${backendUrl}/api/images/${imageId}`,
+        `${backendUrl}/api/images/admin/${imageId}`,
         {
           title: editFormData.title,
           description: editFormData.description,
+          priceEth: editFormData.priceEth,
+          category: editFormData.category,
+          tags: editFormData.tags,
+          usageRights: editFormData.usageRights,
+          licenseType: editFormData.licenseType,
+          sellerId: editFormData.sellerId,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -133,6 +183,7 @@ const ManageImages = ({ token }) => {
       );
 
       if (response.data.success) {
+        const newOwner = users.find((user) => user._id === editFormData.sellerId);
         setImages((prevImages) =>
           prevImages.map((img) =>
             img._id === imageId
@@ -140,6 +191,14 @@ const ManageImages = ({ token }) => {
                   ...img,
                   title: editFormData.title,
                   description: editFormData.description,
+                  priceEth: editFormData.priceEth,
+                  category: editFormData.category,
+                  tags: editFormData.tags
+                    ? editFormData.tags.split(",").map((tag) => tag.trim())
+                    : [],
+                  usageRights: editFormData.usageRights,
+                  licenseType: editFormData.licenseType,
+                  sellerId: newOwner || img.sellerId,
                 }
               : img,
           ),
@@ -275,6 +334,117 @@ const ManageImages = ({ token }) => {
                       placeholder="Description"
                       rows="2"
                     />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="block text-sm text-gray-700">
+                        Price (ETH)
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={editFormData.priceEth}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              priceEth: e.target.value,
+                            })
+                          }
+                          className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        />
+                      </label>
+                      <label className="block text-sm text-gray-700">
+                        Category
+                        <select
+                          value={editFormData.category}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              category: e.target.value,
+                            })
+                          }
+                          className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        >
+                          <option value="">Select category</option>
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+
+                    <label className="block text-sm text-gray-700">
+                      Tags (comma separated)
+                      <input
+                        type="text"
+                        value={editFormData.tags}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            tags: e.target.value,
+                          })
+                        }
+                        className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      />
+                    </label>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="block text-sm text-gray-700">
+                        Usage Rights
+                        <select
+                          value={editFormData.usageRights}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              usageRights: e.target.value,
+                            })
+                          }
+                          className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        >
+                          <option value="personal_use">Personal Use</option>
+                          <option value="commercial_use">Commercial Use</option>
+                          <option value="both">Personal + Commercial</option>
+                        </select>
+                      </label>
+
+                      <label className="block text-sm text-gray-700">
+                        License Type
+                        <select
+                          value={editFormData.licenseType}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              licenseType: e.target.value,
+                            })
+                          }
+                          className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        >
+                          <option value="non-exclusive">Non-exclusive</option>
+                          <option value="exclusive">Exclusive</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <label className="block text-sm text-gray-700">
+                      Owner
+                      <select
+                        value={editFormData.sellerId}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            sellerId: e.target.value,
+                          })
+                        }
+                        className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      >
+                        <option value="">Select owner</option>
+                        {users.map((user) => (
+                          <option key={user._id} value={user._id}>
+                            {user.name} ({user.email})
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleSaveEdit(image._id)}

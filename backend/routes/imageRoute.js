@@ -22,8 +22,11 @@ import {
   updateImageSections,
   getImagesBySection,
   addFakeViews,
+  adminUpdateImage,
+  adminDeleteImage,
 } from "../controllers/imageController.js";
 import auth from "../middleware/auth.js";
+import adminAuth from "../middleware/adminAuth.js";
 import upload from "../middleware/multer.js";
 
 const imageRouter = express.Router();
@@ -58,6 +61,8 @@ imageRouter.post(
   upload.array("images", 10),
   adminMassUploadImages,
 ); // Admin bulk upload images for users
+imageRouter.put("/admin/:imageId", adminAuth, adminUpdateImage); // Admin update image metadata
+imageRouter.delete("/admin/:imageId", adminAuth, adminDeleteImage); // Admin delete image
 imageRouter.get("/admin/pending", auth, getPendingUploads); // Get all pending uploads (admin)
 imageRouter.get("/admin/all", auth, getAllImagesForAdmin); // Get all images for admin management
 imageRouter.post("/:imageId/approve", auth, approveImageUpload); // Approve pending upload (admin)

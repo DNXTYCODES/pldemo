@@ -457,6 +457,139 @@ export const updateImagePrice = async (req, res) => {
   }
 };
 
+export const adminUpdateImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const {
+      title,
+      description,
+      category,
+      tags,
+      usageRights,
+      licenseType,
+      priceEth,
+      sellerId,
+    } = req.body;
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    const ALLOWED_CATEGORIES = await getAllowedImageCategories();
+    if (category && !ALLOWED_CATEGORIES.includes(category)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Allowed categories: ${ALLOWED_CATEGORIES.join(", ")}`,
+      });
+    }
+
+    if (priceEth !== undefined) {
+      const price = parseFloat(priceEth);
+      if (Number.isNaN(price) || price <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid price",
+        });
+      }
+      const ethPrice = await getCurrentEthPrice();
+      image.priceEth = price.toString();
+      image.priceUsd = (price * ethPrice).toFixed(2);
+      image.ethPriceAtListing = ethPrice.toString();
+    }
+
+    if (sellerId && sellerId !== image.sellerId.toString()) {
+      const newOwner = await userModel.findById(sellerId);
+      if (!newOwner) {
+        return res.status(404).json({
+          success: false,
+          message: "New owner not found",
+        });
+      }
+
+      const previousOwnerId = image.sellerId.toString();
+      await userModel.findByIdAndUpdate(previousOwnerId, {
+        $pull: { ownedImages: imageId },
+      });
+      await userModel.findByIdAndUpdate(sellerId, {
+        $addToSet: { ownedImages: imageId },
+      });
+      image.sellerId = sellerId;
+    }
+
+    if (title !== undefined) image.title = title;
+    if (description !== undefined) image.description = description;
+    if (category !== undefined) image.category = category;
+    if (tags !== undefined) {
+      image.tags = Array.isArray(tags)
+        ? tags
+        : String(tags)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+    }
+    if (usageRights !== undefined) image.usageRights = usageRights;
+    if (licenseType !== undefined) image.licenseType = licenseType;
+
+    await image.save();
+
+    res.json({
+      success: true,
+      message: "Image updated successfully",
+      image,
+    });
+  } catch (error) {
+    console.error("Error updating image metadata:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating image metadata",
+      error: error.message,
+    });
+  }
+};
+
+export const adminDeleteImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    const image = await imageModel.findById(imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.imageUrl && image.imageUrl.includes("cloudinary")) {
+      try {
+        // Extract public_id if needed and delete from Cloudinary.
+      } catch (err) {
+        console.log("Could not delete from Cloudinary:", err);
+      }
+    }
+
+    await imageModel.findByIdAndDelete(imageId);
+    await userModel.findByIdAndUpdate(image.sellerId, {
+      $pull: { ownedImages: imageId, favorites: imageId },
+    });
+
+    res.json({
+      success: true,
+      message: "Image deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting image",
+      error: error.message,
+    });
+  }
+};
+
 /**
  * Toggle image favorite status
  */

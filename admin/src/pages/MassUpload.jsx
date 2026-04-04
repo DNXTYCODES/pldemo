@@ -97,7 +97,7 @@ const MassUpload = ({ token }) => {
       tags: "",
       usageRights: "personal_use",
       licenseType: "non-exclusive",
-      userId: users[0]?._id || "",
+      userId: "",
     }));
     setUploads(mapped);
   };
