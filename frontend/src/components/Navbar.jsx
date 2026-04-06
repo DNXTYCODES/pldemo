@@ -69,11 +69,8 @@ const Navbar = () => {
   }, [token, backendUrl]);
 
   const searchTypeOptions = [
-    { value: "keywords", label: "Keyword" },
-    { value: "artistname", label: "Artist" },
-    { value: "keywordsartistname", label: "Keyword + Artist" },
-    { value: "title", label: "Title" },
-    { value: "titleartistname", label: "Title + Artist" },
+    { value: "general", label: "Keyword" },
+    { value: "artist", label: "Artist" },
   ];
 
   const handleSearchTypeSelect = (type) => {

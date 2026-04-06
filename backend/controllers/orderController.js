@@ -1,15 +1,15 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
-import { default as Paystack } from '@paystack/paystack-sdk';
-import Flutterwave from 'flutterwave-node-v3';
+// import { default as Paystack } from '@paystack/paystack-sdk';
+// import Flutterwave from 'flutterwave-node-v3';
 import axios from 'axios';
 
 // Initialize payment gateways
-const paystack = new Paystack(process.env.PAYSTACK_SECRET_KEY);
-const flw = new Flutterwave(
-  process.env.FLW_PUBLIC_KEY,
-  process.env.FLW_SECRET_KEY
-);
+// const paystack = new Paystack(process.env.PAYSTACK_SECRET_KEY);
+// const flw = new Flutterwave(
+//   process.env.FLW_PUBLIC_KEY,
+//   process.env.FLW_SECRET_KEY
+// );
 
 // Helper function to create order
 const createOrder = async (userId, items, amount, address, paymentMethod, currency = 'EUR') => {
@@ -247,124 +247,124 @@ const verifyPaystack = async (req, res) => {
 };
 
 // Flutterwave Payment
-const placeOrderFlutterwave = async (req, res) => {
-  let newOrder;
-  try {
-    const { userId, items, amount, address } = req.body;
-    const { origin } = req.headers;
+// const placeOrderFlutterwave = async (req, res) => {
+//   let newOrder;
+//   try {
+//     const { userId, items, amount, address } = req.body;
+//     const { origin } = req.headers;
 
-    const newOrder = await createOrder(
-      userId,
-      items,
-      amount,
-      address,
-      "Flutterwave"
-    );
+//     const newOrder = await createOrder(
+//       userId,
+//       items,
+//       amount,
+//       address,
+//       "Flutterwave"
+//     );
 
-    const payload = {
-      tx_ref: newOrder._id.toString(),
-      amount: amount,
-      currency: 'EUR', // Flutterwave supports EUR
-      redirect_url: `${origin}/verify?orderId=${newOrder._id}&gateway=flutterwave`,
-      customer: {
-        email: address.email,
-        phonenumber: address.phone,
-        name: `${address.firstName} ${address.lastName}`
-      },
-      customizations: {
-        title: "Order Payment",
-        description: "Payment for items in cart"
-      },
-      meta: {
-        user_id: userId
-      }
-    };
+//     const payload = {
+//       tx_ref: newOrder._id.toString(),
+//       amount: amount,
+//       currency: 'EUR', // Flutterwave supports EUR
+//       redirect_url: `${origin}/verify?orderId=${newOrder._id}&gateway=flutterwave`,
+//       customer: {
+//         email: address.email,
+//         phonenumber: address.phone,
+//         name: `${address.firstName} ${address.lastName}`
+//       },
+//       customizations: {
+//         title: "Order Payment",
+//         description: "Payment for items in cart"
+//       },
+//       meta: {
+//         user_id: userId
+//       }
+//     };
 
-    const response = await flw.PaymentLink.create(payload);
+//     const response = await flw.PaymentLink.create(payload);
     
-    // Check Flutterwave response
-    if (response.status !== 'success' || !response.data.link) {
-      throw new Error(response.message || 'Failed to create payment link');
-    }
+//     // Check Flutterwave response
+//     if (response.status !== 'success' || !response.data.link) {
+//       throw new Error(response.message || 'Failed to create payment link');
+//     }
     
-    res.json({ success: true, link: response.data.link });
+//     res.json({ success: true, link: response.data.link });
 
-  } catch (error) {
-    console.log('Flutterwave order error:', error);
+//   } catch (error) {
+//     console.log('Flutterwave order error:', error);
     
-    // Attempt to delete order on failure
-    if (newOrder) {
-      try {
-        await orderModel.findByIdAndDelete(newOrder._id);
-      } catch (deleteError) {
-        console.error('Failed to delete order:', deleteError);
-      }
-    }
+//     // Attempt to delete order on failure
+//     if (newOrder) {
+//       try {
+//         await orderModel.findByIdAndDelete(newOrder._id);
+//       } catch (deleteError) {
+//         console.error('Failed to delete order:', deleteError);
+//       }
+//     }
     
-    res.json({ success: false, message: error.message });
-  }
-};
+//     res.json({ success: false, message: error.message });
+//   }
+// };
 
 // Verify Flutterwave
-const verifyFlutterwave = async (req, res) => {
-  const { transaction_id, orderId } = req.body;
+// const verifyFlutterwave = async (req, res) => {
+//   const { transaction_id, orderId } = req.body;
 
-  try {
-    console.log('Verifying Flutterwave payment:', { transaction_id, orderId });
+//   try {
+//     console.log('Verifying Flutterwave payment:', { transaction_id, orderId });
     
-    if (!transaction_id || !orderId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Missing transaction_id or orderId' 
-      });
-    }
+//     if (!transaction_id || !orderId) {
+//       return res.status(400).json({ 
+//         success: false, 
+//         message: 'Missing transaction_id or orderId' 
+//       });
+//     }
 
-    const response = await flw.Transaction.verify({ id: transaction_id });
+//     const response = await flw.Transaction.verify({ id: transaction_id });
     
-    if (response.data.status === 'successful') {
-      const updatedOrder = await orderModel.findByIdAndUpdate(
-        orderId, 
-        { 
-          payment: true,
-          status: 'Order Received'
-        },
-        { new: true }
-      );
+//     if (response.data.status === 'successful') {
+//       const updatedOrder = await orderModel.findByIdAndUpdate(
+//         orderId, 
+//         { 
+//           payment: true,
+//           status: 'Order Received'
+//         },
+//         { new: true }
+//       );
       
-      // Get user ID from order to clear cart
-      if (updatedOrder && updatedOrder.userId) {
-        await userModel.findByIdAndUpdate(updatedOrder.userId, { cartData: {} });
-      }
+//       // Get user ID from order to clear cart
+//       if (updatedOrder && updatedOrder.userId) {
+//         await userModel.findByIdAndUpdate(updatedOrder.userId, { cartData: {} });
+//       }
       
-      res.json({ 
-        success: true, 
-        message: "Payment Successful",
-        order: updatedOrder
-      });
-    } else {
-      // Delete order if payment failed
-      await orderModel.findByIdAndDelete(orderId);
-      res.json({ 
-        success: false, 
-        message: `Payment Failed: ${response.data.processor_response || 'Unknown error'}` 
-      });
-    }
-  } catch (error) {
-    console.log('Flutterwave verification error:', error);
+//       res.json({ 
+//         success: true, 
+//         message: "Payment Successful",
+//         order: updatedOrder
+//       });
+//     } else {
+//       // Delete order if payment failed
+//       await orderModel.findByIdAndDelete(orderId);
+//       res.json({ 
+//         success: false, 
+//         message: `Payment Failed: ${response.data.processor_response || 'Unknown error'}` 
+//       });
+//     }
+//   } catch (error) {
+//     console.log('Flutterwave verification error:', error);
     
-    // Attempt to delete order on verification failure
-    try {
-      await orderModel.findByIdAndDelete(orderId);
-    } catch (deleteError) {
-      console.error('Failed to delete order:', deleteError);
-    }
+//     // Attempt to delete order on verification failure
+//     try {
+//       await orderModel.findByIdAndDelete(orderId);
+//     } catch (deleteError) {
+//       console.error('Failed to delete order:', deleteError);
+//     }
     
-    res.status(500).json({ 
-      success: false, 
-      message: error.message || 'Payment verification error' 
-    });
-  }
-};
+//     res.status(500).json({ 
+//       success: false, 
+//       message: error.message || 'Payment verification error' 
+//     });
+//   }
+// };
 
 // All Orders data for Admin Panel
 const allOrders = async (req, res) => {
@@ -493,10 +493,10 @@ const deleteOrder = async (req, res) => {
 
 export {
   placeOrder,
-  placeOrderPaystack,
-  placeOrderFlutterwave,
-  verifyPaystack,
-  verifyFlutterwave,
+  // placeOrderPaystack,
+  // placeOrderFlutterwave,
+  // verifyPaystack,
+  // verifyFlutterwave,
   allOrders,
   userOrders,
   updateStatus,

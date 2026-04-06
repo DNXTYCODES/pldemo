@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFormattedPrice } from "../utils/ethPrice";
 import { fetchImageCategories } from "../utils/categoryService";
 
@@ -9,6 +9,7 @@ const PAGE_SIZE = 20;
 const Explore = () => {
   const { backendUrl, currencyPreference, ethPrice } = useContext(ShopContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,20 @@ const Explore = () => {
     loadCategories();
   }, [backendUrl]);
 
+  // Handle URL parameters for search
+  useEffect(() => {
+    const searchParam = searchParams.get("search");
+    const typeParam = searchParams.get("type");
+    const categoryParam = searchParams.get("category");
+
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);
@@ -47,6 +62,14 @@ const Explore = () => {
 
         if (searchQuery.trim()) {
           url += `&query=${encodeURIComponent(searchQuery.trim())}`;
+          // Add search type based on URL parameter
+          const typeParam = searchParams.get("type");
+          if (typeParam) {
+            url += `&type=${encodeURIComponent(typeParam)}`;
+          } else {
+            // Default to general search
+            url += `&type=general`;
+          }
         }
         if (selectedCategory !== "all") {
           url += `&category=${encodeURIComponent(selectedCategory)}`;
@@ -111,7 +134,7 @@ const Explore = () => {
     };
 
     fetchImages();
-  }, [backendUrl, searchQuery, selectedCategory, currentPage, sortBy]);
+  }, [backendUrl, searchQuery, selectedCategory, currentPage, sortBy, searchParams]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -127,7 +150,7 @@ const Explore = () => {
           </h1>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center">
             {/* Search */}
             <input
               type="text"
@@ -141,7 +164,7 @@ const Explore = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 min-w-[200px]"
+              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 sm:min-w-[200px]"
             >
               {dynamicCategories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -154,7 +177,7 @@ const Explore = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 min-w-[160px]"
+              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 sm:min-w-[160px]"
             >
               <option value="latest">Latest</option>
               <option value="trending">Trending</option>

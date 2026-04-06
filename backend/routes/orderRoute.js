@@ -1,14 +1,14 @@
 import express from 'express'
 import {
   placeOrder,
-  placeOrderPaystack,
-  placeOrderFlutterwave,
+  // placeOrderPaystack,
+  // placeOrderFlutterwave,
   allOrders,
   userOrders,
   updateStatus,
   updatePaymentStatus, // Import new function
-  verifyPaystack,
-  verifyFlutterwave,
+  // verifyPaystack,
+  // verifyFlutterwave,
   deleteOrder
 } from '../controllers/orderController.js'
 import adminAuth  from '../middleware/adminAuth.js'
@@ -25,16 +25,16 @@ orderRouter.post('/payment-status', adminAuth, updatePaymentStatus) // Add this 
 
 // Payment Features
 orderRouter.post('/place', authUser, placeOrder)
-orderRouter.post('/paystack', authUser, paystackDebug, placeOrderPaystack)
-orderRouter.post('/flutterwave', authUser, placeOrderFlutterwave)
+// orderRouter.post('/paystack', authUser, paystackDebug, placeOrderPaystack)
+// orderRouter.post('/flutterwave', authUser, placeOrderFlutterwave)
 
 // User Feature 
 orderRouter.post('/userorders', authUser, userOrders)
 
 // Verify payment
 // orderRouter.post('/verifyPaystack', authUser, paystackDebug, verifyPaystack)
-orderRouter.post('/verifyPaystack', authUser, verifyPaystack)
-orderRouter.post('/verifyFlutterwave', authUser, verifyFlutterwave)
+// orderRouter.post('/verifyPaystack', authUser, verifyPaystack)
+// orderRouter.post('/verifyFlutterwave', authUser, verifyFlutterwave)
 
 // Delete order
 orderRouter.delete('/:orderId', authUser, deleteOrder)

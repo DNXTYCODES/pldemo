@@ -712,16 +712,35 @@ export const searchImages = async (req, res) => {
       sellerId,
       limit = 20,
       skip = 0,
+      type = "general", // general, artist
     } = req.query;
 
     let searchQuery = { status: "active" };
 
     if (query) {
-      searchQuery.$or = [
-        { title: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-        { tags: { $in: [new RegExp(query, "i")] } },
-      ];
+      if (type === "artist") {
+        // Search only by artist/photographer name
+        const users = await userModel.find({
+          name: { $regex: query, $options: "i" }
+        }).select("_id");
+
+        const userIds = users.map(user => user._id);
+        searchQuery.sellerId = { $in: userIds };
+      } else {
+        // General search: artist, keyword (title, description, tags)
+        const users = await userModel.find({
+          name: { $regex: query, $options: "i" }
+        }).select("_id");
+
+        const userIds = users.map(user => user._id);
+
+        searchQuery.$or = [
+          { title: { $regex: query, $options: "i" } },
+          { description: { $regex: query, $options: "i" } },
+          { tags: { $in: [new RegExp(query, "i")] } },
+          { sellerId: { $in: userIds } },
+        ];
+      }
     }
 
     if (category) {

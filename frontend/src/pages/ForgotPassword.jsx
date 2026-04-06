@@ -41,7 +41,7 @@ const ForgotPassword = () => {
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-2">
-            PhotoTrade
+            Peak Lens
           </h1>
           <p className="text-gray-400">Recover your account access</p>
         </div>
