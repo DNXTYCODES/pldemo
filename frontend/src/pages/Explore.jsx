@@ -174,12 +174,6 @@ const Explore = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
               <div className="text-sm text-gray-600">
                 Page <span className="font-semibold">{currentPage}</span>
-                {totalPages > 1 && (
-                  <span>
-                    {" "}
-                    of <span className="font-semibold">{totalPages}</span>
-                  </span>
-                )}
               </div>
               <div className="flex gap-2">
                 <button

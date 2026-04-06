@@ -32,18 +32,22 @@ const Categories = () => {
             .sort()
             .map((categoryName) => ({
               name: categoryName,
-              count: data.images.filter((img) => img.category === categoryName)
-                .length,
             }));
 
           setCategories(uniqueCategories);
-          // Fetch images for each category
-          uniqueCategories.forEach((category) => {
-            fetchCategoryImages(category.name);
-          });
+
+          // Fetch images for all categories and wait for completion
+          const fetchPromises = uniqueCategories.map((category) =>
+            fetchCategoryImages(category.name),
+          );
+          await Promise.all(fetchPromises);
+          setLoading(false);
+        } else {
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setLoading(false);
       }
     };
     fetchCategories();
@@ -53,7 +57,7 @@ const Categories = () => {
   const fetchCategoryImages = async (categoryName) => {
     try {
       const response = await fetch(
-        `${backendUrl}/api/images/search?category=${categoryName}&limit=100`,
+        `${backendUrl}/api/images/search?category=${encodeURIComponent(categoryName.toLowerCase())}&limit=100`,
       );
       const data = await response.json();
       if (data.success && data.images && data.images.length > 0) {
@@ -64,13 +68,24 @@ const Categories = () => {
           ...prev,
           [categoryName]: randomImage,
         }));
+      } else {
+        // If no images found with lowercase, try exact match
+        const response2 = await fetch(
+          `${backendUrl}/api/images/search?category=${encodeURIComponent(categoryName)}&limit=100`,
+        );
+        const data2 = await response2.json();
+        if (data2.success && data2.images && data2.images.length > 0) {
+          const randomImage =
+            data2.images[Math.floor(Math.random() * data2.images.length)];
+          setCategoryImages((prev) => ({
+            ...prev,
+            [categoryName]: randomImage,
+          }));
+        }
       }
     } catch (error) {
       console.error(`Error fetching images for ${categoryName}:`, error);
     }
-
-    // Mark loading as complete once all categories are processed
-    setLoading(false);
   };
 
   const handleViewMore = (categoryName) => {
@@ -149,9 +164,6 @@ const Categories = () => {
                   <h3 className="text-white text-lg sm:text-xl font-bold capitalize">
                     {category.name}
                   </h3>
-                  <p className="text-amber-300 text-sm font-medium">
-                    {category.count} {category.count === 1 ? "photo" : "photos"}
-                  </p>
                 </div>
 
                 {/* Bottom: View More Button */}
