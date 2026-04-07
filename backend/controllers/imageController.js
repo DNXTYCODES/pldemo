@@ -720,19 +720,23 @@ export const searchImages = async (req, res) => {
     if (query) {
       if (type === "artist") {
         // Search only by artist/photographer name
-        const users = await userModel.find({
-          name: { $regex: query, $options: "i" }
-        }).select("_id");
+        const users = await userModel
+          .find({
+            name: { $regex: query, $options: "i" },
+          })
+          .select("_id");
 
-        const userIds = users.map(user => user._id);
+        const userIds = users.map((user) => user._id);
         searchQuery.sellerId = { $in: userIds };
       } else {
         // General search: artist, keyword (title, description, tags)
-        const users = await userModel.find({
-          name: { $regex: query, $options: "i" }
-        }).select("_id");
+        const users = await userModel
+          .find({
+            name: { $regex: query, $options: "i" },
+          })
+          .select("_id");
 
-        const userIds = users.map(user => user._id);
+        const userIds = users.map((user) => user._id);
 
         searchQuery.$or = [
           { title: { $regex: query, $options: "i" } },

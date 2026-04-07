@@ -134,7 +134,14 @@ const Explore = () => {
     };
 
     fetchImages();
-  }, [backendUrl, searchQuery, selectedCategory, currentPage, sortBy, searchParams]);
+  }, [
+    backendUrl,
+    searchQuery,
+    selectedCategory,
+    currentPage,
+    sortBy,
+    searchParams,
+  ]);
 
   useEffect(() => {
     setCurrentPage(1);
