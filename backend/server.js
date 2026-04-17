@@ -44,4 +44,13 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
+// Health check endpoint for uptime/ping-based keepalive
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
+});
+
 app.listen(port, () => console.log("Server started on PORT : " + port));
