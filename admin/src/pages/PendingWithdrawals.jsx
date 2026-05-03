@@ -27,11 +27,14 @@ const PendingWithdrawals = ({ token }) => {
   const confirm = async (id) => {
     const notes = prompt("Admin notes (optional):");
     try {
-      const resp = await fetch(backendUrl + "/api/withdrawal/admin/confirm/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: token },
-        body: JSON.stringify({ adminNotes: notes }),
-      });
+      const resp = await fetch(
+        backendUrl + "/api/withdrawal/admin/confirm/" + id,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ adminNotes: notes }),
+        },
+      );
       const data = await resp.json();
       if (data.success) fetchWithdrawals();
       else alert(data.message || "Failed");
@@ -45,11 +48,14 @@ const PendingWithdrawals = ({ token }) => {
     const reason = prompt("Reason for rejection:");
     if (!reason) return;
     try {
-      const resp = await fetch(backendUrl + "/api/withdrawal/admin/reject/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: token },
-        body: JSON.stringify({ reason }),
-      });
+      const resp = await fetch(
+        backendUrl + "/api/withdrawal/admin/reject/" + id,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ reason }),
+        },
+      );
       const data = await resp.json();
       if (data.success) fetchWithdrawals();
       else alert(data.message || "Failed");
@@ -72,14 +78,34 @@ const PendingWithdrawals = ({ token }) => {
             <div key={w._id} className="p-4 border rounded-lg bg-white">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-semibold">{w.userId?.name} &lt;{w.userId?.email}&gt;</p>
-                  <p className="text-sm text-gray-600">Amount: {w.amountEth} ETH — To: {w.ethereumAddress}</p>
-                  {w.withdrawalCodeId && <p className="text-xs text-gray-500">Code: {w.withdrawalCodeId.code}</p>}
-                  <p className="text-xs text-gray-400">Requested: {new Date(w.createdAt).toLocaleString()}</p>
+                  <p className="font-semibold">
+                    {w.userId?.name} &lt;{w.userId?.email}&gt;
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Amount: {w.amountEth} ETH — To: {w.ethereumAddress}
+                  </p>
+                  {w.withdrawalCodeId && (
+                    <p className="text-xs text-gray-500">
+                      Code: {w.withdrawalCodeId.code}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-400">
+                    Requested: {new Date(w.createdAt).toLocaleString()}
+                  </p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => confirm(w._id)} className="px-3 py-1 bg-emerald-600 text-white rounded">Confirm</button>
-                  <button onClick={() => reject(w._id)} className="px-3 py-1 bg-red-600 text-white rounded">Reject</button>
+                  <button
+                    onClick={() => confirm(w._id)}
+                    className="px-3 py-1 bg-emerald-600 text-white rounded"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => reject(w._id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded"
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
             </div>

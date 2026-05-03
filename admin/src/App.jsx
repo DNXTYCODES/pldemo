@@ -74,8 +74,14 @@ const App = () => {
                   element={<EditProduct token={token} />}
                 />
                 <Route path="/users" element={<Users token={token} />} />
-                <Route path="/pending-withdrawal-fees" element={<PendingWithdrawalFees token={token} />} />
-                <Route path="/pending-withdrawals" element={<PendingWithdrawals token={token} />} />
+                <Route
+                  path="/pending-withdrawal-fees"
+                  element={<PendingWithdrawalFees token={token} />}
+                />
+                <Route
+                  path="/pending-withdrawals"
+                  element={<PendingWithdrawals token={token} />}
+                />
                 <Route
                   path="/user-manual"
                   element={<UserManual token={token} />}

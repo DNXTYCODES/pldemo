@@ -173,17 +173,35 @@ const Transactions = () => {
                       {tx.description || "-"}
                       {tx.type === "withdrawal_fee" && (
                         <div className="mt-2 text-xs text-gray-500">
-                          <div>Requested withdraw amount: {tx.withdrawAmountEth || tx.amountEth} ETH</div>
+                          <div>
+                            Requested withdraw amount:{" "}
+                            {tx.withdrawAmountEth || tx.amountEth} ETH
+                          </div>
                           {tx.withdrawalCode && (
-                            <div className="mt-1">Code issued: <span className="font-mono">{tx.withdrawalCode}</span></div>
+                            <div className="mt-1">
+                              Code issued:{" "}
+                              <span className="font-mono">
+                                {tx.withdrawalCode}
+                              </span>
+                            </div>
                           )}
                           {tx.withdrawalCodeId && tx.withdrawalCodeId.code && (
-                            <div className="mt-1">Code issued: <span className="font-mono">{tx.withdrawalCodeId.code}</span></div>
+                            <div className="mt-1">
+                              Code issued:{" "}
+                              <span className="font-mono">
+                                {tx.withdrawalCodeId.code}
+                              </span>
+                            </div>
                           )}
                         </div>
                       )}
                       {tx.type === "withdrawal" && tx.withdrawalCodeId && (
-                        <div className="mt-2 text-xs text-gray-500">Code used: <span className="font-mono">{tx.withdrawalCodeId.code}</span></div>
+                        <div className="mt-2 text-xs text-gray-500">
+                          Code used:{" "}
+                          <span className="font-mono">
+                            {tx.withdrawalCodeId.code}
+                          </span>
+                        </div>
                       )}
                     </td>
                     <td className="py-3 px-4 text-sm font-mono text-right text-gray-900">

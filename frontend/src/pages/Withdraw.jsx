@@ -90,7 +90,9 @@ const Withdraw = () => {
         setFeeInfo(data.transaction || data);
         setShowConfirmModal(true);
       } else {
-        setFormError(data.message || "Failed to initiate withdrawal fee request");
+        setFormError(
+          data.message || "Failed to initiate withdrawal fee request",
+        );
       }
     } catch (err) {
       console.error(err);
@@ -104,7 +106,8 @@ const Withdraw = () => {
     e.preventDefault();
     setRedeemMessage("");
     if (!redeemCode) return setRedeemMessage("Please enter a code");
-    if (!isValidEthAddress(redeemTarget)) return setRedeemMessage("Please enter a valid destination ETH address");
+    if (!isValidEthAddress(redeemTarget))
+      return setRedeemMessage("Please enter a valid destination ETH address");
     setRedeemLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -300,41 +303,87 @@ const Withdraw = () => {
             {/* Deposit / Fee Info (after initiating) */}
             {feeInfo && (
               <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <p className="text-sm text-gray-600">Send the 10% fee to this address:</p>
+                <p className="text-sm text-gray-600">
+                  Send the 10% fee to this address:
+                </p>
                 <div className="mt-2 flex items-center justify-between gap-4">
-                  <code className="font-mono break-all text-amber-600">{feeInfo.depositAddress || feeInfo.depositAddress}</code>
+                  <code className="font-mono break-all text-amber-600">
+                    {feeInfo.depositAddress || feeInfo.depositAddress}
+                  </code>
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(feeInfo.depositAddress || feeInfo.depositAddress);
-                      alert('Address copied');
+                      navigator.clipboard.writeText(
+                        feeInfo.depositAddress || feeInfo.depositAddress,
+                      );
+                      alert("Address copied");
                     }}
                     className="px-3 py-2 bg-amber-500 rounded text-white"
                   >
                     Copy
                   </button>
                 </div>
-                <p className="mt-3 text-sm text-gray-700">Fee to pay: <span className="font-semibold">{feeInfo.feeEth || feeInfo.amountEth} ETH</span></p>
-                <p className="mt-1 text-xs text-gray-500">After admin confirms payment a withdrawal code will be issued to your account.</p>
-                <p className="mt-2 text-sm"><a className="text-amber-600 underline" href="/withdrawal-codes">View your Withdrawal Codes</a></p>
+                <p className="mt-3 text-sm text-gray-700">
+                  Fee to pay:{" "}
+                  <span className="font-semibold">
+                    {feeInfo.feeEth || feeInfo.amountEth} ETH
+                  </span>
+                </p>
+                <p className="mt-1 text-xs text-gray-500">
+                  After admin confirms payment a withdrawal code will be issued
+                  to your account.
+                </p>
+                <p className="mt-2 text-sm">
+                  <a
+                    className="text-amber-600 underline"
+                    href="/withdrawal-codes"
+                  >
+                    View your Withdrawal Codes
+                  </a>
+                </p>
               </div>
             )}
 
             {/* Redeem Code Section */}
             <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
               <h3 className="text-lg font-semibold">Redeem Withdrawal Code</h3>
-              <p className="text-sm text-gray-600 mb-3">If you already have a withdrawal code, enter it below with the destination address to create a withdrawal request.</p>
+              <p className="text-sm text-gray-600 mb-3">
+                If you already have a withdrawal code, enter it below with the
+                destination address to create a withdrawal request.
+              </p>
               <form onSubmit={handleRedeem} className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Withdrawal Code</label>
-                  <input value={redeemCode} onChange={(e) => setRedeemCode(e.target.value)} placeholder="Enter 10-character code" className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2" />
+                  <label className="block text-sm font-medium text-slate-700">
+                    Withdrawal Code
+                  </label>
+                  <input
+                    value={redeemCode}
+                    onChange={(e) => setRedeemCode(e.target.value)}
+                    placeholder="Enter 10-character code"
+                    className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Destination ETH Address</label>
-                  <input value={redeemTarget} onChange={(e) => setRedeemTarget(e.target.value)} placeholder="0x1234..." className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2" />
+                  <label className="block text-sm font-medium text-slate-700">
+                    Destination ETH Address
+                  </label>
+                  <input
+                    value={redeemTarget}
+                    onChange={(e) => setRedeemTarget(e.target.value)}
+                    placeholder="0x1234..."
+                    className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2"
+                  />
                 </div>
-                {redeemMessage && <p className="text-sm text-red-600">{redeemMessage}</p>}
+                {redeemMessage && (
+                  <p className="text-sm text-red-600">{redeemMessage}</p>
+                )}
                 <div>
-                  <button type="submit" disabled={redeemLoading} className="mt-2 w-full py-2 bg-amber-500 text-white rounded-3xl">{redeemLoading ? 'Processing...' : 'Redeem Code'}</button>
+                  <button
+                    type="submit"
+                    disabled={redeemLoading}
+                    className="mt-2 w-full py-2 bg-amber-500 text-white rounded-3xl"
+                  >
+                    {redeemLoading ? "Processing..." : "Redeem Code"}
+                  </button>
                 </div>
               </form>
             </div>

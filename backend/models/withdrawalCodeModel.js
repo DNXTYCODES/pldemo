@@ -43,6 +43,7 @@ const withdrawalCodeSchema = new mongoose.Schema(
 );
 
 const withdrawalCodeModel =
-  mongoose.models.withdrawalCode || mongoose.model("withdrawalCode", withdrawalCodeSchema);
+  mongoose.models.withdrawalCode ||
+  mongoose.model("withdrawalCode", withdrawalCodeSchema);
 
 export default withdrawalCodeModel;

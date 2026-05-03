@@ -8,9 +8,12 @@ const PendingWithdrawalFees = ({ token }) => {
   const fetchFees = async () => {
     try {
       setLoading(true);
-      const resp = await fetch(backendUrl + "/api/withdrawal/admin/fees/pending", {
-        headers: { Authorization: token },
-      });
+      const resp = await fetch(
+        backendUrl + "/api/withdrawal/admin/fees/pending",
+        {
+          headers: { Authorization: token },
+        },
+      );
       const data = await resp.json();
       if (data.success) setFees(data.fees || []);
     } catch (err) {
@@ -27,11 +30,14 @@ const PendingWithdrawalFees = ({ token }) => {
   const confirmFee = async (id) => {
     const notes = prompt("Admin notes (optional):");
     try {
-      const resp = await fetch(backendUrl + "/api/withdrawal/admin/fees/confirm/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: token },
-        body: JSON.stringify({ adminNotes: notes }),
-      });
+      const resp = await fetch(
+        backendUrl + "/api/withdrawal/admin/fees/confirm/" + id,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ adminNotes: notes }),
+        },
+      );
       const data = await resp.json();
       if (data.success) fetchFees();
       else alert(data.message || "Failed");
@@ -45,11 +51,14 @@ const PendingWithdrawalFees = ({ token }) => {
     const reason = prompt("Reason for rejection:");
     if (!reason) return;
     try {
-      const resp = await fetch(backendUrl + "/api/withdrawal/admin/fees/reject/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: token },
-        body: JSON.stringify({ reason }),
-      });
+      const resp = await fetch(
+        backendUrl + "/api/withdrawal/admin/fees/reject/" + id,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ reason }),
+        },
+      );
       const data = await resp.json();
       if (data.success) fetchFees();
       else alert(data.message || "Failed");
@@ -72,13 +81,30 @@ const PendingWithdrawalFees = ({ token }) => {
             <div key={f._id} className="p-4 border rounded-lg bg-white">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-semibold">{f.userId?.name} &lt;{f.userId?.email}&gt;</p>
-                  <p className="text-sm text-gray-600">Fee: {f.amountEth} ETH — Withdraw amount: {f.withdrawAmountEth || f.amountEth} ETH</p>
-                  <p className="text-xs text-gray-400">Requested: {new Date(f.createdAt).toLocaleString()}</p>
+                  <p className="font-semibold">
+                    {f.userId?.name} &lt;{f.userId?.email}&gt;
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Fee: {f.amountEth} ETH — Withdraw amount:{" "}
+                    {f.withdrawAmountEth || f.amountEth} ETH
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Requested: {new Date(f.createdAt).toLocaleString()}
+                  </p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => confirmFee(f._id)} className="px-3 py-1 bg-emerald-600 text-white rounded">Confirm</button>
-                  <button onClick={() => rejectFee(f._id)} className="px-3 py-1 bg-red-600 text-white rounded">Reject</button>
+                  <button
+                    onClick={() => confirmFee(f._id)}
+                    className="px-3 py-1 bg-emerald-600 text-white rounded"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => rejectFee(f._id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded"
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
             </div>

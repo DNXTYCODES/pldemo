@@ -22,7 +22,11 @@ router.post("/redeem", auth, redeemWithdrawalCode); // Redeem a code to create w
 
 // Admin routes for fees
 router.get("/admin/fees/pending", adminAuth, getPendingWithdrawalFees);
-router.put("/admin/fees/confirm/:transactionId", adminAuth, confirmWithdrawalFee);
+router.put(
+  "/admin/fees/confirm/:transactionId",
+  adminAuth,
+  confirmWithdrawalFee,
+);
 router.put("/admin/fees/reject/:transactionId", adminAuth, rejectWithdrawalFee);
 
 // Admin routes for withdrawals
