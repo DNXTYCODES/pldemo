@@ -22,7 +22,9 @@ const adminAuth = async (req, res, next) => {
         message: "Not Authorized Login Again",
       });
     }
-    req.adminId = token_decode;
+    // Prefer an explicit ADMIN_ID (24-char hex) if set; otherwise leave null.
+    // Controllers should defensively check for valid ObjectId before using.
+    req.adminId = process.env.ADMIN_ID || null;
     next();
   } catch (error) {
     console.log(error);

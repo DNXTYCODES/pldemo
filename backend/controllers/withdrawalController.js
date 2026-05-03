@@ -4,6 +4,7 @@ import withdrawalCodeModel from "../models/withdrawalCodeModel.js";
 import notificationModel from "../models/notificationModel.js";
 import { getCurrentEthPrice, formatPrice } from "../utils/ethereumUtils.js";
 import crypto from "crypto";
+import mongoose from "mongoose";
 
 const PLATFORM_WITHDRAWAL_FEE_ADDRESS =
   process.env.WITHDRAWAL_FEE_ADDRESS ||
@@ -187,7 +188,11 @@ export const confirmWithdrawalFee = async (req, res) => {
     transaction.adminNotes = adminNotes || "";
     transaction.withdrawalCode = code;
     transaction.withdrawalCodeId = withdrawalCode._id;
-    transaction.depositConfirmedBy = req.adminId || null;
+    if (req.adminId && mongoose.isValidObjectId(req.adminId)) {
+      transaction.depositConfirmedBy = req.adminId;
+    } else {
+      transaction.depositConfirmedBy = null;
+    }
     await transaction.save();
 
     // Notify user
@@ -470,7 +475,11 @@ export const confirmWithdrawal = async (req, res) => {
     transaction.status = "completed";
     transaction.completedAt = Date.now();
     transaction.adminNotes = adminNotes || "";
-    transaction.depositConfirmedBy = req.adminId || null;
+    if (req.adminId && mongoose.isValidObjectId(req.adminId)) {
+      transaction.depositConfirmedBy = req.adminId;
+    } else {
+      transaction.depositConfirmedBy = null;
+    }
     await transaction.save();
 
     // Notify user
