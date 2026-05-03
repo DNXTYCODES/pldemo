@@ -15,6 +15,8 @@ import ManagePhotographers from "./pages/ManagePhotographers";
 import MassUpload from "./pages/MassUpload";
 import ImageCategories from "./pages/ImageCategories";
 import UserManual from "./pages/UserManual";
+import PendingWithdrawalFees from "./pages/PendingWithdrawalFees";
+import PendingWithdrawals from "./pages/PendingWithdrawals";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -72,6 +74,8 @@ const App = () => {
                   element={<EditProduct token={token} />}
                 />
                 <Route path="/users" element={<Users token={token} />} />
+                <Route path="/pending-withdrawal-fees" element={<PendingWithdrawalFees token={token} />} />
+                <Route path="/pending-withdrawals" element={<PendingWithdrawals token={token} />} />
                 <Route
                   path="/user-manual"
                   element={<UserManual token={token} />}

@@ -976,7 +976,16 @@ const getUserTransactions = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const user = await userModel.findById(userId).populate("transactions");
+    const user = await userModel
+        .findById(userId)
+        .populate({
+          path: "transactions",
+          populate: [
+            { path: "imageId", select: "title" },
+            { path: "sellerId", select: "name email profilePicture" },
+            { path: "withdrawalCodeId", select: "code amountWithdrawableEth amountPaidEth status createdAt reservedAt usedAt" },
+          ],
+        });
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }

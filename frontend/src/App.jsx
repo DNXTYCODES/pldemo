@@ -25,6 +25,7 @@ import FundAccount from "./pages/FundAccount";
 import Settings from "./pages/Settings";
 import Withdraw from "./pages/Withdraw";
 import Transactions from "./pages/Transactions";
+import WithdrawalCodes from "./pages/WithdrawalCodes";
 import ImageDetail from "./pages/ImageDetail";
 import UploaderProfile from "./pages/UploaderProfile";
 import Photographers from "./pages/Photographers";
@@ -87,6 +88,7 @@ const App = () => {
           <Route path="/fund-account" element={<FundAccount />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/withdraw" element={<Withdraw />} />
+          <Route path="/withdrawal-codes" element={<WithdrawalCodes />} />
           <Route path="/transactions" element={<Transactions />} />
 
           {/* Image Routes */}

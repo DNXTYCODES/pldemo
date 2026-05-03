@@ -11,6 +11,8 @@ const Navbar = ({ setToken }) => {
     { to: "/image-categories", label: "➕ Add Image Category" },
     { to: "/manage-photographers", label: "👥 Manage Photographers" },
     { to: "/users", label: "👤 Manage Users" },
+    { to: "/pending-withdrawal-fees", label: "💳 Pending Fees" },
+    { to: "/pending-withdrawals", label: "🔁 Pending Withdrawals" },
   ];
 
   return (

