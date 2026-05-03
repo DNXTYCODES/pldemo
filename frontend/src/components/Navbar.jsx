@@ -505,6 +505,29 @@ const Navbar = () => {
 
                       <button
                         onClick={() => {
+                          navigate("/withdrawal-codes");
+                          setShowProfileDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-amber-400 transition-colors flex items-center gap-3"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m2 0a2 2 0 100-4H7a2 2 0 100 4m0 8a2 2 0 100-4h10a2 2 0 100 4"
+                          />
+                        </svg>
+                        Withdrawal Codes
+                      </button>
+
+                      <button
+                        onClick={() => {
                           navigate("/withdraw");
                           setShowProfileDropdown(false);
                         }}

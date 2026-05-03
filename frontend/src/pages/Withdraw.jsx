@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { getFormattedPrice } from "../utils/ethPrice";
 
@@ -182,6 +183,13 @@ const Withdraw = () => {
                 Enter your destination ETH address and request any amount up to
                 your available balance. We’ll review the request and send funds
                 to your wallet address once approved.
+              </p>
+              <p className="mt-3 text-sm">
+                You can view any issued withdrawal codes on your
+                <Link to="/withdrawal-codes" className="text-amber-600 underline ml-1">
+                  Withdrawal Codes page
+                </Link>
+                .
               </p>
 
               <details className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -378,17 +386,14 @@ const Withdraw = () => {
                     {feeInfo.feeEth || feeInfo.amountEth} ETH
                   </span>
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-2 text-sm text-gray-700">
                   After admin confirms payment a withdrawal code will be issued
                   to your account.
                 </p>
                 <p className="mt-2 text-sm">
-                  <a
-                    className="text-amber-600 underline"
-                    href="/withdrawal-codes"
-                  >
+                  <Link to="/withdrawal-codes" className="text-amber-600 underline">
                     View your Withdrawal Codes
-                  </a>
+                  </Link>
                 </p>
               </div>
             )}
