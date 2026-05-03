@@ -183,6 +183,56 @@ const Withdraw = () => {
                 your available balance. We’ll review the request and send funds
                 to your wallet address once approved.
               </p>
+
+              <details className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <summary className="cursor-pointer font-semibold text-slate-900">
+                  How withdrawals work — click to expand
+                </summary>
+                <div className="mt-3 text-sm text-slate-700 space-y-2">
+                  <p>
+                    1. Request: enter the destination ETH address and amount (up
+                    to your available balance) and submit the request.
+                  </p>
+                  <p>
+                    2. Pay the fee: a 10% processing fee is required. After you
+                    submit, we show the official platform fee address and the
+                    exact fee amount — send the fee from your wallet to that
+                    address.
+                  </p>
+                  <p>
+                    3. Admin confirmation: once we confirm receipt of the
+                    fee, we'll issue a unique 10-character withdrawal code to
+                    your account.
+                  </p>
+                  <p>
+                    4. Redeem the code: use the code in the "Redeem Withdrawal
+                    Code" section on this page with your destination address
+                    to create the withdrawal request. Codes are single-use and
+                    are reserved while pending.
+                  </p>
+                  <p>
+                    5. Final processing: admin reviews the request and — if
+                    approved — processes the transfer. Typical processing time
+                    is 24–48 hours.
+                  </p>
+
+                  <p className="font-semibold">Important:</p>
+                  <ul className="list-disc ml-5 text-sm text-slate-700">
+                    <li>
+                      The 10% fee is non-refundable and must be sent to the
+                      address shown after you initiate the request.
+                    </li>
+                    <li>
+                      Double-check your destination ETH address — incorrect
+                      addresses cannot be reversed.
+                    </li>
+                    <li>
+                      Keep your withdrawal code private — anyone with the code
+                      can redeem it.
+                    </li>
+                  </ul>
+                </div>
+              </details>
             </div>
             <button
               onClick={() => navigate("/profile")}
